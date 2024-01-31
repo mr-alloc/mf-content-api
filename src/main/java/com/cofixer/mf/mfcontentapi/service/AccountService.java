@@ -11,6 +11,9 @@ import com.cofixer.mf.mfcontentapi.manager.AccountManager;
 import com.cofixer.mf.mfcontentapi.util.EncryptUtil;
 import com.cofixer.mf.mfcontentapi.util.JwtUtil;
 import com.cofixer.mf.mfcontentapi.validator.AccountValidator;
+import kr.devis.util.entityprinter.print.PrintConfigurator;
+import kr.devis.util.entityprinter.print.printer.EntityPrinter;
+import kr.devis.util.entityprinter.print.setting.ExpandableSetting;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ public class AccountService {
 
     private final AccountValidator accountValidator;
     private final AccountManager accountManager;
+    private final EntityPrinter printer;
+    private final PrintConfigurator<Integer> ec;
 
     @Transactional
     public Account createAccount(CreateAccountReq req) {
@@ -51,6 +56,7 @@ public class AccountService {
         //계정 조회
         Account found = accountManager.getAccount(req.getEmail(),
                 () -> new AccountException(DeclaredAccountResult.NOT_FOUND_ACCOUNT));
+        log.info(printer.drawEntity(found, ec));
         String encrypted = EncryptUtil.encrypt(req.getPassword(), EncryptAlgorithm.SHA256);
         //비밀번호 확인
         if ( ! found.getPassword().equals(encrypted)) {
