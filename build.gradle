@@ -41,6 +41,7 @@ dependencies {
 
 
 	implementation 'kr.devis.util.entityprinter:entity-printer:1.0.1-SNAPSHOT'
+	implementation 'com.auth0:java-jwt:4.4.0'
 
 
 	compileOnly 'org.projectlombok:lombok'

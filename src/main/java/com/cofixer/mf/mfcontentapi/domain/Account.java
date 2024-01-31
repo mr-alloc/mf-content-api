@@ -51,4 +51,8 @@ public class Account implements Serializable {
         newAccount.createdAt = LocalDateTime.now().toEpochSecond(AppContext.APP_ZONE_OFFSET);
         return newAccount;
     }
+
+    public void changeEncrypted(String encrypt) {
+        this.password = encrypt;
+    }
 }

@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
-public class CreateAccountReq {
+public class VerifyAccountReq {
 
     /* 이메일 */
     @NotEmpty

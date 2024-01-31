@@ -2,6 +2,8 @@ package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.domain.Account;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
+import com.cofixer.mf.mfcontentapi.dto.req.VerifyAccountReq;
+import com.cofixer.mf.mfcontentapi.dto.res.VerifiedAccountRes;
 import com.cofixer.mf.mfcontentapi.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/account")
-public class MemberController {
+public class AccountController {
 
     private final AccountService accountService;
 
@@ -25,5 +27,12 @@ public class MemberController {
         Account account = accountService.createAccount(req);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<VerifiedAccountRes> verifyAccount(@RequestBody VerifyAccountReq req) {
+        VerifiedAccountRes verifiedRes = accountService.verifyAccount(req);
+
+        return ResponseEntity.ok(verifiedRes);
     }
 }

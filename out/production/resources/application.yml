@@ -15,9 +15,13 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       pull-name: mission
       auto-commit: false
+  config:
+    activate:
+      on-profile: local
 
 
 logging:
   level:
 #    org.hibernate.SQL: WARN
     com.cofixer.mf.mfcontentapi: DEBUG
+  config: classpath:logback-${spring.profiles.active}.xml

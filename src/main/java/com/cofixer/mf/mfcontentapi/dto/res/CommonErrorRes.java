@@ -12,6 +12,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 public class CommonErrorRes {
 
-    String message;
+    int code;
 
 }
