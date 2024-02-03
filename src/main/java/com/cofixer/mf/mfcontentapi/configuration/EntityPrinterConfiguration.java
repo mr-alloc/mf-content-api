@@ -19,6 +19,7 @@ public class EntityPrinterConfiguration {
     public PrintConfigurator<Integer> ec () {
         return ExpandableSetting.EXPANDABLE_ENTITY_SETTING
                 .withoutFloor()
+                .excludeDataType()
                 .getConfig();
     }
 

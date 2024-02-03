@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.service;
 
+import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
 import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
 import com.cofixer.mf.mfcontentapi.domain.Account;
@@ -8,16 +9,18 @@ import com.cofixer.mf.mfcontentapi.dto.req.VerifyAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.res.VerifiedAccountRes;
 import com.cofixer.mf.mfcontentapi.exception.AccountException;
 import com.cofixer.mf.mfcontentapi.manager.AccountManager;
+import com.cofixer.mf.mfcontentapi.manager.CredentialManager;
 import com.cofixer.mf.mfcontentapi.util.EncryptUtil;
 import com.cofixer.mf.mfcontentapi.util.JwtUtil;
 import com.cofixer.mf.mfcontentapi.validator.AccountValidator;
 import kr.devis.util.entityprinter.print.PrintConfigurator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
-import kr.devis.util.entityprinter.print.setting.ExpandableSetting;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class AccountService {
 
     private final AccountValidator accountValidator;
     private final AccountManager accountManager;
+    private final CredentialManager credentialManager;
     private final EntityPrinter printer;
     private final PrintConfigurator<Integer> ec;
 
@@ -48,7 +52,7 @@ public class AccountService {
         return accountManager.createAccount(newer);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public VerifiedAccountRes verifyAccount(VerifyAccountReq req) {
         //입력값 검증
         accountValidator.validate(req.getEmail(), req.getPassword());
@@ -56,13 +60,17 @@ public class AccountService {
         //계정 조회
         Account found = accountManager.getAccount(req.getEmail(),
                 () -> new AccountException(DeclaredAccountResult.NOT_FOUND_ACCOUNT));
-        log.info(printer.drawEntity(found, ec));
         String encrypted = EncryptUtil.encrypt(req.getPassword(), EncryptAlgorithm.SHA256);
         //비밀번호 확인
-        if ( ! found.getPassword().equals(encrypted)) {
+        if (!found.getPassword().equals(encrypted)) {
             throw new AccountException(DeclaredAccountResult.NOT_FOUND_ACCOUNT);
         }
-        String credential = JwtUtil.createToken(found.getId());
+
+        Instant instant = AppContext.APP_CLOCK.instant();
+        String credential = JwtUtil.createToken(found.getId(), instant);
+
+        //토큰 등록
+        credentialManager.registerCredential(found.getId(), credential);
 
         return new VerifiedAccountRes(credential);
     }

@@ -1,7 +1,6 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
-import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;

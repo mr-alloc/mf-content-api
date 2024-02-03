@@ -7,14 +7,13 @@ spring:
     properties:
       hibernate.hbm2ddl.auto: create-drop #create-drop : 시작할때 테이블을 삭제 후 생성하고 종료할때 테이블을 삭제한다.
     show-sql: true
-
   config:
     activate:
       on-profile: local
 
 datasource:
   mission:
-    url: jdbc:mysql://localhost:3306/mf_dev?cacheCallableStmts=true&serverTimezone=Asia/Seoul&useServerPrepStmts=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://mission-db:3306/mf_dev?cacheCallableStmts=true&serverTimezone=Asia/Seoul&useServerPrepStmts=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
     username: root
     password: devis
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -13,7 +13,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAPublicKeySpec;
+import java.time.Instant;
 import java.util.function.Predicate;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
@@ -21,12 +21,12 @@ public class JwtUtil {
 
     private static final Algorithm ALGORITHM = getAlgorithm();
 
-    public static String createToken(long accountId) {
+    public static String createToken(long accountId, Instant currentInstant) {
         try {
             return JWT.create()
                     .withIssuer(String.valueOf(accountId))
-                    .withIssuedAt(AppContext.APP_CLOCK.instant())
-                    .withExpiresAt(AppContext.APP_CLOCK.instant().plusSeconds(AppContext.CREDENTIAL_EXPIRE_SECOND))
+                    .withIssuedAt(currentInstant)
+                    .withExpiresAt(currentInstant.plusSeconds(AppContext.CREDENTIAL_EXPIRE_SECOND))
                     .sign(ALGORITHM);
         } catch (JWTVerificationException ex) {
             ex.printStackTrace();
