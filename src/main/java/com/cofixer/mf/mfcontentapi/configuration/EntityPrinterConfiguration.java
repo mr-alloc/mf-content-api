@@ -1,7 +1,8 @@
 package com.cofixer.mf.mfcontentapi.configuration;
 
-import kr.devis.util.entityprinter.print.PrintConfigurator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
+import kr.devis.util.entityprinter.print.setting.ExpandableEntitySetting;
+import kr.devis.util.entityprinter.print.setting.ExpandableMapSetting;
 import kr.devis.util.entityprinter.print.setting.ExpandableSetting;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,18 +17,16 @@ public class EntityPrinterConfiguration {
     }
 
     @Bean
-    public PrintConfigurator<Integer> ec () {
+    public ExpandableEntitySetting es() {
         return ExpandableSetting.EXPANDABLE_ENTITY_SETTING
                 .withoutFloor()
-                .excludeDataType()
-                .getConfig();
+                .excludeDataType();
     }
 
     @Bean
-    public PrintConfigurator<String> mc () {
+    public ExpandableMapSetting ms() {
         return ExpandableSetting.EXPANDABLE_MAP_SETTING
-                .withoutFloor()
-                .getConfig();
+                .withoutFloor();
     }
 
 }

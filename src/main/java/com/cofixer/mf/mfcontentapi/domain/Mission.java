@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.*;
+import java.time.LocalDateTime;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -49,11 +49,11 @@ public class Mission implements Serializable {
     @Column(name = "created_at", nullable = false)
     Long createdAt;
 
-    public static Mission forCreate(CreateMissionReq req) {
+    public static Mission forCreate(CreateMissionReq req, Long memberId) {
         Mission newMission = new Mission();
 
         newMission.name = req.getMissionName();
-        newMission.reporterId = 15L;
+        newMission.reporterId = memberId;
         newMission.assigneeId = req.getAssignee();
         newMission.missionType = req.getMissionType();
 

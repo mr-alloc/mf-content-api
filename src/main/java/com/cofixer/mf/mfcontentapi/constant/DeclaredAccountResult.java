@@ -17,6 +17,7 @@ public enum DeclaredAccountResult {
     PASSWORD_RULE_VIOLATION(-2),
     DUPLICATED_EMAIL(-3),
     NOT_FOUND_ACCOUNT(-4);
+
     private final int code;
 
 }

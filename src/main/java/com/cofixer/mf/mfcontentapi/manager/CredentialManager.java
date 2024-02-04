@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -18,5 +20,9 @@ public class CredentialManager {
     @Transactional(propagation = Propagation.MANDATORY)
     public void registerCredential(Long id, String credential) {
         credentialRepository.save(AccessCredential.of(id, credential));
+    }
+
+    public Optional<AccessCredential> getMayCredential(Long accountId) {
+        return credentialRepository.findById(accountId);
     }
 }

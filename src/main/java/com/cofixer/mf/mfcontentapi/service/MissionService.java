@@ -16,8 +16,8 @@ public class MissionService {
     private final MissionRepository missionRepository;
 
     @Transactional
-    public Mission createMission(CreateMissionReq req) {
-        Mission mission = Mission.forCreate(req);
+    public Mission createMission(CreateMissionReq req, Long memberId) {
+        Mission mission = Mission.forCreate(req, memberId);
 
         return missionRepository.save(mission);
     }
