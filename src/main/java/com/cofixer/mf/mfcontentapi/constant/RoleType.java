@@ -11,10 +11,11 @@ import java.util.Map;
 @Getter
 @RequiredArgsConstructor
 public enum RoleType {
+    GUEST(0),
     MEMBER(1),
     SUB_LEADER(2),
     LEADER(3),
-    ;
+    ADMIN(4);
     private final int level;
     private static final Map<Integer, RoleType> CACHED = IterateUtil.toMap(List.of(RoleType.values()), RoleType::getLevel);
 

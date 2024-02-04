@@ -31,7 +31,6 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = extractToken(request.getHeader(AUTHORIZATION_HEADER));
-        log.info("[AUTHORIZE] token: {}", token);
         if (token != null) {
             DecodedJWT decoded = JwtUtil.decode(token);
             boolean isPassed = isNotExpired(decoded) && isSyncedToken(decoded, token) && isCacheAuthorization(request, decoded);
