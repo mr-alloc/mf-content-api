@@ -1,15 +1,13 @@
 package com.cofixer.mf.mfcontentapi.configuration;
 
 import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
-import com.cofixer.mf.mfcontentapi.constant.RoleType;
+import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
@@ -25,7 +23,7 @@ public class ServiceRoleProperty {
      * 요청 Path 별 권한 설정
      */
     @Getter
-    private Map<Integer, RoleType> serviceRoleMap;
+    private Map<Integer, AccountRoleType> serviceRoleMap;
 
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
@@ -39,13 +37,11 @@ public class ServiceRoleProperty {
         scanControllers();
     }
 
-    public void scanControllers() {
-        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-        handlerMethods.forEach((key, value) -> {
+    private void scanControllers() {
+        requestMappingHandlerMapping.getHandlerMethods().forEach((key, value) -> {
             try {
                 Method method = value.getMethod();
-                Class<?> controllerClass = method.getDeclaringClass();
-                MemberAuth defaultControllerAuth = AnnotationUtils.getAnnotation(controllerClass, MemberAuth.class);
+                MemberAuth defaultControllerAuth = AnnotationUtils.getAnnotation(method.getDeclaringClass(), MemberAuth.class);
                 MemberAuth methodAuth = AnnotationUtils.getAnnotation(method, MemberAuth.class);
 
                 MemberAuth memberAuth = getMemberAuthWithOrdered(defaultControllerAuth, methodAuth);

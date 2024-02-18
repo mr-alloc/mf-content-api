@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = extractToken(request.getHeader(AUTHORIZATION_HEADER));
+        log.info("[REQUEST] {} {}", request.getMethod(), request.getRequestURI());
         if (token != null) {
             DecodedJWT decoded = JwtUtil.decode(token);
             boolean isPassed = isNotExpired(decoded) && isSyncedToken(decoded, token) && isCacheAuthorization(request, decoded);

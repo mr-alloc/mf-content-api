@@ -51,7 +51,7 @@ public class Account implements Serializable {
         return newAccount;
     }
 
-    public void changeEncrypted(String encrypt) {
+    public void encryptPassword(String encrypt) {
         this.password = encrypt;
     }
 }

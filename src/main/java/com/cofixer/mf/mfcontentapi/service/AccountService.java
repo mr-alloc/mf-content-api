@@ -4,6 +4,7 @@ import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
 import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
 import com.cofixer.mf.mfcontentapi.domain.Account;
+import com.cofixer.mf.mfcontentapi.dto.req.ConfirmAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.VerifyAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.res.AccountInfoRes;
@@ -38,21 +39,21 @@ public class AccountService {
 
     @Transactional
     public Account createAccount(CreateAccountReq req) {
-        String originPassword = req.getPassword();
-        Account newer = Account.forCreate(req.getEmail(), originPassword);
-
         //입력값 검증
-        accountValidator.validate(newer.getEmail(), newer.getPassword());
+        accountValidator.validate(req.getEmail(), req.getPassword());
 
         //이메일 중복 확인
-        if (accountManager.isExistAccount(newer.getEmail())) {
+        if (accountManager.isExistAccount(req.getEmail())) {
             throw new AccountException(DeclaredAccountResult.DUPLICATED_EMAIL);
         }
 
-        newer.changeEncrypted(EncryptUtil.encrypt(originPassword, EncryptAlgorithm.SHA256));
-
         //계정 생성
-        Account saved = accountManager.createAccount(newer);
+        Account saved = accountManager.createAccount(
+                Account.forCreate(
+                        req.getEmail(),
+                        EncryptUtil.encrypt(req.getPassword(), EncryptAlgorithm.SHA256)
+                )
+        );
         memberManager.createMember(saved.getId());
         return saved;
     }
@@ -84,5 +85,16 @@ public class AccountService {
     public AccountInfoRes getAccountInfo(Long aid) {
         Account account = accountManager.getExistedAccount(aid);
         return new AccountInfoRes(account.getEmail(), account.getPhone(), account.getCreatedAt());
+    }
+
+    @Transactional(readOnly = true)
+    public void confirmAccount(ConfirmAccountReq req) {
+        //생성규칙 확인
+        accountValidator.validate(req.getEmail());
+
+        //계정 조회
+        if (accountManager.isExistAccount(req.getEmail())) {
+            throw new AccountException(DeclaredAccountResult.DUPLICATED_EMAIL);
+        }
     }
 }

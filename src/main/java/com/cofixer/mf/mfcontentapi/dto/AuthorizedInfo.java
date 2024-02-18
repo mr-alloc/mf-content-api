@@ -1,11 +1,11 @@
 package com.cofixer.mf.mfcontentapi.dto;
 
-import com.cofixer.mf.mfcontentapi.constant.RoleType;
+import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 
 public record AuthorizedInfo(
         Long aid,
         Long mid,
-        RoleType role
+        AccountRoleType role
 ) {
 
     public boolean hasMemberId() {

@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.aspect;
 
-import com.cofixer.mf.mfcontentapi.constant.RoleType;
+import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 
 import java.lang.annotation.*;
 
@@ -9,9 +9,9 @@ import java.lang.annotation.*;
 @Documented
 public @interface MemberAuth {
 
-    RoleType value() default RoleType.MEMBER;
+    AccountRoleType value() default AccountRoleType.MEMBER;
 
-    RoleType[] specify() default {};
+    AccountRoleType[] specify() default {};
 
 
 }

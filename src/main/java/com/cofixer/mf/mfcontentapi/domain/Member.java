@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.constant.RoleType;
+import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,14 +38,14 @@ public class Member implements Serializable {
     public static Member forCreate(Long accountId) {
         Member newer = new Member();
         newer.accountId = accountId;
-        newer.role = RoleType.MEMBER.getLevel();
+        newer.role = AccountRoleType.MEMBER.getLevel();
 
         return newer;
     }
 
-    public RoleType getMemberRole() {
-        return RoleType.exist(role)
-                ? RoleType.of(role)
-                : RoleType.MEMBER;
+    public AccountRoleType getMemberRole() {
+        return AccountRoleType.exist(role)
+                ? AccountRoleType.of(role)
+                : AccountRoleType.MEMBER;
     }
 }
