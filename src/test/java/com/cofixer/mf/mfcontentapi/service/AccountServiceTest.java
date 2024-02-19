@@ -5,7 +5,7 @@ import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
 import com.cofixer.mf.mfcontentapi.exception.AccountException;
 import com.cofixer.mf.mfcontentapi.manager.AccountManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
-import com.cofixer.mf.mfcontentapi.validator.AccountValidator;
+import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +27,7 @@ class AccountServiceTest {
     AccountManager accountManager;
 
     @Mock
-    AccountValidator accountValidator;
+    CommonValidator commonValidator;
 
     @Mock
     MemberManager memberManager;

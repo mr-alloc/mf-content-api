@@ -23,13 +23,13 @@ public class CorsFilter implements Filter {
     private static final String ALLOWED_ORIGIN = "http://localhost:5173";
     private static final String ALLOWED_CREDENTIALS = "true";
 
-    private static final String UserAgent = "User-Agent";
+    private static final String USER_AGENT = "User-Agent";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        String userAgent = httpRequest.getHeader(UserAgent);
+        String userAgent = httpRequest.getHeader(USER_AGENT);
         log.info("User-Agent: {}", userAgent);
 
         if (!HttpMethod.OPTIONS.name().equals(httpRequest.getMethod())) {

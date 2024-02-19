@@ -15,7 +15,7 @@ import com.cofixer.mf.mfcontentapi.manager.CredentialManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
 import com.cofixer.mf.mfcontentapi.util.EncryptUtil;
 import com.cofixer.mf.mfcontentapi.util.JwtUtil;
-import com.cofixer.mf.mfcontentapi.validator.AccountValidator;
+import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
 import kr.devis.util.entityprinter.print.setting.ExpandableEntitySetting;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +24,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class AccountService {
 
-    private final AccountValidator accountValidator;
+    private final CommonValidator commonValidator;
     private final AccountManager accountManager;
     private final MemberManager memberManager;
     private final CredentialManager credentialManager;
@@ -40,7 +41,7 @@ public class AccountService {
     @Transactional
     public Account createAccount(CreateAccountReq req) {
         //입력값 검증
-        accountValidator.validate(req.getEmail(), req.getPassword());
+        commonValidator.validateAccount(req.getEmail(), req.getPassword());
 
         //이메일 중복 확인
         if (accountManager.isExistAccount(req.getEmail())) {
@@ -61,7 +62,7 @@ public class AccountService {
     @Transactional
     public VerifiedAccountRes verifyAccount(VerifyAccountReq req) {
         //입력값 검증
-        accountValidator.validate(req.getEmail(), req.getPassword());
+        commonValidator.validateAccount(req.getEmail(), req.getPassword());
 
         //계정 조회
         Account found = accountManager.getExistedAccount(req.getEmail(),
@@ -73,12 +74,15 @@ public class AccountService {
         }
 
         Instant instant = AppContext.APP_CLOCK.instant();
-        String credential = JwtUtil.createToken(found.getId(), instant);
         log.info(printer.drawEntity(found, es.getConfig()));
-        //토큰 등록
-        credentialManager.registerCredential(found.getId(), credential);
 
-        return new VerifiedAccountRes(credential);
+        String accessToken = JwtUtil.createToken(found.getId(), instant);
+        String refreshToken = UUID.randomUUID().toString();
+
+        //토큰 등록
+        credentialManager.registerCredential(found.getId(), refreshToken);
+
+        return new VerifiedAccountRes(accessToken, refreshToken);
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +94,7 @@ public class AccountService {
     @Transactional(readOnly = true)
     public void confirmAccount(ConfirmAccountReq req) {
         //생성규칙 확인
-        accountValidator.validate(req.getEmail());
+        commonValidator.validateAccount(req.getEmail());
 
         //계정 조회
         if (accountManager.isExistAccount(req.getEmail())) {

@@ -1,17 +1,21 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
+import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
+@DynamicUpdate
 @Table(name = "mf_member", indexes = {
         @Index(name = "idx_aid", columnList = "aid", unique = true)
 })
@@ -35,6 +39,9 @@ public class Member implements Serializable {
     @Column(name = "nickname")
     String nickname;
 
+    @Column(name = "registered_at")
+    Long registeredAt;
+
     public static Member forCreate(Long accountId) {
         Member newer = new Member();
         newer.accountId = accountId;
@@ -47,5 +54,10 @@ public class Member implements Serializable {
         return AccountRoleType.exist(role)
                 ? AccountRoleType.of(role)
                 : AccountRoleType.MEMBER;
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+        this.registeredAt = LocalDateTime.now().toEpochSecond(AppContext.APP_ZONE_OFFSET);
     }
 }

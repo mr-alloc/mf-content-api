@@ -13,7 +13,9 @@ public enum DeclaredMemberResult {
      */
     NOT_FOUND_MEMBER(-1),
     NOT_AUTHORIZED_ROLE(-2, HttpStatus.UNAUTHORIZED),
+    NICKNAME_RULE_VIOLATION(-3, HttpStatus.BAD_REQUEST),
     ;
+
     private final int code;
     private HttpStatus httpStatus;
 

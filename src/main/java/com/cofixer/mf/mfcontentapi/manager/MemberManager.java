@@ -1,6 +1,8 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
+import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.domain.Member;
+import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,5 +29,10 @@ public class MemberManager {
     public Member createMember(Long accountId) {
         Member member = Member.forCreate(accountId);
         return memberRepository.save(member);
+    }
+
+    public Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(DeclaredMemberResult.NOT_FOUND_MEMBER));
     }
 }

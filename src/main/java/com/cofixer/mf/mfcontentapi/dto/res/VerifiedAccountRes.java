@@ -6,6 +6,8 @@ package com.cofixer.mf.mfcontentapi.dto.res;
  */
 
 public record VerifiedAccountRes (
-        String credential
+        String accessToken,
+
+        String refreshToken
 ) {
 }
