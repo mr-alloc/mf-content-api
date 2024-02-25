@@ -1,16 +1,13 @@
 package com.cofixer.mf.mfcontentapi.constant;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum EncryptAlgorithm {
     SHA256("SHA-256"),
     RSA("RSA");
 
-    private String algorithm;
-
-    EncryptAlgorithm(String algorithm) {
-        this.algorithm = algorithm;
-    }
-
-    public String getAlgorithm() {
-        return algorithm;
-    }
+    private final String algorithm;
 }

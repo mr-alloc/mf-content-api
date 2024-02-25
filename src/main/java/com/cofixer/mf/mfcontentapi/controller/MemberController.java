@@ -9,10 +9,7 @@ import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
 import com.cofixer.mf.mfcontentapi.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,8 +27,8 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/change-nickname")
-    public ResponseEntity<Void> changeNickname(ChangeNicknameReq req) {
+    @PutMapping("/nickname")
+    public ResponseEntity<Void> changeNickname(@RequestBody ChangeNicknameReq req) {
         AuthorizedInfo info = AuthorizedService.getInfo();
         memberService.changeNickname(info.mid(), req);
 

@@ -19,6 +19,7 @@ public class CorsFilter implements Filter {
     private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
     private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+    private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
 
     private static final String ALLOWED_ORIGIN = "http://localhost:5173";
     private static final String ALLOWED_CREDENTIALS = "true";
@@ -40,6 +41,7 @@ public class CorsFilter implements Filter {
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_ORIGIN);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, ALLOWED_CREDENTIALS);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        httpResponse.setHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
 
         //CORS preflight request OK
         httpResponse.setStatus(HttpServletResponse.SC_OK);

@@ -1,8 +1,10 @@
 package com.cofixer.mf.mfcontentapi.service;
 
+import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.domain.Member;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
 import com.cofixer.mf.mfcontentapi.dto.res.SimpleMemberInfo;
+import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
 import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
@@ -32,9 +34,12 @@ public class MemberService {
 
     @Transactional
     public void changeNickname(Long mid, ChangeNicknameReq req) {
+        commonValidator.validateNickname(req.getNickname());
         Member member = manager.getMember(mid);
 
-        commonValidator.validateNickname(req.getNickname());
+        if (member.hasNickName()) {
+            throw new MemberException(DeclaredMemberResult.ALREADY_INITIALIZED);
+        }
 
         member.changeNickname(req.getNickname());
     }

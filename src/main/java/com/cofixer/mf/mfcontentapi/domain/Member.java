@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.util.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -59,5 +60,10 @@ public class Member implements Serializable {
     public void changeNickname(String nickname) {
         this.nickname = nickname;
         this.registeredAt = LocalDateTime.now().toEpochSecond(AppContext.APP_ZONE_OFFSET);
+    }
+
+
+    public boolean hasNickName() {
+        return StringUtils.hasLength(this.nickname);
     }
 }

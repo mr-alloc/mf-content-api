@@ -3,19 +3,19 @@ package com.cofixer.mf.mfcontentapi.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
-import java.util.function.Predicate;
 
+@Slf4j
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class JwtUtil {
 
@@ -28,8 +28,6 @@ public class JwtUtil {
                     .withIssuedAt(currentInstant)
                     .withExpiresAt(currentInstant.plusSeconds(AppContext.CREDENTIAL_EXPIRE_SECOND))
                     .sign(ALGORITHM);
-        } catch (JWTVerificationException ex) {
-            ex.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -39,16 +37,6 @@ public class JwtUtil {
     public static DecodedJWT decode(String token) {
         JWTVerifier verifier = JWT.require(ALGORITHM).build();
         return verifier.verify(token);
-    }
-
-    public static boolean isValid(String token, Predicate<DecodedJWT> predicate) {
-        try {
-            DecodedJWT decodedJWT = decode(token);
-            return predicate.test(decodedJWT);
-        } catch (JWTVerificationException ex) {
-            ex.printStackTrace();
-            return false;
-        }
     }
 
     private static Algorithm getAlgorithm() {

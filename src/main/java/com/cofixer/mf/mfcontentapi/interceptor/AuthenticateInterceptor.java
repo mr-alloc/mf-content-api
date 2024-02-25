@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.interceptor;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
@@ -31,18 +32,23 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String token = extractToken(request.getHeader(AUTHORIZATION_HEADER));
-        log.info("[REQUEST] {} {}\ntoken: {}", request.getMethod(), request.getRequestURI(), token);
-        if (token != null) {
-            DecodedJWT decoded = JwtUtil.decode(token);
-            boolean isPassed = isNotExpired(decoded) && isCacheAuthorization(request, decoded);
-            if (!isPassed) {
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        try {
+            String token = extractToken(request.getHeader(AUTHORIZATION_HEADER));
+            log.info("[REQUEST] {} {}", request.getMethod(), request.getRequestURI());
+            if (token != null) {
+                DecodedJWT decoded = JwtUtil.decode(token);
+                boolean isPassed = isNotExpired(decoded) && isCacheAuthorization(request, decoded);
+                if (!isPassed) {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                }
+                return isPassed;
             }
-
-            return isPassed;
+        } catch (SignatureVerificationException ex) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        } catch (Exception ex) {
+            log.error("Failed to authenticate", ex);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
         return false;
     }
 
