@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-public record SimpleMemberInfo(
+public record SimpleMemberInfoRes(
 
         Long id,
 

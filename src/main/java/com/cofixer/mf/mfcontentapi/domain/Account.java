@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
@@ -43,6 +44,9 @@ public class Account implements Serializable {
     @Column(name = "created_at", nullable = false)
     Long createdAt;
 
+    @Column(name = "last_signed_in_at")
+    Long lastSignedInAt;
+
     public static Account forCreate(String email, String password) {
         Account newAccount = new Account();
         newAccount.email = email;
@@ -53,5 +57,9 @@ public class Account implements Serializable {
 
     public void encryptPassword(String encrypt) {
         this.password = encrypt;
+    }
+
+    public void renewSignedInAt(Instant instant) {
+        this.lastSignedInAt = instant.getEpochSecond();
     }
 }

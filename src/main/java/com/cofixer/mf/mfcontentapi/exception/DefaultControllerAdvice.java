@@ -15,14 +15,14 @@ public class DefaultControllerAdvice {
     @ExceptionHandler(MissionException.class)
     public ResponseEntity<CommonErrorRes> missionExceptionHandler(MissionException ex) {
         return ResponseEntity.internalServerError()
-                .body(new CommonErrorRes(ex.getCode()));
+                .body(new CommonErrorRes("MISSION", ex.getCode()));
     }
 
     @ExceptionHandler(AccountException.class)
     public ResponseEntity<CommonErrorRes> accountExceptionHandler(AccountException ex) {
         log.error("[{}] {}", ex.getResult().name(), ex.getMessage());
         return ResponseEntity.internalServerError()
-                .body(new CommonErrorRes(ex.getResult().getCode()));
+                .body(new CommonErrorRes("ACCOUNT", ex.getResult().getCode()));
     }
 
     @ExceptionHandler(MemberException.class)
@@ -32,10 +32,10 @@ public class DefaultControllerAdvice {
         HttpStatus httpStatus = result.getHttpStatus();
         if (httpStatus != null) {
             return ResponseEntity.status(httpStatus)
-                    .body(new CommonErrorRes(result.getCode()));
+                    .body(new CommonErrorRes("MEMBER", result.getCode()));
         }
 
         return ResponseEntity.internalServerError()
-                .body(new CommonErrorRes(result.getCode()));
+                .body(new CommonErrorRes("MEMBER", result.getCode()));
     }
 }

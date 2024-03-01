@@ -79,6 +79,9 @@ public class AccountService {
         String accessToken = JwtUtil.createToken(found.getId(), instant);
         String refreshToken = UUID.randomUUID().toString();
 
+        //로그인 일시 수정
+        found.renewSignedInAt(instant);
+
         //토큰 등록
         credentialManager.registerCredential(found.getId(), refreshToken);
 

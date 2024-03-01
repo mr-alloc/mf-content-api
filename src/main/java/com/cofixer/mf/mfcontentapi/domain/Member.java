@@ -66,4 +66,8 @@ public class Member implements Serializable {
     public boolean hasNickName() {
         return StringUtils.hasLength(this.nickname);
     }
+
+    public boolean nicknameIs(String nickname) {
+        return this.nickname.equals(nickname);
+    }
 }
