@@ -2,10 +2,11 @@ package com.cofixer.mf.mfcontentapi.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum DeclaredAccountResult {
+public enum DeclaredAccountResult implements DeclaredResult {
 
     /**
      * -1: 이메일 생성규칙 위반
@@ -16,8 +17,19 @@ public enum DeclaredAccountResult {
     EMAIL_RULE_VIOLATION(-1),
     PASSWORD_RULE_VIOLATION(-2),
     DUPLICATED_EMAIL(-3),
-    NOT_FOUND_ACCOUNT(-4);
+    NOT_FOUND_ACCOUNT(-4, HttpStatus.UNAUTHORIZED);
 
     private final int code;
+    private HttpStatus httpStatus;
+
+    DeclaredAccountResult(int code, HttpStatus httpStatus) {
+        this.code = code;
+        this.httpStatus = httpStatus;
+    }
+
+    @Override
+    public HttpStatus getHttpStatus() {
+        return this.httpStatus;
+    }
 
 }

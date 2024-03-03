@@ -8,7 +8,6 @@ import lombok.experimental.FieldDefaults;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Getter
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
@@ -51,7 +50,7 @@ public class Account implements Serializable {
         Account newAccount = new Account();
         newAccount.email = email;
         newAccount.password = password;
-        newAccount.createdAt = LocalDateTime.now().toEpochSecond(AppContext.APP_ZONE_OFFSET);
+        newAccount.createdAt = AppContext.APP_CLOCK.instant().getEpochSecond();
         return newAccount;
     }
 

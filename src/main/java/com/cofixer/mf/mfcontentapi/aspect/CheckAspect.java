@@ -47,10 +47,9 @@ public class CheckAspect {
                 .orElse(AccountRoleType.ADMIN);
 
         log.info("Need Role [{}], member role is [{}]", needRole.name(), memberRole.name());
-        if (memberRole.isAuthorizedThan(needRole)) {
-            return;
+        if (memberRole.isNotAllowedTo(needRole)) {
+            throw new MemberException(DeclaredMemberResult.NOT_ALLOWED_ROLE, needRole.name());
         }
 
-        throw new MemberException(DeclaredMemberResult.NOT_AUTHORIZED_ROLE, needRole.name());
     }
 }

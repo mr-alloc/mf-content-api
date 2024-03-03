@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.exception;
 
+import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.dto.res.CommonErrorRes;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +21,17 @@ public class DefaultControllerAdvice {
 
     @ExceptionHandler(AccountException.class)
     public ResponseEntity<CommonErrorRes> accountExceptionHandler(AccountException ex) {
-        log.error("[{}] {}", ex.getResult().name(), ex.getMessage());
+        DeclaredAccountResult result = ex.getResult();
+        log.error("[{}] {}", result.name(), ex.getMessage());
+
+        HttpStatus httpStatus = result.getHttpStatus();
+        if (httpStatus != null) {
+            return ResponseEntity.status(httpStatus)
+                    .body(new CommonErrorRes("ACCOUNT", result.getCode()));
+        }
+
         return ResponseEntity.internalServerError()
-                .body(new CommonErrorRes("ACCOUNT", ex.getResult().getCode()));
+                .body(new CommonErrorRes("ACCOUNT", result.getCode()));
     }
 
     @ExceptionHandler(MemberException.class)

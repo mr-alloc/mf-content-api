@@ -26,7 +26,7 @@ public enum AccountRoleType {
         return CACHED.get(level);
     }
 
-    public boolean isAuthorizedThan(AccountRoleType other) {
-        return this.level >= other.level;
+    public boolean isNotAllowedTo(AccountRoleType other) {
+        return this.level < other.level;
     }
 }

@@ -6,13 +6,13 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum DeclaredMemberResult {
+public enum DeclaredMemberResult implements DeclaredResult {
 
     /**
      * -1: 회원을 찾을 수 없음
      */
     NOT_FOUND_MEMBER(-1),
-    NOT_AUTHORIZED_ROLE(-2, HttpStatus.UNAUTHORIZED),
+    NOT_ALLOWED_ROLE(-2, HttpStatus.FORBIDDEN),
     NICKNAME_RULE_VIOLATION(-3, HttpStatus.BAD_REQUEST),
     ALREADY_INITIALIZED(-4, HttpStatus.BAD_REQUEST);
 
@@ -22,5 +22,10 @@ public enum DeclaredMemberResult {
     DeclaredMemberResult(int code, HttpStatus httpStatus) {
         this.code = code;
         this.httpStatus = httpStatus;
+    }
+
+    @Override
+    public HttpStatus getHttpStatus() {
+        return this.httpStatus;
     }
 }
