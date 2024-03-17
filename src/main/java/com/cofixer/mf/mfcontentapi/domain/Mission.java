@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -54,12 +55,12 @@ public class Mission implements Serializable {
 
         newMission.name = req.getMissionName();
         newMission.reporterId = memberId;
-        newMission.assigneeId = req.getAssignee();
+        newMission.assigneeId = Optional.ofNullable(req.getAssignee()).orElse(memberId);
         newMission.missionType = req.getMissionType();
 
         LocalDateTime today = LocalDateTime.now(AppContext.APP_CLOCK);
         newMission.createdAt = today.toEpochSecond(AppContext.APP_ZONE_OFFSET);
-        newMission.deadLine = today.plusDays(req.getDeadLine()).toEpochSecond(AppContext.APP_ZONE_OFFSET);
+        newMission.deadLine = today.plusSeconds(req.getDeadline()).toEpochSecond(AppContext.APP_ZONE_OFFSET);
 
         return newMission;
     }

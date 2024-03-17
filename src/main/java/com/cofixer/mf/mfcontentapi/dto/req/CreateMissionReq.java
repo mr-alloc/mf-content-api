@@ -2,7 +2,6 @@ package com.cofixer.mf.mfcontentapi.dto.req;
 
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -18,5 +17,5 @@ public class CreateMissionReq {
     Integer missionType;
 
     /* 기한(일 단위) */
-    Integer deadLine;
+    Integer deadline;
 }
