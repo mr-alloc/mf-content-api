@@ -3,7 +3,7 @@ package com.cofixer.mf.mfcontentapi.service;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.domain.Account;
 import com.cofixer.mf.mfcontentapi.domain.Member;
-import com.cofixer.mf.mfcontentapi.dto.AuthorizedInfo;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
 import com.cofixer.mf.mfcontentapi.dto.res.MemberDetailRes;
 import com.cofixer.mf.mfcontentapi.dto.res.SimpleMemberInfoRes;
@@ -51,9 +51,9 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberDetailRes getMemberDetail(AuthorizedInfo authorizedInfo) {
-        Account found = accountManager.getExistedAccount(authorizedInfo.aid());
-        Member member = manager.getMember(authorizedInfo.mid());
+    public MemberDetailRes getMemberDetail(AuthorizedMember authorizedMember) {
+        Account found = accountManager.getExistedAccount(authorizedMember.aid());
+        Member member = manager.getMember(authorizedMember.mid());
 
         return MemberDetailRes.of(found, member);
     }

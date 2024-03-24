@@ -2,7 +2,7 @@ package com.cofixer.mf.mfcontentapi.dto;
 
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 
-public record AuthorizedInfo(
+public record AuthorizedMember(
         Long aid,
         Long mid,
         AccountRoleType role

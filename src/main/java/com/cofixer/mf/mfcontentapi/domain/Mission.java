@@ -30,6 +30,10 @@ public class Mission implements Serializable {
     @Column(name = "mission_name", nullable = false)
     String name;
 
+    /* 미션 부제 */
+    @Column(name = "sub_name")
+    String subName;
+
     /* 생성자 아이디 */
     @Column(name = "reporter_id", nullable = false)
     Long reporterId;

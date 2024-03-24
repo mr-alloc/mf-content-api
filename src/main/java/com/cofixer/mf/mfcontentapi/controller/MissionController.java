@@ -2,7 +2,7 @@ package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
 import com.cofixer.mf.mfcontentapi.domain.Mission;
-import com.cofixer.mf.mfcontentapi.dto.AuthorizedInfo;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.res.CreateMissionRes;
 import com.cofixer.mf.mfcontentapi.dto.res.GetMemberCalendarRes;
@@ -24,7 +24,7 @@ public class MissionController {
 
     @PostMapping("/create")
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
-        AuthorizedInfo info = AuthorizedService.getInfo();
+        AuthorizedMember info = AuthorizedService.getMember();
         Mission mission = missionService.createMission(req, info.mid());
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -36,7 +36,7 @@ public class MissionController {
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate
     ) {
-        AuthorizedInfo info = AuthorizedService.getInfo();
+        AuthorizedMember info = AuthorizedService.getMember();
         GetMemberCalendarRes response = missionService.getMemberCalendar(info.mid(), startDate, endDate);
         return ResponseEntity.ok(response);
     }

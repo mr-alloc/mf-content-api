@@ -2,7 +2,7 @@ package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
-import com.cofixer.mf.mfcontentapi.dto.AuthorizedInfo;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
 import com.cofixer.mf.mfcontentapi.dto.res.MemberDetailRes;
 import com.cofixer.mf.mfcontentapi.dto.res.SimpleMemberInfoRes;
@@ -22,7 +22,7 @@ public class MemberController {
 
     @GetMapping("/info")
     public ResponseEntity<SimpleMemberInfoRes> getMemberInfo() {
-        AuthorizedInfo info = AuthorizedService.getInfo();
+        AuthorizedMember info = AuthorizedService.getMember();
 
         SimpleMemberInfoRes response = memberService.getSimpleMemberInfo(info.mid());
         return ResponseEntity.ok(response);
@@ -30,7 +30,7 @@ public class MemberController {
 
     @PutMapping("/nickname")
     public ResponseEntity<Void> changeNickname(@RequestBody ChangeNicknameReq req) {
-        AuthorizedInfo info = AuthorizedService.getInfo();
+        AuthorizedMember info = AuthorizedService.getMember();
         memberService.changeNickname(info.mid(), req);
 
         return ResponseEntity.ok().build();
@@ -38,7 +38,7 @@ public class MemberController {
 
     @GetMapping("/detail")
     public ResponseEntity<MemberDetailRes> getMemberDetail() {
-        AuthorizedInfo info = AuthorizedService.getInfo();
+        AuthorizedMember info = AuthorizedService.getMember();
         MemberDetailRes detail = memberService.getMemberDetail(info);
         return ResponseEntity.ok(detail);
     }

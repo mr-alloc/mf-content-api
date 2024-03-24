@@ -26,6 +26,6 @@ public class MemberException extends CommonException {
 
     @Override
     public int getCode() {
-        return 0;
+        return this.result.getCode();
     }
 }

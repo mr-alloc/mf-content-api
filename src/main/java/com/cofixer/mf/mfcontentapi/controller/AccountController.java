@@ -2,7 +2,7 @@ package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
-import com.cofixer.mf.mfcontentapi.dto.AuthorizedInfo;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ConfirmAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.VerifyAccountReq;
@@ -47,7 +47,7 @@ public class AccountController {
     @GetMapping("/info")
     @MemberAuth(AccountRoleType.MEMBER)
     public ResponseEntity<AccountInfoRes> getAccountInfo() {
-        AuthorizedInfo info = AuthorizedService.getInfo();
+        AuthorizedMember info = AuthorizedService.getMember();
 
         AccountInfoRes accountInfoRes = accountService.getAccountInfo(
                 info.aid()

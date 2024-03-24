@@ -10,6 +10,9 @@ public class CreateMissionReq {
     /* 미션명 */
     String missionName;
 
+    /* 미션 부제 */
+    String missionSubName;
+
     /* 수행자 */
     Long assignee;
 

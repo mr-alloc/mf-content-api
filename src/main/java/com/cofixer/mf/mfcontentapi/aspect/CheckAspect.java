@@ -3,7 +3,7 @@ package com.cofixer.mf.mfcontentapi.aspect;
 import com.cofixer.mf.mfcontentapi.configuration.ServiceRoleProperty;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
-import com.cofixer.mf.mfcontentapi.dto.AuthorizedInfo;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +38,8 @@ public class CheckAspect {
         Map<Integer, AccountRoleType> serviceRoleMap = serviceRoleProperty.getServiceRoleMap();
 
         //멤버 권한
-        AccountRoleType memberRole = Optional.ofNullable(AuthorizedService.getInfo())
-                .map(AuthorizedInfo::role)
+        AccountRoleType memberRole = Optional.ofNullable(AuthorizedService.getMember())
+                .map(AuthorizedMember::role)
                 .orElse(AccountRoleType.GUEST);
 
         //필요한 최소 권한

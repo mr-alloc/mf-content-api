@@ -5,7 +5,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.domain.Member;
-import com.cofixer.mf.mfcontentapi.dto.AuthorizedInfo;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.CredentialManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
@@ -57,7 +57,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         Member member = memberManager.getMayMemberByAccountId(accountId)
                 .orElseThrow(() -> new MemberException(DeclaredMemberResult.NOT_FOUND_MEMBER, String.valueOf(accountId)));
 
-        AuthorizedService.setInfo(request, new AuthorizedInfo(accountId, member.getId(), member.getMemberRole()));
+        AuthorizedService.setInfo(request, new AuthorizedMember(accountId, member.getId(), member.getMemberRole()));
         return true;
     }
 

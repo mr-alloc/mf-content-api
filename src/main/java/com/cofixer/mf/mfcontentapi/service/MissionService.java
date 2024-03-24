@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -36,6 +37,7 @@ public class MissionService {
         log.info("start: {} end: {}", startTime, endTime);
         List<MissionSummaryValue> missions = missionManager.getMissions(mid, startTime, endTime).stream()
                 .map(MissionSummaryValue::of)
+                .sorted(Comparator.comparing(MissionSummaryValue::deadLine))
                 .toList();
 
         return GetMemberCalendarRes.of(missions);

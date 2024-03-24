@@ -23,9 +23,4 @@ public enum DeclaredMemberResult implements DeclaredResult {
         this.code = code;
         this.httpStatus = httpStatus;
     }
-
-    @Override
-    public HttpStatus getHttpStatus() {
-        return this.httpStatus;
-    }
 }
