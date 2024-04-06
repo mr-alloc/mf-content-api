@@ -36,6 +36,7 @@ public class FamilyMember implements Serializable {
         FamilyMember newer = new FamilyMember();
 
         newer.id = id;
+        newer.nickname = "";
         newer.memberRole = memberRole.getLevel();
         newer.registeredAt = AppContext.APP_CLOCK.instant().getEpochSecond();
 

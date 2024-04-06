@@ -29,12 +29,13 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     private final CredentialManager credentialManager;
     private final MemberManager memberManager;
     private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String FAMILY_ID_HEADER = "Selected-Family-Id";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
             String token = extractToken(request.getHeader(AUTHORIZATION_HEADER));
-            log.info("[REQUEST] {} {}", request.getMethod(), request.getRequestURI());
+            log.info("[REQUEST] {} {}, family: {}", request.getMethod(), request.getRequestURI(), request.getHeader(FAMILY_ID_HEADER));
             if (token != null) {
                 DecodedJWT decoded = JwtUtil.decode(token);
                 boolean isPassed = isNotExpired(decoded) && isCacheAuthorization(request, decoded);

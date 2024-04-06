@@ -10,6 +10,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -25,6 +27,8 @@ public class CorsFilter implements Filter {
     private static final String ALLOWED_CREDENTIALS = "true";
 
     private static final String USER_AGENT = "User-Agent";
+    private static final String ALLOWED_HEADERS = List.of("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "Selected-Family-Id").stream()
+            .collect(Collectors.joining(", "));
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -38,9 +42,10 @@ public class CorsFilter implements Filter {
             return;
         }
 
+
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_ORIGIN);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, ALLOWED_CREDENTIALS);
-        httpResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        httpResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, "Origin, X-Requested-With, Content-Type, Accept, Authorization, Selected-Family-Id");
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
 
         //CORS preflight request OK

@@ -6,7 +6,9 @@ spring:
     open-in-view: false #요청이 끝날때까지 오픈된 세션을 유지하지 않는다.
     properties:
       hibernate.hbm2ddl.auto: create-drop #create-drop : 시작할때 테이블을 삭제 후 생성하고 종료할때 테이블을 삭제한다.
-    show-sql: true
+      hibernate:
+        show_sql: true
+        format_sql: true
   config:
     activate:
       on-profile: local

@@ -34,7 +34,6 @@ public class FamilyService {
 
     @Transactional(readOnly = true)
     public List<FamilySummary> getFamilySummaries(Long mid) {
-        familyManager.getOwnFamilies(mid);
-        return null;
+        return familyManager.getOwnFamilies(mid);
     }
 }

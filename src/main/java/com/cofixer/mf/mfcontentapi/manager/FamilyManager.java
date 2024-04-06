@@ -3,6 +3,7 @@ package com.cofixer.mf.mfcontentapi.manager;
 import com.cofixer.mf.mfcontentapi.constant.MemberRole;
 import com.cofixer.mf.mfcontentapi.domain.Family;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
+import com.cofixer.mf.mfcontentapi.dto.res.FamilySummary;
 import com.cofixer.mf.mfcontentapi.repository.FamilyMemberRepository;
 import com.cofixer.mf.mfcontentapi.repository.FamilyRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +38,7 @@ public class FamilyManager {
         return familyMemberRepository.findByIdMemberId(mid);
     }
 
-    public List<Family> getOwnFamilies(Long mid) {
-        familyRepository.findOwnFamilies(mid);
-        return null;
+    public List<FamilySummary> getOwnFamilies(Long mid) {
+        return familyRepository.findOwnFamilies(mid);
     }
 }

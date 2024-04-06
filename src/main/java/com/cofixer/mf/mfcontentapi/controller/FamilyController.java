@@ -33,8 +33,8 @@ public class FamilyController {
                 .body(new CreateFamilyRes(created.getId()));
     }
 
-    @GetMapping
-    public ResponseEntity<GetFamilyRes> getFamilies() {
+    @GetMapping("/own")
+    public ResponseEntity<GetFamilyRes> getOwnFamilies() {
         AuthorizedMember member = AuthorizedService.getMember();
         List<FamilySummary> familySummaries = familyService.getFamilySummaries(member.mid());
 

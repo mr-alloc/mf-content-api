@@ -19,7 +19,7 @@ public class AuthorizedService {
                 .map(ServletRequestAttributes::getRequest)
                 .map(request -> request.getAttribute(AUTHORIZED_KEY))
                 .map(AuthorizedMember.class::cast)
-                .orElseThrow();
+                .orElse(null);
     }
 
     public static void setInfo(HttpServletRequest request, AuthorizedMember authorizedMember) {

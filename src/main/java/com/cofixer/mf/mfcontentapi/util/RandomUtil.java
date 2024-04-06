@@ -27,7 +27,7 @@ public class RandomUtil {
         return RANDOM.ints(ASCII_NUMBER_START, ASCII_LOWER_F + 1)
                 .filter(HEX_COLOR_RANGE)
                 .limit(HEX_COLOR_LENGTH)
-                .collect(() -> new StringBuilder("#"), StringBuilder::appendCodePoint, StringBuilder::append)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
     }
 
