@@ -17,7 +17,12 @@ public class AuthorizedService {
         return Optional.ofNullable(RequestContextHolder.getRequestAttributes())
                 .map(ServletRequestAttributes.class::cast)
                 .map(ServletRequestAttributes::getRequest)
-                .map(request -> request.getAttribute(AUTHORIZED_KEY))
+                .map(AuthorizedService::getMemberWithRequested)
+                .orElse(null);
+    }
+
+    private static AuthorizedMember getMemberWithRequested(HttpServletRequest request) {
+        return Optional.ofNullable(request.getAttribute(AUTHORIZED_KEY))
                 .map(AuthorizedMember.class::cast)
                 .orElse(null);
     }

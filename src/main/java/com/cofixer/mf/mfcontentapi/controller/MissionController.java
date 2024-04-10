@@ -24,8 +24,8 @@ public class MissionController {
 
     @PostMapping("/create")
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
-        AuthorizedMember info = AuthorizedService.getMember();
-        Mission mission = missionService.createMission(req, info.mid());
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        Mission mission = missionService.createMission(req, authorizedMember.getMemberId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CreateMissionRes(mission.getId()));
@@ -36,8 +36,8 @@ public class MissionController {
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate
     ) {
-        AuthorizedMember info = AuthorizedService.getMember();
-        GetMemberCalendarRes response = missionService.getMemberCalendar(info.mid(), startDate, endDate);
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        GetMemberCalendarRes response = missionService.getMemberCalendar(authorizedMember.getMemberId(), startDate, endDate);
         return ResponseEntity.ok(response);
     }
 }

@@ -27,7 +27,7 @@ public class FamilyController {
     @PostMapping("/create")
     public ResponseEntity<CreateFamilyRes> createFamily(@RequestBody CreateFamilyReq req) {
         AuthorizedMember info = AuthorizedService.getMember();
-        Family created = familyService.createFamily(req, info.mid());
+        Family created = familyService.createFamily(req, info.getMemberId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CreateFamilyRes(created.getId()));
@@ -36,7 +36,7 @@ public class FamilyController {
     @GetMapping("/own")
     public ResponseEntity<GetFamilyRes> getOwnFamilies() {
         AuthorizedMember member = AuthorizedService.getMember();
-        List<FamilySummary> familySummaries = familyService.getFamilySummaries(member.mid());
+        List<FamilySummary> familySummaries = familyService.getFamilySummaries(member.getMemberId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(GetFamilyRes.of(familySummaries));

@@ -39,7 +39,7 @@ public class CheckAspect {
 
         //멤버 권한
         AccountRoleType memberRole = Optional.ofNullable(AuthorizedService.getMember())
-                .map(AuthorizedMember::role)
+                .map(AuthorizedMember::getRole)
                 .orElse(AccountRoleType.GUEST);
 
         //필요한 최소 권한

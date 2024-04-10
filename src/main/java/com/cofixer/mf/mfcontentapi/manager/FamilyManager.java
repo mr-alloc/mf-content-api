@@ -3,6 +3,7 @@ package com.cofixer.mf.mfcontentapi.manager;
 import com.cofixer.mf.mfcontentapi.constant.MemberRole;
 import com.cofixer.mf.mfcontentapi.domain.Family;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMember.FamilyMemberId;
 import com.cofixer.mf.mfcontentapi.dto.res.FamilySummary;
 import com.cofixer.mf.mfcontentapi.repository.FamilyMemberRepository;
 import com.cofixer.mf.mfcontentapi.repository.FamilyRepository;
@@ -40,5 +41,10 @@ public class FamilyManager {
 
     public List<FamilySummary> getOwnFamilies(Long mid) {
         return familyRepository.findOwnFamilies(mid);
+    }
+
+    public FamilyMember getFamilyMember(FamilyMemberId familyMemberId) {
+        return familyMemberRepository.findById(familyMemberId)
+                .orElseThrow(() -> new IllegalArgumentException("가족 멤버가 존재하지 않습니다."));
     }
 }

@@ -2,6 +2,7 @@ package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.domain.Account;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
 import com.cofixer.mf.mfcontentapi.domain.Member;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
@@ -9,6 +10,7 @@ import com.cofixer.mf.mfcontentapi.dto.res.MemberDetailRes;
 import com.cofixer.mf.mfcontentapi.dto.res.SimpleMemberInfoRes;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.AccountManager;
+import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
 import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
@@ -28,20 +30,26 @@ public class MemberService {
     private final CommonValidator commonValidator;
     private final EntityPrinter printer;
     private final ExpandableEntitySetting es;
+    private final FamilyManager familyManager;
 
     @Transactional(readOnly = true)
-    public SimpleMemberInfoRes getSimpleMemberInfo(Long mid) {
-        Member member = manager.getMember(mid);
+    public SimpleMemberInfoRes getSimpleMemberInfo(AuthorizedMember authorizedMember) {
+        Member member = manager.getMember(authorizedMember.getMemberId());
+        SimpleMemberInfoRes memberInfo = SimpleMemberInfoRes.of(member);
 
         log.info(printer.drawEntity(member, es.getConfig()));
+        if (authorizedMember.forFamilyMember()) {
+            FamilyMember familyMember = familyManager.getFamilyMember(FamilyMember.FamilyMemberId.of(authorizedMember));
+            memberInfo.decorateFamilyMember(familyMember);
+        }
 
-        return new SimpleMemberInfoRes(member.getId(), member.getNickname(), member.getRole());
+        return memberInfo;
     }
 
     @Transactional
-    public void changeNickname(Long mid, ChangeNicknameReq req) {
+    public void changeNickname(AuthorizedMember authorizedMember, ChangeNicknameReq req) {
         commonValidator.validateNickname(req.getNickname());
-        Member member = manager.getMember(mid);
+        Member member = manager.getMember(authorizedMember.getMemberId());
 
         if (member.hasNickName() && member.nicknameIs(req.getNickname())) {
             throw new MemberException(DeclaredMemberResult.ALREADY_INITIALIZED);
@@ -52,8 +60,8 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberDetailRes getMemberDetail(AuthorizedMember authorizedMember) {
-        Account found = accountManager.getExistedAccount(authorizedMember.aid());
-        Member member = manager.getMember(authorizedMember.mid());
+        Account found = accountManager.getExistedAccount(authorizedMember.getAccountId());
+        Member member = manager.getMember(authorizedMember.getMemberId());
 
         return MemberDetailRes.of(found, member);
     }

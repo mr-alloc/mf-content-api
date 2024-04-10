@@ -7,6 +7,7 @@ import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
 import com.cofixer.mf.mfcontentapi.dto.res.MemberDetailRes;
 import com.cofixer.mf.mfcontentapi.dto.res.SimpleMemberInfoRes;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
+import com.cofixer.mf.mfcontentapi.service.FamilyMemberService;
 import com.cofixer.mf.mfcontentapi.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +20,24 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final FamilyMemberService familyMemberService;
 
     @GetMapping("/info")
     public ResponseEntity<SimpleMemberInfoRes> getMemberInfo() {
         AuthorizedMember info = AuthorizedService.getMember();
 
-        SimpleMemberInfoRes response = memberService.getSimpleMemberInfo(info.mid());
+        SimpleMemberInfoRes response = memberService.getSimpleMemberInfo(info);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/nickname")
     public ResponseEntity<Void> changeNickname(@RequestBody ChangeNicknameReq req) {
-        AuthorizedMember info = AuthorizedService.getMember();
-        memberService.changeNickname(info.mid(), req);
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        if (authorizedMember.forFamilyMember()) {
+            familyMemberService.changeNickname(authorizedMember, req);
+        } else {
+            memberService.changeNickname(authorizedMember, req);
+        }
 
         return ResponseEntity.ok().build();
     }

@@ -37,6 +37,9 @@ public class Member implements Serializable {
     @Column(name = "role")
     Integer role;
 
+    @Column(name = "profile_image_url")
+    String profileImageUrl;
+
     @Column(name = "nickname")
     String nickname;
 

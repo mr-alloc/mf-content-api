@@ -47,10 +47,10 @@ public class AccountController {
     @GetMapping("/info")
     @MemberAuth(AccountRoleType.MEMBER)
     public ResponseEntity<AccountInfoRes> getAccountInfo() {
-        AuthorizedMember info = AuthorizedService.getMember();
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
 
         AccountInfoRes accountInfoRes = accountService.getAccountInfo(
-                info.aid()
+                authorizedMember.getAccountId()
         );
 
         return ResponseEntity.ok(accountInfoRes);
