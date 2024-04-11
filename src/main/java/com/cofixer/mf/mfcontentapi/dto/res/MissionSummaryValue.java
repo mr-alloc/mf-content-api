@@ -1,7 +1,6 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.Mission;
-
+import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
 public record MissionSummaryValue(
 
         /* 미션 ID */
@@ -14,7 +13,7 @@ public record MissionSummaryValue(
         Long deadLine
 ) {
 
-    public static MissionSummaryValue of(Mission mission) {
+    public static MissionSummaryValue of(IndividualMission mission) {
         return new MissionSummaryValue(mission.getId(), mission.getName(), mission.getDeadLine());
     }
 }

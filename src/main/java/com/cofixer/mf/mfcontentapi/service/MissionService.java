@@ -1,8 +1,10 @@
 package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
-import com.cofixer.mf.mfcontentapi.domain.Mission;
+import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
+import com.cofixer.mf.mfcontentapi.dto.req.GetFamilyCalendarRes;
 import com.cofixer.mf.mfcontentapi.dto.res.GetMemberCalendarRes;
 import com.cofixer.mf.mfcontentapi.dto.res.MissionSummaryValue;
 import com.cofixer.mf.mfcontentapi.manager.MissionManager;
@@ -24,8 +26,8 @@ public class MissionService {
 
     private final MissionManager missionManager;
 
-    public Mission createMission(CreateMissionReq req, Long memberId) {
-        Mission mission = Mission.forCreate(req, memberId);
+    public IndividualMission createMission(CreateMissionReq req, Long memberId) {
+        IndividualMission mission = IndividualMission.forCreate(req, memberId);
         return missionManager.saveMission(mission);
     }
 
@@ -34,12 +36,20 @@ public class MissionService {
         long startTime = LocalDateTime.of(DateTimeUtil.parseDate(startDate), LocalTime.MIN).toEpochSecond(AppContext.APP_ZONE_OFFSET);
         long endTime = LocalDateTime.of(DateTimeUtil.parseDate(endDate), LocalTime.MAX).toEpochSecond(AppContext.APP_ZONE_OFFSET);
 
-        log.info("start: {} end: {}", startTime, endTime);
         List<MissionSummaryValue> missions = missionManager.getMissions(mid, startTime, endTime).stream()
                 .map(MissionSummaryValue::of)
                 .sorted(Comparator.comparing(MissionSummaryValue::deadLine))
                 .toList();
 
         return GetMemberCalendarRes.of(missions);
+    }
+
+    @Transactional(readOnly = true)
+    public GetFamilyCalendarRes getFamilyCalendar(AuthorizedMember authorizedMember, String startDate, String endDate) {
+        long startTime = LocalDateTime.of(DateTimeUtil.parseDate(startDate), LocalTime.MIN).toEpochSecond(AppContext.APP_ZONE_OFFSET);
+        long endTime = LocalDateTime.of(DateTimeUtil.parseDate(endDate), LocalTime.MAX).toEpochSecond(AppContext.APP_ZONE_OFFSET);
+
+        missionManager.getFamilyMissions(authorizedMember, startTime, endTime);
+        return null;
     }
 }

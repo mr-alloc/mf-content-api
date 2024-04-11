@@ -5,7 +5,7 @@ import java.util.List;
 
 public record GetMemberCalendarRes(
 
-        List<MissionSummaryValue> memberCalendar
+        List<MissionSummaryValue> calendar
 ) {
     public static GetMemberCalendarRes of(List<MissionSummaryValue> memberCalendar) {
         return new GetMemberCalendarRes(memberCalendar);

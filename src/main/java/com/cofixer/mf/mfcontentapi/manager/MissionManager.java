@@ -1,7 +1,10 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
-import com.cofixer.mf.mfcontentapi.domain.Mission;
-import com.cofixer.mf.mfcontentapi.repository.MissionRepository;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
+import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.repository.FamilyMissionRepository;
+import com.cofixer.mf.mfcontentapi.repository.IndividualMissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,14 +15,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MissionManager {
 
-    private final MissionRepository repository;
+    private final IndividualMissionRepository individualMissionRepository;
+    private final FamilyMissionRepository familyMissionRepository;
 
     @Transactional
-    public Mission saveMission(Mission mission) {
-        return repository.save(mission);
+    public IndividualMission saveMission(IndividualMission mission) {
+        return individualMissionRepository.save(mission);
     }
 
-    public List<Mission> getMissions(Long mid, long startTime, long endTime) {
-        return repository.findByAssigneeIdAndDeadLineBetween(mid, startTime, endTime);
+    public List<IndividualMission> getMissions(Long mid, long startTime, long endTime) {
+        return individualMissionRepository.findPeriodMissions(mid, startTime, endTime);
+    }
+
+    public List<FamilyMission> getFamilyMissions(AuthorizedMember authorizedMember, long startTime, long endTime) {
+        return familyMissionRepository.findPeriodMissions(authorizedMember, startTime, endTime);
     }
 }
