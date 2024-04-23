@@ -5,9 +5,14 @@ import java.util.List;
 
 public record GetMemberCalendarRes(
 
-        List<MissionSummaryValue> calendar
+        List<IndividualMissionValue> calendar,
+
+        List<HolidayValue> holidays
 ) {
-    public static GetMemberCalendarRes of(List<MissionSummaryValue> memberCalendar) {
-        return new GetMemberCalendarRes(memberCalendar);
+    public static GetMemberCalendarRes of(
+            List<IndividualMissionValue> memberCalendar,
+            List<HolidayValue> holidays
+    ) {
+        return new GetMemberCalendarRes(memberCalendar, holidays);
     }
 }
