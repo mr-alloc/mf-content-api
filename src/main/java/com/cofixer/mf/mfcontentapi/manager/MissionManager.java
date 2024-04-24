@@ -7,6 +7,7 @@ import com.cofixer.mf.mfcontentapi.repository.FamilyMissionRepository;
 import com.cofixer.mf.mfcontentapi.repository.IndividualMissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,10 +19,16 @@ public class MissionManager {
     private final IndividualMissionRepository individualMissionRepository;
     private final FamilyMissionRepository familyMissionRepository;
 
-    @Transactional
-    public IndividualMission saveMission(IndividualMission mission) {
+    @Transactional(propagation = Propagation.MANDATORY)
+    public IndividualMission saveIndividualMission(IndividualMission mission) {
         return individualMissionRepository.save(mission);
     }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public FamilyMission saveFamilyMission(FamilyMission mission) {
+        return familyMissionRepository.save(mission);
+    }
+
 
     public List<IndividualMission> getMissions(Long mid, long startTime, long endTime) {
         return individualMissionRepository.findPeriodMissions(mid, startTime, endTime);

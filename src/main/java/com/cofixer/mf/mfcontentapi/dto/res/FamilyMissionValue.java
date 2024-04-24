@@ -4,7 +4,7 @@ import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
 
 public record FamilyMissionValue(
 
-        Long missionId,
+        Long id,
         String name,
         Long createdAt
 ) {

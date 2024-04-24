@@ -52,4 +52,6 @@ public abstract class Mission implements Serializable {
 
         this.createdAt = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
     }
+
+    public abstract Long getId();
 }

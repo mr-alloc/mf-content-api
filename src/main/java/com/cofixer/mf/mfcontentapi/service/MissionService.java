@@ -1,7 +1,9 @@
 package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
 import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.GetFamilyCalendarRes;
@@ -29,9 +31,15 @@ public class MissionService {
     private final MissionManager missionManager;
     private final HolidayManager holidayManager;
 
-    public IndividualMission createMission(CreateMissionReq req, Long memberId) {
-        IndividualMission mission = IndividualMission.forCreate(req, memberId);
-        return missionManager.saveMission(mission);
+    @Transactional
+    public Mission createMission(CreateMissionReq req, AuthorizedMember authorizedMember) {
+        if (authorizedMember.forFamilyMember()) {
+            FamilyMission mission = FamilyMission.forCreate(req, authorizedMember);
+            return missionManager.saveFamilyMission(mission);
+        } else {
+            IndividualMission mission = IndividualMission.forCreate(req, authorizedMember.getMemberId());
+            return missionManager.saveIndividualMission(mission);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +67,6 @@ public class MissionService {
         List<FamilyMissionValue> missions = missionManager.getFamilyMissions(authorizedMember, startTime, endTime).stream()
                 .map(FamilyMissionValue::of)
                 .toList();
-
 
         List<HolidayValue> holidays = holidayManager.getAllHolidays().stream()
                 .map(HolidayValue::of)

@@ -1,5 +1,8 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
+import com.cofixer.mf.mfcontentapi.AppContext;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -29,5 +33,16 @@ public class FamilyMission extends Mission implements Serializable {
     @Column(name = "family_id")
     Long familyId;
 
+    public FamilyMission(CreateMissionReq req, Long memberId, LocalDateTime now) {
+        super(req.getMissionName(), memberId, req.getAssignee(), req.getMissionType(), now);
+    }
 
+    public static FamilyMission forCreate(CreateMissionReq req, AuthorizedMember authorizedMember) {
+        LocalDateTime now = LocalDateTime.now(AppContext.APP_CLOCK);
+        FamilyMission newMission = new FamilyMission(req, authorizedMember.getMemberId(), now);
+
+        newMission.familyId = authorizedMember.getFamilyId();
+
+        return newMission;
+    }
 }

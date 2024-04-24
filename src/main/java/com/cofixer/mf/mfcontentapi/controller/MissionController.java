@@ -1,7 +1,7 @@
 package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
-import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.GetFamilyCalendarRes;
@@ -26,7 +26,7 @@ public class MissionController {
     @PostMapping("/create")
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        IndividualMission mission = missionService.createMission(req, authorizedMember.getMemberId());
+        Mission mission = missionService.createMission(req, authorizedMember);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CreateMissionRes(mission.getId()));
