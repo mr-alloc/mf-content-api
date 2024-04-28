@@ -12,4 +12,6 @@ import java.util.List;
 public interface FamilyMemberRepository extends JpaRepository<FamilyMember, FamilyMemberId> {
 
     List<FamilyMember> findByIdMemberId(Long memberId);
+
+    List<FamilyMember> findByIdFamilyId(Long familyId);
 }

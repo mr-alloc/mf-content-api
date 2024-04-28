@@ -1,8 +1,10 @@
 package com.cofixer.mf.mfcontentapi.service;
 
-import com.cofixer.mf.mfcontentapi.constant.MemberRole;
+import com.cofixer.mf.mfcontentapi.constant.MemberRoleType;
 import com.cofixer.mf.mfcontentapi.domain.Family;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyReq;
+import com.cofixer.mf.mfcontentapi.dto.res.FamilyMemberSummary;
 import com.cofixer.mf.mfcontentapi.dto.res.FamilySummary;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
@@ -27,7 +29,7 @@ public class FamilyService {
         commonValidator.validateFamily(newer);
 
         Family saved = familyManager.saveFamily(newer);
-        familyManager.registerFamilyMember(saved, mid, MemberRole.MEMBER);
+        familyManager.registerFamilyMember(saved, mid, MemberRoleType.MEMBER);
 
         return saved;
     }
@@ -35,5 +37,12 @@ public class FamilyService {
     @Transactional(readOnly = true)
     public List<FamilySummary> getFamilySummaries(Long mid) {
         return familyManager.getOwnFamilies(mid);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FamilyMemberSummary> getFamilyMembers(AuthorizedMember authorizedMember) {
+        return familyManager.getAllMembers(authorizedMember.getFamilyId()).stream()
+                .map(FamilyMemberSummary::of)
+                .toList();
     }
 }

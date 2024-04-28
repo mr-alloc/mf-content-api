@@ -64,14 +64,12 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         Member member = memberManager.getMayMemberByAccountId(accountId)
                 .orElseThrow(() -> new MemberException(DeclaredMemberResult.NOT_FOUND_MEMBER, String.valueOf(accountId)));
 
-        Long verifiedFamilyId = Optional.ofNullable(request.getHeader(UserProtocol.HEADER_FAMILY_ID))
+        Optional<FamilyMember> mayFamilyMember = Optional.ofNullable(request.getHeader(UserProtocol.HEADER_FAMILY_ID))
                 .map(Long::parseLong)
                 .filter(familyId -> !UserProtocol.NOT_SELECTED_FAMILY_ID.equals(familyId))
-                .map(familyId -> familyManager.getFamilyMember(FamilyMemberId.of(familyId, member.getId())))
-                .map(FamilyMember::getFamilyId)
-                .orElse(UserProtocol.NOT_SELECTED_FAMILY_ID);
+                .map(familyId -> familyManager.getFamilyMember(FamilyMemberId.of(familyId, member.getId())));
 
-        AuthorizedService.setInfo(request, AuthorizedMember.of(accountId, member, verifiedFamilyId));
+        AuthorizedService.setInfo(request, AuthorizedMember.of(accountId, member, mayFamilyMember));
         return true;
     }
 

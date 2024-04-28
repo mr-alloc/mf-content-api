@@ -1,12 +1,10 @@
 package com.cofixer.mf.mfcontentapi.controller;
 
-import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
+import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
 import com.cofixer.mf.mfcontentapi.domain.Family;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyReq;
-import com.cofixer.mf.mfcontentapi.dto.res.CreateFamilyRes;
-import com.cofixer.mf.mfcontentapi.dto.res.FamilySummary;
-import com.cofixer.mf.mfcontentapi.dto.res.GetFamilyRes;
+import com.cofixer.mf.mfcontentapi.dto.res.*;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
 import com.cofixer.mf.mfcontentapi.service.FamilyService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@MemberAuth
+@AccountAuth
 @RequestMapping("/v1/family")
 public class FamilyController {
 
@@ -40,5 +38,13 @@ public class FamilyController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(GetFamilyRes.of(familySummaries));
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<GetFamilyMembers> getFamilyMembers() {
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        List<FamilyMemberSummary> familyMembers = familyService.getFamilyMembers(authorizedMember);
+
+        return ResponseEntity.ok(GetFamilyMembers.of(familyMembers));
     }
 }

@@ -1,10 +1,9 @@
 package com.cofixer.mf.mfcontentapi.controller;
 
-import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
+import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
 import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
-import com.cofixer.mf.mfcontentapi.dto.req.GetFamilyCalendarRes;
 import com.cofixer.mf.mfcontentapi.dto.res.CreateMissionRes;
 import com.cofixer.mf.mfcontentapi.dto.res.GetMemberCalendarRes;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@MemberAuth
+@AccountAuth
 @RequestMapping("/v1/mission")
 public class MissionController {
 
@@ -32,23 +31,13 @@ public class MissionController {
                 .body(new CreateMissionRes(mission.getId()));
     }
 
-    @GetMapping("/member-calendar")
+    @GetMapping("/calendar")
     public ResponseEntity<GetMemberCalendarRes> getMemberCalendar(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate
     ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         GetMemberCalendarRes response = missionService.getMemberCalendar(authorizedMember.getMemberId(), startDate, endDate);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/family-calendar")
-    public ResponseEntity<GetFamilyCalendarRes> getFamilyCalendar(
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate
-    ) {
-        AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        GetFamilyCalendarRes response = missionService.getFamilyCalendar(authorizedMember, startDate, endDate);
         return ResponseEntity.ok(response);
     }
 }

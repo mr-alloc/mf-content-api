@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
-import com.cofixer.mf.mfcontentapi.constant.MemberRole;
+import com.cofixer.mf.mfcontentapi.constant.MemberRoleType;
 import com.cofixer.mf.mfcontentapi.domain.Family;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember.FamilyMemberId;
@@ -29,14 +29,20 @@ public class FamilyManager {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public FamilyMember registerFamilyMember(Family family, Long mid, MemberRole memberRole) {
-        FamilyMember familyMember = FamilyMember.forCreate(family.getId(), mid, memberRole);
+    public FamilyMember registerFamilyMember(Family family, Long mid, MemberRoleType memberRoleType) {
+        FamilyMember familyMember = FamilyMember.forCreate(family.getId(), mid, memberRoleType);
 
         return familyMemberRepository.save(familyMember);
     }
 
-    public List<FamilyMember> getFamilyMembers(Long mid) {
-        return familyMemberRepository.findByIdMemberId(mid);
+    /**
+     * 소속된 패밀리 멤버 목록
+     *
+     * @param memberIdd
+     * @return
+     */
+    public List<FamilyMember> getFamilyMembers(Long memberIdd) {
+        return familyMemberRepository.findByIdMemberId(memberIdd);
     }
 
     public List<FamilySummary> getOwnFamilies(Long mid) {
@@ -46,5 +52,9 @@ public class FamilyManager {
     public FamilyMember getFamilyMember(FamilyMemberId familyMemberId) {
         return familyMemberRepository.findById(familyMemberId)
                 .orElseThrow(() -> new IllegalArgumentException("가족 멤버가 존재하지 않습니다."));
+    }
+
+    public List<FamilyMember> getAllMembers(Long familyId) {
+        return familyMemberRepository.findByIdFamilyId(familyId);
     }
 }

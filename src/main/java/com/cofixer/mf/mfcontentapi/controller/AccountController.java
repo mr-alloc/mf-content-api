@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.controller;
 
-import com.cofixer.mf.mfcontentapi.aspect.MemberAuth;
+import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ConfirmAccountReq;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@MemberAuth(AccountRoleType.GUEST)
+@AccountAuth(AccountRoleType.GUEST)
 @RestController
 @RequestMapping("/v1/account")
 public class AccountController {
@@ -45,7 +45,7 @@ public class AccountController {
     }
 
     @GetMapping("/info")
-    @MemberAuth(AccountRoleType.MEMBER)
+    @AccountAuth(AccountRoleType.MEMBER)
     public ResponseEntity<AccountInfoRes> getAccountInfo() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
 

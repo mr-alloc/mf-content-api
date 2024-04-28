@@ -1,7 +1,7 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
-import com.cofixer.mf.mfcontentapi.constant.MemberRole;
+import com.cofixer.mf.mfcontentapi.constant.MemberRoleType;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,13 +37,13 @@ public class FamilyMember implements Serializable {
     @Column(name = "registered_at", nullable = false)
     Long registeredAt;
 
-    public static FamilyMember forCreate(Long familyId, Long memberId, MemberRole memberRole) {
+    public static FamilyMember forCreate(Long familyId, Long memberId, MemberRoleType memberRoleType) {
         FamilyMemberId id = new FamilyMemberId(familyId, memberId);
         FamilyMember newer = new FamilyMember();
 
         newer.id = id;
         newer.nickname = "";
-        newer.memberRole = memberRole.getLevel();
+        newer.memberRole = memberRoleType.getLevel();
         newer.registeredAt = AppContext.APP_CLOCK.instant().getEpochSecond();
 
         return newer;
@@ -83,6 +83,10 @@ public class FamilyMember implements Serializable {
 
         public static FamilyMemberId of(AuthorizedMember authorizedMember) {
             return new FamilyMemberId(authorizedMember.getFamilyId(), authorizedMember.getMemberId());
+        }
+
+        public static FamilyMemberId of(AuthorizedMember authorizedMember, Long assignee) {
+            return new FamilyMemberId(authorizedMember.getFamilyId(), assignee);
         }
     }
 }

@@ -2,7 +2,7 @@ package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
-import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
+import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,15 +33,32 @@ public class FamilyMission extends Mission implements Serializable {
     @Column(name = "family_id")
     Long familyId;
 
-    public FamilyMission(CreateMissionReq req, Long memberId, LocalDateTime now) {
-        super(req.getMissionName(), memberId, req.getAssignee(), req.getMissionType(), now);
+    @Column(name = "start_stamp")
+    Long startStamp;
+
+    @Column(name = "end_stamp")
+    Long endStamp;
+
+    public FamilyMission(String name, Long reporter, Long assignee, Integer missionType, LocalDateTime now) {
+        super(name, reporter, assignee, missionType, now);
     }
 
-    public static FamilyMission forCreate(CreateMissionReq req, AuthorizedMember authorizedMember) {
+    public static FamilyMission forCreate(
+            CreateFamilyMissionReq request,
+            FamilyMember assignee,
+            AuthorizedMember authorizedMember
+    ) {
         LocalDateTime now = LocalDateTime.now(AppContext.APP_CLOCK);
-        FamilyMission newMission = new FamilyMission(req, authorizedMember.getMemberId(), now);
-
+        FamilyMission newMission = new FamilyMission(
+                request.getTitle(),
+                authorizedMember.getMemberId(),
+                assignee.getMemberId(),
+                request.getType(),
+                now
+        );
         newMission.familyId = authorizedMember.getFamilyId();
+        newMission.startStamp = request.getStartTime();
+        newMission.endStamp = request.getEndTime();
 
         return newMission;
     }

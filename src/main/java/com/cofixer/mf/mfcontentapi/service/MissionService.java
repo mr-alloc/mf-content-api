@@ -1,16 +1,17 @@
 package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMember.FamilyMemberId;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
 import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
 import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.GetFamilyCalendarRes;
-import com.cofixer.mf.mfcontentapi.dto.res.FamilyMissionValue;
-import com.cofixer.mf.mfcontentapi.dto.res.GetMemberCalendarRes;
-import com.cofixer.mf.mfcontentapi.dto.res.HolidayValue;
-import com.cofixer.mf.mfcontentapi.dto.res.IndividualMissionValue;
+import com.cofixer.mf.mfcontentapi.dto.res.*;
+import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.manager.MissionManager;
 import com.cofixer.mf.mfcontentapi.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,16 +31,12 @@ public class MissionService {
 
     private final MissionManager missionManager;
     private final HolidayManager holidayManager;
+    private final FamilyManager familyManager;
 
     @Transactional
     public Mission createMission(CreateMissionReq req, AuthorizedMember authorizedMember) {
-        if (authorizedMember.forFamilyMember()) {
-            FamilyMission mission = FamilyMission.forCreate(req, authorizedMember);
-            return missionManager.saveFamilyMission(mission);
-        } else {
-            IndividualMission mission = IndividualMission.forCreate(req, authorizedMember.getMemberId());
-            return missionManager.saveIndividualMission(mission);
-        }
+        IndividualMission mission = IndividualMission.forCreate(req, authorizedMember.getMemberId());
+        return missionManager.saveIndividualMission(mission);
     }
 
     @Transactional(readOnly = true)
@@ -72,5 +69,14 @@ public class MissionService {
                 .map(HolidayValue::of)
                 .toList();
         return GetFamilyCalendarRes.of(missions, holidays);
+    }
+
+    @Transactional
+    public CreateFamilyMissionRes createFamilyMission(CreateFamilyMissionReq request, AuthorizedMember authorizedMember) {
+        FamilyMember assignee = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember, request.getAssignee()));
+        FamilyMission mission = FamilyMission.forCreate(request, assignee, authorizedMember);
+
+        FamilyMission newerMission = missionManager.saveFamilyMission(mission);
+        return CreateFamilyMissionRes.of(newerMission);
     }
 }
