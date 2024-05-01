@@ -35,6 +35,7 @@ public class SimpleMemberInfoRes {
                 .ifPresent((member) -> {
                     this.nickname = member.getNickname();
                     this.profileImageUrl = member.getProfileImageUrl();
+                    this.role = familyMember.getMemberRole();
                 });
     }
 }

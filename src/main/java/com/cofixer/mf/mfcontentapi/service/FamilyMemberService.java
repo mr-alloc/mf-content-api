@@ -2,7 +2,7 @@ package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredFamilyResult;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
-import com.cofixer.mf.mfcontentapi.domain.FamilyMember.FamilyMemberId;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMemberId;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
 import com.cofixer.mf.mfcontentapi.exception.FamilyException;
@@ -30,4 +30,5 @@ public class FamilyMemberService {
 
         familyMember.changeNickname(req.getNickname());
     }
+
 }

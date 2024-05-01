@@ -6,7 +6,7 @@ import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.constant.UserProtocol;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
-import com.cofixer.mf.mfcontentapi.domain.FamilyMember.FamilyMemberId;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMemberId;
 import com.cofixer.mf.mfcontentapi.domain.Member;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;

@@ -2,9 +2,12 @@ package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.MemberRoleType;
-import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 
@@ -37,11 +40,10 @@ public class FamilyMember implements Serializable {
     @Column(name = "registered_at", nullable = false)
     Long registeredAt;
 
-    public static FamilyMember forCreate(Long familyId, Long memberId, MemberRoleType memberRoleType) {
-        FamilyMemberId id = new FamilyMemberId(familyId, memberId);
+    public static FamilyMember forCreate(FamilyMemberId familyMemberId, MemberRoleType memberRoleType) {
         FamilyMember newer = new FamilyMember();
 
-        newer.id = id;
+        newer.id = familyMemberId;
         newer.nickname = "";
         newer.memberRole = memberRoleType.getLevel();
         newer.registeredAt = AppContext.APP_CLOCK.instant().getEpochSecond();
@@ -61,32 +63,4 @@ public class FamilyMember implements Serializable {
         this.nickname = nickname;
     }
 
-
-    @Getter
-    @Embeddable
-    @EqualsAndHashCode
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FamilyMemberId implements Serializable {
-        @Serial
-        private static final long serialVersionUID = 7209203449087964255L;
-
-        @Column(name = "family_id", nullable = false)
-        Long familyId;
-
-        @Column(name = "member_id", nullable = false)
-        Long memberId;
-
-        public static FamilyMemberId of(Long familyId, Long memberId) {
-            return new FamilyMemberId(familyId, memberId);
-        }
-
-        public static FamilyMemberId of(AuthorizedMember authorizedMember) {
-            return new FamilyMemberId(authorizedMember.getFamilyId(), authorizedMember.getMemberId());
-        }
-
-        public static FamilyMemberId of(AuthorizedMember authorizedMember, Long assignee) {
-            return new FamilyMemberId(authorizedMember.getFamilyId(), assignee);
-        }
-    }
 }

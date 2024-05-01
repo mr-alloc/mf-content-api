@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -34,5 +36,13 @@ public class MemberManager {
     public Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(DeclaredMemberResult.NOT_FOUND_MEMBER));
+    }
+
+    public List<Member> getMembers(Collection<Long> memberIds) {
+        return memberRepository.findAllById(memberIds);
+    }
+
+    public boolean existMember(Long memberId) {
+        return memberRepository.existsById(memberId);
     }
 }

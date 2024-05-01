@@ -1,11 +1,7 @@
 package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
-import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
-import com.cofixer.mf.mfcontentapi.domain.FamilyMember.FamilyMemberId;
-import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
-import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
-import com.cofixer.mf.mfcontentapi.domain.Mission;
+import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
@@ -73,7 +69,7 @@ public class MissionService {
 
     @Transactional
     public CreateFamilyMissionRes createFamilyMission(CreateFamilyMissionReq request, AuthorizedMember authorizedMember) {
-        FamilyMember assignee = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember, request.getAssignee()));
+        FamilyMember assignee = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee()));
         FamilyMission mission = FamilyMission.forCreate(request, assignee, authorizedMember);
 
         FamilyMission newerMission = missionManager.saveFamilyMission(mission);

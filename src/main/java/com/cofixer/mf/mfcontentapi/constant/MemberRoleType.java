@@ -11,7 +11,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum MemberRoleType {
     NONE(-1),
-    MEMBER(0),
+    REGULAR(0),
     SUB_MASTER(1),
     MASTER(2);
 

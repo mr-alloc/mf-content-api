@@ -14,7 +14,10 @@ public enum DeclaredMemberResult implements DeclaredResult {
     NOT_FOUND_MEMBER(-1),
     NOT_ALLOWED_ROLE(-2, HttpStatus.FORBIDDEN),
     NICKNAME_RULE_VIOLATION(-3, HttpStatus.BAD_REQUEST),
-    ALREADY_INITIALIZED(-4, HttpStatus.BAD_REQUEST);
+    ALREADY_INITIALIZED(-4, HttpStatus.BAD_REQUEST),
+    NOT_FOUND_CONNECT_REQUEST(-5),
+    NOT_FOUND_FAMILY(-6),
+    ALREADY_AFFILIATED_FAMILY(-7);
 
     private final int code;
     private HttpStatus httpStatus;

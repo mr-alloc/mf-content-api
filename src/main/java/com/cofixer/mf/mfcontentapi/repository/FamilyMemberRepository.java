@@ -1,7 +1,7 @@
 package com.cofixer.mf.mfcontentapi.repository;
 
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
-import com.cofixer.mf.mfcontentapi.domain.FamilyMember.FamilyMemberId;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMemberId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -26,5 +27,9 @@ public class IterateUtil {
 
     public static <T, V> Map<V, T> toMap(Collection<T> collection, Function<T, V> keyMapper) {
         return collection.stream().collect(Collectors.toMap(keyMapper, Function.identity()));
+    }
+
+    public static <T, V> List<V> convertList(Collection<T> collection, Function<T, V> extractor) {
+        return collection.stream().map(extractor).toList();
     }
 }

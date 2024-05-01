@@ -1,6 +1,7 @@
 package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
+import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@AccountAuth
+@AccountAuth(AccountRoleType.MEMBER)
 @RequestMapping("/v1/mission")
 public class MissionController {
 

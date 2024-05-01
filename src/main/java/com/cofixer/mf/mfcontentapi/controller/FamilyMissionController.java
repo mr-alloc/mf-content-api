@@ -2,6 +2,7 @@ package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
 import com.cofixer.mf.mfcontentapi.aspect.FamilyMemberAuth;
+import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import com.cofixer.mf.mfcontentapi.constant.MemberRoleType;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@AccountAuth
+@AccountAuth(AccountRoleType.MEMBER)
 @RequestMapping("/v1/family/mission")
 public class FamilyMissionController {
 
@@ -34,7 +35,7 @@ public class FamilyMissionController {
     }
 
 
-    @FamilyMemberAuth(MemberRoleType.MEMBER)
+    @FamilyMemberAuth(MemberRoleType.REGULAR)
     @GetMapping("/calendar")
     public ResponseEntity<GetFamilyCalendarRes> getFamilyCalendar(
             @RequestParam("startDate") String startDate,
