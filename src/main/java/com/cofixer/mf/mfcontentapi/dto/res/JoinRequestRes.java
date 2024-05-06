@@ -3,7 +3,7 @@ package com.cofixer.mf.mfcontentapi.dto.res;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMemberConnectRequest;
 import com.cofixer.mf.mfcontentapi.domain.Member;
 
-public record MemberConnectRequestRes(
+public record JoinRequestRes(
         Long memberId,
 
         String nickname,
@@ -12,8 +12,8 @@ public record MemberConnectRequestRes(
 
         Long requestedAt
 ) {
-    public static MemberConnectRequestRes of(FamilyMemberConnectRequest request, Member member) {
-        return new MemberConnectRequestRes(
+    public static JoinRequestRes of(FamilyMemberConnectRequest request, Member member) {
+        return new JoinRequestRes(
                 member.getId(),
                 member.getNickname(),
                 member.getProfileImageUrl(),

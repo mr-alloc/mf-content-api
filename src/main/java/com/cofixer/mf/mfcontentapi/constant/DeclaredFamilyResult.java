@@ -15,7 +15,8 @@ public enum DeclaredFamilyResult implements DeclaredResult {
     NOT_FOUND_FAMILY(-5, HttpStatus.BAD_REQUEST),
     ALREADY_REQUESTED_TO_CONNECT(-6),
     NOT_FOUND_CONNECT_REQUEST(-7),
-    NOT_FOUND_MEMBER(-8);
+    NOT_FOUND_MEMBER(-8),
+    INVALID_FAMILY_REQUEST(-9, HttpStatus.BAD_REQUEST);
 
     private final int code;
     private HttpStatus httpStatus;

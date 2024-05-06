@@ -9,7 +9,8 @@ import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyReq;
 import com.cofixer.mf.mfcontentapi.dto.res.FamilyMemberSummary;
 import com.cofixer.mf.mfcontentapi.dto.res.FamilySummary;
-import com.cofixer.mf.mfcontentapi.dto.res.MemberConnectRequestRes;
+import com.cofixer.mf.mfcontentapi.dto.res.GetFamilyInfoRes;
+import com.cofixer.mf.mfcontentapi.dto.res.JoinRequestRes;
 import com.cofixer.mf.mfcontentapi.exception.FamilyException;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
@@ -40,6 +41,7 @@ public class FamilyService {
         commonValidator.validateFamily(newer);
 
         Family saved = familyManager.saveFamily(newer);
+        saved.initInviteCode();
         FamilyMemberId familyMemberId = FamilyMemberId.of(saved.getId(), mid);
         familyManager.registerFamilyMember(familyMemberId, MemberRoleType.MASTER);
 
@@ -74,7 +76,7 @@ public class FamilyService {
     }
 
     @Transactional(readOnly = true)
-    public List<MemberConnectRequestRes> getMemberConnectRequests(AuthorizedMember authorizedMember, FamilyMemberDirection direction) {
+    public List<JoinRequestRes> getMemberConnectRequests(AuthorizedMember authorizedMember, FamilyMemberDirection direction) {
         FamilyMemberId familyMemberId = FamilyMemberId.of(authorizedMember.getFamilyId(), null);
         List<FamilyMemberConnectRequest> connectRequests = familyManager.getConnectRequests(familyMemberId, direction);
 
@@ -82,7 +84,7 @@ public class FamilyService {
         Map<Long, Member> memberMap = IterateUtil.toMap(memberManager.getMembers(memberIds), Member::getId);
 
         return connectRequests.stream()
-                .map(request -> MemberConnectRequestRes.of(request, memberMap.get(request.getMemberId())))
+                .map(request -> JoinRequestRes.of(request, memberMap.get(request.getMemberId())))
                 .toList();
     }
 
@@ -116,5 +118,11 @@ public class FamilyService {
 
         familyManager.cancelRequest(connectRequest);
         return memberId;
+    }
+
+    @Transactional(readOnly = true)
+    public GetFamilyInfoRes getFamilyInfo(AuthorizedMember authorizedMember) {
+        Family family = familyManager.getFamily(authorizedMember.getFamilyId());
+        return GetFamilyInfoRes.of(family);
     }
 }

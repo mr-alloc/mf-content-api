@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Optional;
-
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 @Getter
@@ -22,7 +20,7 @@ public class AuthorizedMember {
     AccountRoleType accountRole;
     MemberRoleType memberRole;
 
-    public static AuthorizedMember of(Long accountId, Member member, Optional<FamilyMember> mayFamilyMember) {
+    public static AuthorizedMember of(Long accountId, Member member) {
         AuthorizedMember newer = new AuthorizedMember();
         newer.accountId = accountId;
         newer.memberId = member.getId();
@@ -31,12 +29,12 @@ public class AuthorizedMember {
         newer.familyId = UserProtocol.NOT_SELECTED_FAMILY_ID;
         newer.memberRole = MemberRoleType.NONE;
 
-        mayFamilyMember.ifPresent(familyMember -> {
-            newer.familyId = familyMember.getFamilyId();
-            newer.memberRole = MemberRoleType.fromLevel(familyMember.getMemberRole());
-        });
-
         return newer;
+    }
+
+    public void decorateFamilyMember(FamilyMember familyMember) {
+        this.familyId = familyMember.getFamilyId();
+        this.memberRole = MemberRoleType.fromLevel(familyMember.getMemberRole());
     }
 
     public boolean hasMemberId() {

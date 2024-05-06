@@ -1,20 +1,26 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
+import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyReq;
+import com.cofixer.mf.mfcontentapi.util.EncryptUtil;
 import com.cofixer.mf.mfcontentapi.util.RandomUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@DynamicUpdate
 @Entity
-@Table(name = "mf_family")
+@Table(name = "mf_family", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_invite_code", columnNames = {"invite_code"})
+})
 public class Family implements Serializable {
     @Serial
     private static final long serialVersionUID = -4878795371659623625L;
@@ -39,6 +45,9 @@ public class Family implements Serializable {
     @Column(name = "default_color_hex")
     String defaultColorHex;
 
+    @Column(name = "invite_code")
+    String inviteCode;
+
     @Column(name = "created_at", nullable = false)
     Long createdAt;
 
@@ -52,5 +61,9 @@ public class Family implements Serializable {
         newer.createdAt = AppContext.APP_CLOCK.instant().getEpochSecond();
 
         return newer;
+    }
+
+    public void initInviteCode() {
+        this.inviteCode = EncryptUtil.encrypt(String.valueOf(this.id), EncryptAlgorithm.MD5);
     }
 }

@@ -116,7 +116,8 @@ public class FamilyManager {
         connectRepository.delete(connectRequest);
     }
 
-    public boolean existFamily(Long familyId) {
-        return familyRepository.existsById(familyId);
+    public Family getFamily(String inviteCode) {
+        return familyRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new FamilyException(DeclaredFamilyResult.NOT_FOUND_FAMILY));
     }
 }

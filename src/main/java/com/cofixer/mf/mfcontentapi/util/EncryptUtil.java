@@ -12,7 +12,6 @@ public class EncryptUtil {
     public static String encrypt(String data, EncryptAlgorithm algorithm) {
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm.getAlgorithm());
-
             md.update(data.getBytes());
             return byteToHex(md.digest());
         } catch (NoSuchAlgorithmException e) {

@@ -3,8 +3,8 @@ package com.cofixer.mf.mfcontentapi.dto.res;
 import com.cofixer.mf.mfcontentapi.domain.Family;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMemberConnectRequest;
 
-public record FamilyConnectRequestRes(
-        Long id,
+public record InviteRequestRes(
+        Long familyId,
 
         String name,
 
@@ -12,8 +12,8 @@ public record FamilyConnectRequestRes(
 
         Long requestedAt
 ) {
-    public static FamilyConnectRequestRes of(FamilyMemberConnectRequest connectRequest, Family family) {
-        return new FamilyConnectRequestRes(
+    public static InviteRequestRes of(FamilyMemberConnectRequest connectRequest, Family family) {
+        return new InviteRequestRes(
                 family.getId(),
                 family.getName(),
                 family.getLogoImageUrl(),

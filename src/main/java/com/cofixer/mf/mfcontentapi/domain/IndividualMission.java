@@ -10,7 +10,10 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Clock;
 import java.time.LocalDateTime;
+
+import static com.cofixer.mf.mfcontentapi.util.DateTimeUtil.DAY_IN_SECONDS;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -41,11 +44,13 @@ public class IndividualMission extends Mission implements Serializable {
     }
 
     public static IndividualMission forCreate(CreateMissionReq req, Long memberId) {
-        LocalDateTime now = LocalDateTime.now(AppContext.APP_CLOCK);
+        Clock utcClock = AppContext.APP_CLOCK;
+        LocalDateTime now = LocalDateTime.now(utcClock);
         IndividualMission newMission = new IndividualMission(req, memberId, now);
 
         newMission.subName = req.getMissionSubName();
-        newMission.deadLine = now.plusSeconds(req.getDeadline()).toEpochSecond(AppContext.APP_ZONE_OFFSET);
+        newMission.deadLine = Math.addExact(utcClock.instant().getEpochSecond(), Math.addExact(req.getDeadline(), DAY_IN_SECONDS));
+
 
         return newMission;
     }

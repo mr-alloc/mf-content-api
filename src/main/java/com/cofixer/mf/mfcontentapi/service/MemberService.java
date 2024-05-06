@@ -5,7 +5,8 @@ import com.cofixer.mf.mfcontentapi.constant.FamilyMemberDirection;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
-import com.cofixer.mf.mfcontentapi.dto.res.FamilyConnectRequestRes;
+import com.cofixer.mf.mfcontentapi.dto.req.FamilyJoinReq;
+import com.cofixer.mf.mfcontentapi.dto.res.InviteRequestRes;
 import com.cofixer.mf.mfcontentapi.dto.res.MemberDetailRes;
 import com.cofixer.mf.mfcontentapi.dto.res.SimpleMemberInfoRes;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
@@ -78,7 +79,7 @@ public class MemberService {
 
 
     @Transactional(readOnly = true)
-    public List<FamilyConnectRequestRes> getOwnConnectRequests(AuthorizedMember authorizedMember, FamilyMemberDirection direction) {
+    public List<InviteRequestRes> getOwnConnectRequests(AuthorizedMember authorizedMember, FamilyMemberDirection direction) {
         FamilyMemberId familyMemberId = FamilyMemberId.of(null, authorizedMember.getMemberId());
         List<FamilyMemberConnectRequest> connectRequests = familyManager.getConnectRequests(familyMemberId, direction);
 
@@ -86,7 +87,7 @@ public class MemberService {
         Map<Long, Family> familyMap = IterateUtil.toMap(familyManager.getFamilies(familyIds), Family::getId);
 
         return connectRequests.stream()
-                .map(connectRequest -> FamilyConnectRequestRes.of(connectRequest, familyMap.get(connectRequest.getFamilyId())))
+                .map(connectRequest -> InviteRequestRes.of(connectRequest, familyMap.get(connectRequest.getFamilyId())))
                 .toList();
     }
 
@@ -124,16 +125,15 @@ public class MemberService {
     }
 
     @Transactional
-    public Long requestFamilyMember(Long familyId, AuthorizedMember authorizedMember) {
-        ConditionUtil.throwIfTrue(!familyManager.existFamily(familyId),
-                () -> new MemberException(DeclaredMemberResult.NOT_FOUND_FAMILY));
-        FamilyMemberId familyMemberId = FamilyMemberId.of(familyId, authorizedMember.getMemberId());
+    public Family requestFamilyMember(FamilyJoinReq req, AuthorizedMember authorizedMember) {
+        Family family = familyManager.getFamily(req.getInviteCode());
+        FamilyMemberId familyMemberId = FamilyMemberId.of(family.getId(), authorizedMember.getMemberId());
 
         if (familyManager.isOurFamily(familyMemberId)) {
             throw new MemberException(DeclaredMemberResult.ALREADY_AFFILIATED_FAMILY);
         }
 
-        FamilyMemberConnectRequest connectRequest = familyManager.requestToConnect(familyMemberId, FamilyMemberDirection.MEMBER_TO_FAMILY);
-        return connectRequest.getFamilyId();
+        familyManager.requestToConnect(familyMemberId, FamilyMemberDirection.MEMBER_TO_FAMILY);
+        return family;
     }
 }

@@ -3,8 +3,10 @@ package com.cofixer.mf.mfcontentapi.controller;
 import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import com.cofixer.mf.mfcontentapi.constant.FamilyMemberDirection;
+import com.cofixer.mf.mfcontentapi.domain.Family;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
+import com.cofixer.mf.mfcontentapi.dto.req.FamilyJoinReq;
 import com.cofixer.mf.mfcontentapi.dto.res.*;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
 import com.cofixer.mf.mfcontentapi.service.MemberService;
@@ -45,12 +47,12 @@ public class MemberController {
         return ResponseEntity.ok(detail);
     }
 
-    @PostMapping("/request/{familyId}")
-    public ResponseEntity<RequestFamilyRes> requestConnectFamily(@PathVariable Long familyId) {
+    @PostMapping("/request/join")
+    public ResponseEntity<RequestFamilyRes> requestConnectFamily(@RequestBody FamilyJoinReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        Long requestId = memberService.requestFamilyMember(familyId, authorizedMember);
+        Family requestedFamily = memberService.requestFamilyMember(req, authorizedMember);
 
-        return ResponseEntity.ok(RequestFamilyRes.of(requestId));
+        return ResponseEntity.ok(RequestFamilyRes.of(requestedFamily));
     }
 
 
@@ -62,20 +64,20 @@ public class MemberController {
         return ResponseEntity.ok(CancelFamilyRequestRes.of(canceledFamilyId));
     }
 
-    @GetMapping("/family_requests")
-    public ResponseEntity<GetFamilyConnectRequestRes> getFamilyRequests() {
+    @GetMapping("/invite_requests")
+    public ResponseEntity<GetInviteRequestRes> getInviteRequests() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        List<FamilyConnectRequestRes> connectRequests = memberService.getOwnConnectRequests(authorizedMember, FamilyMemberDirection.FAMILY_TO_MEMBER);
+        List<InviteRequestRes> connectRequests = memberService.getOwnConnectRequests(authorizedMember, FamilyMemberDirection.FAMILY_TO_MEMBER);
 
-        return ResponseEntity.ok(GetFamilyConnectRequestRes.of(connectRequests));
+        return ResponseEntity.ok(GetInviteRequestRes.of(connectRequests));
     }
 
     @GetMapping("/own_requests")
-    public ResponseEntity<GetFamilyConnectRequestRes> getOwnRequests() {
+    public ResponseEntity<GetInviteRequestRes> getOwnRequests() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        List<FamilyConnectRequestRes> connectRequests = memberService.getOwnConnectRequests(authorizedMember, FamilyMemberDirection.MEMBER_TO_FAMILY);
+        List<InviteRequestRes> connectRequests = memberService.getOwnConnectRequests(authorizedMember, FamilyMemberDirection.MEMBER_TO_FAMILY);
 
-        return ResponseEntity.ok(GetFamilyConnectRequestRes.of(connectRequests));
+        return ResponseEntity.ok(GetInviteRequestRes.of(connectRequests));
     }
 
     @PostMapping("/accept/{familyId}")

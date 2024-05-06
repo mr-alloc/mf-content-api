@@ -3,12 +3,13 @@ package com.cofixer.mf.mfcontentapi.interceptor;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cofixer.mf.mfcontentapi.AppContext;
+import com.cofixer.mf.mfcontentapi.constant.DeclaredFamilyResult;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.constant.UserProtocol;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMemberId;
-import com.cofixer.mf.mfcontentapi.domain.Member;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.exception.FamilyException;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.CredentialManager;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
@@ -61,17 +62,28 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
     private boolean isCacheAuthorization(HttpServletRequest request, DecodedJWT decoded) {
         long accountId = Long.parseLong(decoded.getIssuer());
-        Member member = memberManager.getMayMemberByAccountId(accountId)
+        AuthorizedMember authorizedMember = memberManager.getMayMemberByAccountId(accountId)
+                .map(member -> AuthorizedMember.of(accountId, member))
                 .orElseThrow(() -> new MemberException(DeclaredMemberResult.NOT_FOUND_MEMBER, String.valueOf(accountId)));
 
-        Optional<FamilyMember> mayFamilyMember = Optional.ofNullable(request.getHeader(UserProtocol.HEADER_FAMILY_ID))
-                .map(Long::parseLong)
-                .filter(familyId -> !UserProtocol.NOT_SELECTED_FAMILY_ID.equals(familyId))
-                .map(familyId -> familyManager.getFamilyMember(FamilyMemberId.of(familyId, member.getId())));
+        long requestedFamilyId = extractFamilyId(request);
+        if (UserProtocol.NOT_SELECTED_FAMILY_ID < requestedFamilyId) {
+            FamilyMember familyMember = Optional.ofNullable(familyManager.getFamilyMember(FamilyMemberId.of(requestedFamilyId, authorizedMember.getMemberId())))
+                    .orElseThrow(() -> new FamilyException(DeclaredFamilyResult.INVALID_FAMILY_REQUEST));
 
-        AuthorizedService.setInfo(request, AuthorizedMember.of(accountId, member, mayFamilyMember));
+            authorizedMember.decorateFamilyMember(familyMember);
+        }
+
+        AuthorizedService.setInfo(request, authorizedMember);
         return true;
     }
+
+    private long extractFamilyId(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(UserProtocol.HEADER_FAMILY_ID))
+                .map(Long::parseLong)
+                .orElse(0L);
+    }
+
 
     private boolean isNotExpired(DecodedJWT decoded) {
         return decoded.getExpiresAtAsInstant().isAfter(AppContext.APP_CLOCK.instant());

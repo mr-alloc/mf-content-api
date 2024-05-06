@@ -40,6 +40,14 @@ public class FamilyController {
                 .body(new CreateFamilyRes(created.getId()));
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<GetFamilyInfoRes> getFamilyInfo() {
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        GetFamilyInfoRes familyInfo = familyService.getFamilyInfo(authorizedMember);
+
+        return ResponseEntity.ok(familyInfo);
+    }
+
     @PutMapping("/member/nickname")
     public ResponseEntity<Void> changeNickname(@RequestBody ChangeNicknameReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -75,12 +83,12 @@ public class FamilyController {
     }
 
     @FamilyMemberAuth(MemberRoleType.SUB_MASTER)
-    @GetMapping("/member_requests")
-    public ResponseEntity<GetMemberConnectRequestRes> getMemberRequests() {
+    @GetMapping("/join_requests")
+    public ResponseEntity<GetJoinRequestRes> getJoinRequests() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        List<MemberConnectRequestRes> connectRequests = familyService.getMemberConnectRequests(authorizedMember, FamilyMemberDirection.MEMBER_TO_FAMILY);
+        List<JoinRequestRes> connectRequests = familyService.getMemberConnectRequests(authorizedMember, FamilyMemberDirection.MEMBER_TO_FAMILY);
 
-        return ResponseEntity.ok(GetMemberConnectRequestRes.of(connectRequests));
+        return ResponseEntity.ok(GetJoinRequestRes.of(connectRequests));
     }
 
     @FamilyMemberAuth(MemberRoleType.MASTER)
@@ -94,11 +102,11 @@ public class FamilyController {
 
     @FamilyMemberAuth(MemberRoleType.SUB_MASTER)
     @GetMapping("/own_requests")
-    public ResponseEntity<GetMemberConnectRequestRes> getOwnRequests() {
+    public ResponseEntity<GetJoinRequestRes> getOwnRequests() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        List<MemberConnectRequestRes> connectRequests = familyService.getMemberConnectRequests(authorizedMember, FamilyMemberDirection.FAMILY_TO_MEMBER);
+        List<JoinRequestRes> connectRequests = familyService.getMemberConnectRequests(authorizedMember, FamilyMemberDirection.FAMILY_TO_MEMBER);
 
-        return ResponseEntity.ok(GetMemberConnectRequestRes.of(connectRequests));
+        return ResponseEntity.ok(GetJoinRequestRes.of(connectRequests));
     }
 
     @FamilyMemberAuth(MemberRoleType.MASTER)

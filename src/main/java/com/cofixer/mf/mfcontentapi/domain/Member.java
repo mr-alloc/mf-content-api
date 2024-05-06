@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
@@ -19,6 +18,9 @@ import java.time.LocalDateTime;
 @DynamicUpdate
 @Table(name = "mf_member", indexes = {
         @Index(name = "idx_aid", columnList = "aid", unique = true)
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "uk_aid", columnNames = {"aid"}),
+        @UniqueConstraint(name = "uk_nickname", columnNames = {"nickname"}),
 })
 public class Member implements Serializable {
 
@@ -62,7 +64,7 @@ public class Member implements Serializable {
 
     public void changeNickname(String nickname) {
         this.nickname = nickname;
-        this.registeredAt = LocalDateTime.now().toEpochSecond(AppContext.APP_ZONE_OFFSET);
+        this.registeredAt = AppContext.APP_CLOCK.instant().getEpochSecond();
     }
 
 
