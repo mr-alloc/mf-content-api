@@ -93,7 +93,7 @@ public class FamilyController {
 
     @FamilyMemberAuth(MemberRoleType.MASTER)
     @DeleteMapping("/cancel/{memberId}")
-    public ResponseEntity<CancelMemberRequestRes> cancelConnectRequest(@PathVariable Long memberId) {
+    public ResponseEntity<CancelMemberRequestRes> cancelConnectRequest(@PathVariable("memberId") Long memberId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         Long canceledMemberId = familyService.cancelFamilyMember(memberId, authorizedMember);
 
@@ -111,7 +111,7 @@ public class FamilyController {
 
     @FamilyMemberAuth(MemberRoleType.MASTER)
     @PostMapping("/accept/{memberId}")
-    public ResponseEntity<AcceptMemberRequestRes> acceptConnectRequest(@PathVariable Long memberId) {
+    public ResponseEntity<AcceptMemberRequestRes> acceptConnectRequest(@PathVariable("memberId") Long memberId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         Long newMemberId = familyService.acceptFamilyMember(memberId, authorizedMember);
 
@@ -120,7 +120,7 @@ public class FamilyController {
 
     @FamilyMemberAuth(MemberRoleType.MASTER)
     @PostMapping("/reject/{memberId}")
-    public ResponseEntity<RejectMemberRequestRes> rejectConnectRequest(@PathVariable Long memberId) {
+    public ResponseEntity<RejectMemberRequestRes> rejectConnectRequest(@PathVariable("memberId") Long memberId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         Long rejectedMemberId = familyService.rejectFamilyMember(memberId, authorizedMember);
 
