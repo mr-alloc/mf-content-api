@@ -5,4 +5,5 @@ import org.springframework.http.HttpStatus;
 public interface DeclaredResult {
 
     HttpStatus getHttpStatus();
+
 }

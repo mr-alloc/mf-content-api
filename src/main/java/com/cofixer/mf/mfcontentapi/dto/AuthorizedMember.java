@@ -19,6 +19,7 @@ public class AuthorizedMember {
     Long familyId;
     AccountRoleType accountRole;
     MemberRoleType memberRole;
+    boolean isBlocked;
 
     public static AuthorizedMember of(Long accountId, Member member) {
         AuthorizedMember newer = new AuthorizedMember();
@@ -28,6 +29,7 @@ public class AuthorizedMember {
 
         newer.familyId = UserProtocol.NOT_SELECTED_FAMILY_ID;
         newer.memberRole = MemberRoleType.NONE;
+        newer.isBlocked = member.isBlocked();
 
         return newer;
     }

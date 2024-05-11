@@ -45,6 +45,10 @@ public class Member implements Serializable {
     @Column(name = "nickname")
     String nickname;
 
+    //정지 여부
+    @Column(name = "is_blocked")
+    boolean isBlocked;
+
     @Column(name = "registered_at")
     Long registeredAt;
 
@@ -52,6 +56,7 @@ public class Member implements Serializable {
         Member newer = new Member();
         newer.accountId = accountId;
         newer.role = AccountRoleType.MEMBER.getLevel();
+        newer.isBlocked = false;
 
         return newer;
     }

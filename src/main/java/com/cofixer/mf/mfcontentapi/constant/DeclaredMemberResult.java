@@ -17,7 +17,8 @@ public enum DeclaredMemberResult implements DeclaredResult {
     ALREADY_INITIALIZED(-4, HttpStatus.BAD_REQUEST),
     NOT_FOUND_CONNECT_REQUEST(-5),
     NOT_FOUND_FAMILY(-6),
-    ALREADY_AFFILIATED_FAMILY(-7);
+    ALREADY_AFFILIATED_FAMILY(-7),
+    BLOCKED_MEMBER(-8, HttpStatus.FORBIDDEN);
 
     private final int code;
     private HttpStatus httpStatus;
@@ -25,5 +26,9 @@ public enum DeclaredMemberResult implements DeclaredResult {
     DeclaredMemberResult(int code, HttpStatus httpStatus) {
         this.code = code;
         this.httpStatus = httpStatus;
+    }
+
+    public boolean isBlockMember() {
+        return this == BLOCKED_MEMBER;
     }
 }

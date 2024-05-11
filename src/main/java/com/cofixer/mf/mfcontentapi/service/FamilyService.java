@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.service;
 
+import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredFamilyResult;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.constant.FamilyMemberDirection;
@@ -55,8 +56,9 @@ public class FamilyService {
 
     @Transactional(readOnly = true)
     public List<FamilyMemberSummary> getFamilyMembers(AuthorizedMember authorizedMember) {
+        long now = AppContext.APP_CLOCK.instant().getEpochSecond();
         return familyManager.getAllMembers(authorizedMember.getFamilyId()).stream()
-                .map(FamilyMemberSummary::of)
+                .map(familyMember -> FamilyMemberSummary.of(familyMember, now))
                 .toList();
     }
 
@@ -113,7 +115,7 @@ public class FamilyService {
     @Transactional
     public Long rejectFamilyMember(Long memberId, AuthorizedMember authorizedMember) {
         FamilyMemberId familyMemberId = FamilyMemberId.of(authorizedMember.getFamilyId(), memberId);
-        FamilyMemberConnectRequest connectRequest = familyManager.getConnectRequest(familyMemberId, FamilyMemberDirection.FAMILY_TO_MEMBER);
+        FamilyMemberConnectRequest connectRequest = familyManager.getConnectRequest(familyMemberId, FamilyMemberDirection.MEMBER_TO_FAMILY);
         ConditionUtil.throwIfTrue(connectRequest == null, () -> new MemberException(DeclaredMemberResult.NOT_FOUND_CONNECT_REQUEST));
 
         familyManager.cancelRequest(connectRequest);

@@ -2,14 +2,17 @@ package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
+import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
 import com.cofixer.mf.mfcontentapi.domain.Account;
+import com.cofixer.mf.mfcontentapi.domain.Member;
 import com.cofixer.mf.mfcontentapi.dto.req.ConfirmAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.VerifyAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.res.AccountInfoRes;
 import com.cofixer.mf.mfcontentapi.dto.res.VerifiedAccountRes;
 import com.cofixer.mf.mfcontentapi.exception.AccountException;
+import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.AccountManager;
 import com.cofixer.mf.mfcontentapi.manager.CredentialManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
@@ -67,6 +70,13 @@ public class AccountService {
         //계정 조회
         Account found = accountManager.getExistedAccount(req.getEmail(),
                 () -> new AccountException(DeclaredAccountResult.NOT_FOUND_ACCOUNT));
+
+        //이용정지 확인
+        memberManager.getMayMemberByAccountId(found.getId())
+                .filter(Member::isBlocked)
+                .ifPresent(member -> {
+                    throw new MemberException(DeclaredMemberResult.BLOCKED_MEMBER);
+                });
         String encrypted = EncryptUtil.encrypt(req.getPassword(), EncryptAlgorithm.SHA256);
         //비밀번호 확인
         if (!found.getPassword().equals(encrypted)) {

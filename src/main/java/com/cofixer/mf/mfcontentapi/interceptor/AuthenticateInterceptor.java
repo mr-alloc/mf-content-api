@@ -1,10 +1,12 @@
 package com.cofixer.mf.mfcontentapi.interceptor;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredFamilyResult;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
+import com.cofixer.mf.mfcontentapi.constant.MemberStatus;
 import com.cofixer.mf.mfcontentapi.constant.UserProtocol;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMemberId;
@@ -36,6 +38,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     private final CredentialManager credentialManager;
     private final MemberManager memberManager;
     private final FamilyManager familyManager;
+
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
     @Override
@@ -45,14 +48,16 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
             log.info("[REQUEST] {} {}, family: {}", request.getMethod(), request.getRequestURI(), request.getHeader(UserProtocol.HEADER_FAMILY_ID));
             if (token != null) {
                 DecodedJWT decoded = JwtUtil.decode(token);
-                boolean isPassed = isNotExpired(decoded) && isCacheAuthorization(request, decoded);
+                boolean isPassed = isNotExpired(decoded) && isCacheAuthorization(request, response, decoded);
                 if (!isPassed) {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 }
                 return isPassed;
             }
-        } catch (SignatureVerificationException ex) {
+        } catch (TokenExpiredException | SignatureVerificationException ex) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        } catch (MemberException ex) {
+            handleMemberException(ex, request, response);
         } catch (Exception ex) {
             log.error("Failed to authenticate", ex);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -60,11 +65,26 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         return false;
     }
 
-    private boolean isCacheAuthorization(HttpServletRequest request, DecodedJWT decoded) {
+    private void handleMemberException(MemberException ex, HttpServletRequest request, HttpServletResponse response) {
+        DeclaredMemberResult result = ex.getResult();
+        Integer statusCode = Optional.ofNullable(result.getHttpStatus())
+                .map(HttpStatus::value)
+                .orElseGet(HttpStatus.INTERNAL_SERVER_ERROR::value);
+
+        switch (result) {
+            case BLOCKED_MEMBER -> {
+                response.setStatus(statusCode);
+                response.setHeader(UserProtocol.USER_STATUS, MemberStatus.BLOCKED.getCode());
+            }
+        }
+    }
+
+    private boolean isCacheAuthorization(HttpServletRequest request, HttpServletResponse response, DecodedJWT decoded) {
         long accountId = Long.parseLong(decoded.getIssuer());
         AuthorizedMember authorizedMember = memberManager.getMayMemberByAccountId(accountId)
                 .map(member -> AuthorizedMember.of(accountId, member))
                 .orElseThrow(() -> new MemberException(DeclaredMemberResult.NOT_FOUND_MEMBER, String.valueOf(accountId)));
+        checkBlockMember(authorizedMember);
 
         long requestedFamilyId = extractFamilyId(request);
         if (UserProtocol.NOT_SELECTED_FAMILY_ID < requestedFamilyId) {
@@ -76,6 +96,12 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
         AuthorizedService.setInfo(request, authorizedMember);
         return true;
+    }
+
+    private void checkBlockMember(AuthorizedMember authorizedMember) {
+        if (authorizedMember.isBlocked()) {
+            throw new MemberException(DeclaredMemberResult.BLOCKED_MEMBER);
+        }
     }
 
     private long extractFamilyId(HttpServletRequest request) {

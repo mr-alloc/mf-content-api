@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -22,13 +21,13 @@ public class CorsFilter implements Filter {
     private static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
     private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
+    private static final String ACCESS_ORIGIN_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
 
     private static final String ALLOWED_ORIGIN = "http://localhost:5173";
     private static final String ALLOWED_CREDENTIALS = "true";
 
     private static final String USER_AGENT = "User-Agent";
-    private static final String ALLOWED_HEADERS = List.of("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "Selected-Family-Id").stream()
-            .collect(Collectors.joining(", "));
+    private static final String ALLOWED_HEADERS = String.join(", ", List.of("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "Selected-Family-Id"));
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -45,7 +44,7 @@ public class CorsFilter implements Filter {
 
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_ORIGIN);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, ALLOWED_CREDENTIALS);
-        httpResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, "Origin, X-Requested-With, Content-Type, Accept, Authorization, Selected-Family-Id");
+        httpResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, ALLOWED_HEADERS);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
 
         //CORS preflight request OK

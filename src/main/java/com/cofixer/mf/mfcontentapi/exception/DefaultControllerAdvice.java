@@ -2,6 +2,8 @@ package com.cofixer.mf.mfcontentapi.exception;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
+import com.cofixer.mf.mfcontentapi.constant.MemberStatus;
+import com.cofixer.mf.mfcontentapi.constant.UserProtocol;
 import com.cofixer.mf.mfcontentapi.dto.res.CommonErrorRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,7 +41,14 @@ public class DefaultControllerAdvice {
         DeclaredMemberResult result = ex.getResult();
         log.error("[{}] {}", result.name(), ex.getMessage());
         HttpStatus httpStatus = result.getHttpStatus();
+
         if (httpStatus != null) {
+            if (ex.getResult().isBlockMember()) {
+                return ResponseEntity.status(httpStatus)
+                        .header(UserProtocol.USER_STATUS, MemberStatus.BLOCKED.getCode())
+                        .body(new CommonErrorRes("MEMBER", result.getCode()));
+            }
+
             return ResponseEntity.status(httpStatus)
                     .body(new CommonErrorRes("MEMBER", result.getCode()));
         }
