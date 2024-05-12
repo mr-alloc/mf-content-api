@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.dto.req;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -8,16 +9,17 @@ import lombok.experimental.FieldDefaults;
 @Data
 public class CreateMissionReq {
     /* 미션명 */
-    String missionName;
+    @NotEmpty
+    String name;
 
     /* 미션 부제 */
-    String missionSubName;
-
-    /* 수행자 */
-    Long assignee;
+    String subName;
 
     /* 미션 타입 */
-    Integer missionType;
+    Integer type;
+
+    /* 미션 시작일(utc) */
+    Long startDate;
 
     /* 기한(일 단위) */
     Integer deadline;

@@ -10,6 +10,8 @@ public record JoinRequestRes(
 
         String profile,
 
+        String introduce,
+
         Long requestedAt
 ) {
     public static JoinRequestRes of(FamilyMemberConnectRequest request, Member member) {
@@ -17,6 +19,7 @@ public record JoinRequestRes(
                 member.getId(),
                 member.getNickname(),
                 member.getProfileImageUrl(),
+                request.getIntroduce(),
                 request.getRequestedAt()
         );
     }

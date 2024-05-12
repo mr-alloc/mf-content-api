@@ -47,7 +47,7 @@ public class MemberController {
         return ResponseEntity.ok(detail);
     }
 
-    @PostMapping("/request/join")
+    @PostMapping("/join_request")
     public ResponseEntity<RequestFamilyRes> requestConnectFamily(@RequestBody FamilyJoinReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         Family requestedFamily = memberService.requestFamilyMember(req, authorizedMember);
@@ -56,7 +56,7 @@ public class MemberController {
     }
 
 
-    @DeleteMapping("/cancel/{familyId}")
+    @DeleteMapping("/join_request/{familyId}")
     public ResponseEntity<CancelFamilyRequestRes> cancelConnectRequest(@PathVariable Long familyId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         Long canceledFamilyId = memberService.cancelFamilyRequest(familyId, authorizedMember);
@@ -64,7 +64,7 @@ public class MemberController {
         return ResponseEntity.ok(CancelFamilyRequestRes.of(canceledFamilyId));
     }
 
-    @GetMapping("/invite_requests")
+    @GetMapping("/invite_request")
     public ResponseEntity<GetInviteRequestRes> getInviteRequests() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         List<InviteRequestRes> connectRequests = memberService.getOwnConnectRequests(authorizedMember, FamilyMemberDirection.FAMILY_TO_MEMBER);
@@ -72,7 +72,7 @@ public class MemberController {
         return ResponseEntity.ok(GetInviteRequestRes.of(connectRequests));
     }
 
-    @GetMapping("/own_requests")
+    @GetMapping("/join_request/own")
     public ResponseEntity<GetInviteRequestRes> getOwnRequests() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         List<InviteRequestRes> connectRequests = memberService.getOwnConnectRequests(authorizedMember, FamilyMemberDirection.MEMBER_TO_FAMILY);

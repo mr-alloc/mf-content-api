@@ -2,6 +2,7 @@ package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.constant.FamilyMemberDirection;
+import com.cofixer.mf.mfcontentapi.constant.StringViolation;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeNicknameReq;
@@ -15,6 +16,7 @@ import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
 import com.cofixer.mf.mfcontentapi.util.ConditionUtil;
 import com.cofixer.mf.mfcontentapi.util.IterateUtil;
+import com.cofixer.mf.mfcontentapi.util.StringUtil;
 import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
 import kr.devis.util.entityprinter.print.setting.ExpandableEntitySetting;
@@ -126,6 +128,7 @@ public class MemberService {
 
     @Transactional
     public Family requestFamilyMember(FamilyJoinReq req, AuthorizedMember authorizedMember) {
+        StringUtil.validate(req.getIntroduce(), StringViolation.JOIN_REQUEST_INTRODUCE);
         Family family = familyManager.getFamily(req.getInviteCode());
         FamilyMemberId familyMemberId = FamilyMemberId.of(family.getId(), authorizedMember.getMemberId());
 
@@ -133,7 +136,7 @@ public class MemberService {
             throw new MemberException(DeclaredMemberResult.ALREADY_AFFILIATED_FAMILY);
         }
 
-        familyManager.requestToConnect(familyMemberId, FamilyMemberDirection.MEMBER_TO_FAMILY);
+        familyManager.requestToConnect(familyMemberId, req.getIntroduce(), FamilyMemberDirection.MEMBER_TO_FAMILY);
         return family;
     }
 }

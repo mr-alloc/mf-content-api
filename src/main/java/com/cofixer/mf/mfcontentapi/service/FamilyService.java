@@ -72,7 +72,7 @@ public class FamilyService {
             throw new FamilyException(DeclaredFamilyResult.ALREADY_OUR_FAMILY_MEMBER);
         }
 
-        FamilyMemberConnectRequest connectRequest = familyManager.requestToConnect(familyMemberId, FamilyMemberDirection.FAMILY_TO_MEMBER);
+        FamilyMemberConnectRequest connectRequest = familyManager.requestToConnect(familyMemberId, "NO-INTRODUCE", FamilyMemberDirection.FAMILY_TO_MEMBER);
 
         return connectRequest.getMemberId();
     }

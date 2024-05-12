@@ -40,7 +40,7 @@ public class IndividualMission extends Mission implements Serializable {
     Long deadLine;
 
     public IndividualMission(CreateMissionReq req, Long memberId, LocalDateTime now) {
-        super(req.getMissionName(), memberId, req.getAssignee(), req.getMissionType(), now);
+        super(req.getName(), memberId, memberId, req.getType(), req.getStartDate(), now);
     }
 
     public static IndividualMission forCreate(CreateMissionReq req, Long memberId) {
@@ -48,7 +48,7 @@ public class IndividualMission extends Mission implements Serializable {
         LocalDateTime now = LocalDateTime.now(utcClock);
         IndividualMission newMission = new IndividualMission(req, memberId, now);
 
-        newMission.subName = req.getMissionSubName();
+        newMission.subName = req.getSubName();
         newMission.deadLine = Math.addExact(utcClock.instant().getEpochSecond(), Math.addExact(req.getDeadline(), DAY_IN_SECONDS));
 
 

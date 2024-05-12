@@ -44,12 +44,16 @@ public abstract class Mission implements Serializable {
     @Column(name = "created_at", nullable = false)
     Long createdAt;
 
-    protected Mission(String name, Long reporter, Long assignee, Integer missionType, LocalDateTime now) {
+    /* 미션 시작일 */
+    @Column(name = "start_date")
+    Long startDate;
+
+    protected Mission(String name, Long reporter, Long assignee, Integer missionType, Long startDate, LocalDateTime now) {
         this.name = name;
         this.reporterId = reporter;
         this.assigneeId = Optional.ofNullable(assignee).orElse(reporter);
         this.missionType = missionType;
-
+        this.startDate = startDate;
         this.createdAt = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
     }
 

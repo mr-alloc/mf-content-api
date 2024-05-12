@@ -92,7 +92,7 @@ public class FamilyController {
     }
 
     @FamilyMemberAuth(MemberRoleType.MASTER)
-    @DeleteMapping("/cancel/{memberId}")
+    @DeleteMapping("/invite/{memberId}")
     public ResponseEntity<CancelMemberRequestRes> cancelConnectRequest(@PathVariable("memberId") Long memberId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         Long canceledMemberId = familyService.cancelFamilyMember(memberId, authorizedMember);

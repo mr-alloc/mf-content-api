@@ -39,8 +39,8 @@ public class FamilyMission extends Mission implements Serializable {
     @Column(name = "end_stamp")
     Long endStamp;
 
-    public FamilyMission(String name, Long reporter, Long assignee, Integer missionType, LocalDateTime now) {
-        super(name, reporter, assignee, missionType, now);
+    public FamilyMission(String name, Long reporter, Long assignee, Integer missionType, Long startDate, LocalDateTime now) {
+        super(name, reporter, assignee, missionType, startDate, now);
     }
 
     public static FamilyMission forCreate(
@@ -50,15 +50,17 @@ public class FamilyMission extends Mission implements Serializable {
     ) {
         LocalDateTime now = LocalDateTime.now(AppContext.APP_CLOCK);
         FamilyMission newMission = new FamilyMission(
-                request.getTitle(),
+                request.getName(),
                 authorizedMember.getMemberId(),
                 assignee.getMemberId(),
                 request.getType(),
+                request.getStartDate(),
                 now
         );
         newMission.familyId = authorizedMember.getFamilyId();
-        newMission.startStamp = request.getStartTime();
-        newMission.endStamp = request.getEndTime();
+        //미션 수행자가 설정
+        newMission.startStamp = 0L;
+        newMission.endStamp = 0L;
 
         return newMission;
     }

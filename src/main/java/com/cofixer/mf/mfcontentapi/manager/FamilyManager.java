@@ -76,12 +76,12 @@ public class FamilyManager {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public FamilyMemberConnectRequest requestToConnect(FamilyMemberId familyMemberId, FamilyMemberDirection direction) {
+    public FamilyMemberConnectRequest requestToConnect(FamilyMemberId familyMemberId, String introduce, FamilyMemberDirection direction) {
         FamilyMemberConnectRequest.Id id = FamilyMemberConnectRequest.Id.of(familyMemberId, direction);
         if (connectRepository.hasRequested(id)) {
             throw new FamilyException(DeclaredFamilyResult.ALREADY_REQUESTED_TO_CONNECT);
         }
-        FamilyMemberConnectRequest request = FamilyMemberConnectRequest.of(id);
+        FamilyMemberConnectRequest request = FamilyMemberConnectRequest.of(id, introduce);
 
         return connectRepository.save(request);
 

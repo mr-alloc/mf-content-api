@@ -27,14 +27,17 @@ public class FamilyMemberConnectRequest implements Serializable {
     @EmbeddedId
     Id id;
 
+    @Column(name = "introduce", nullable = false, length = 500)
+    String introduce;
 
     @Column(name = "requested_at", nullable = false)
     Long requestedAt;
 
-    public static FamilyMemberConnectRequest of(Id id) {
+    public static FamilyMemberConnectRequest of(Id id, String introduce) {
         FamilyMemberConnectRequest newer = new FamilyMemberConnectRequest();
 
         newer.id = id;
+        newer.introduce = introduce;
         newer.requestedAt = AppContext.APP_CLOCK.instant().getEpochSecond();
 
         return newer;

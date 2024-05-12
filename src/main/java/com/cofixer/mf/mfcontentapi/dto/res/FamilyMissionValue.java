@@ -7,7 +7,8 @@ public record FamilyMissionValue(
         String name,
         Long startStamp,
         Long endStamp,
-        Long createdAt
+
+        Long startDate
 ) {
 
     public static FamilyMissionValue of(FamilyMission mission) {
@@ -16,7 +17,7 @@ public record FamilyMissionValue(
                 mission.getName(),
                 mission.getStartStamp(),
                 mission.getEndStamp(),
-                mission.getCreatedAt()
+                mission.getStartDate()
         );
     }
 }
