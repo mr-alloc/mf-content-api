@@ -46,10 +46,6 @@ public class MemberService {
         SimpleMemberInfoRes memberInfo = SimpleMemberInfoRes.of(member);
 
         log.info(printer.drawEntity(member, es.getConfig()));
-        if (authorizedMember.forFamilyMember()) {
-            FamilyMember familyMember = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember));
-            memberInfo.decorateFamilyMember(familyMember);
-        }
 
         return memberInfo;
     }

@@ -126,4 +126,12 @@ public class FamilyController {
 
         return ResponseEntity.ok(RejectMemberRequestRes.of(rejectedMemberId));
     }
+
+    @GetMapping("/members/own")
+    public ResponseEntity<GetFamilyMemberInfo> getFamilyMemberInfo() {
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        FamilyMemberInfo familyMemberInfo = familyService.getFamilyMemberInfo(authorizedMember);
+
+        return ResponseEntity.ok(GetFamilyMemberInfo.of(familyMemberInfo));
+    }
 }

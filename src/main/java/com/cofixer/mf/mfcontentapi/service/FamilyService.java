@@ -8,10 +8,7 @@ import com.cofixer.mf.mfcontentapi.constant.MemberRoleType;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyReq;
-import com.cofixer.mf.mfcontentapi.dto.res.FamilyMemberSummary;
-import com.cofixer.mf.mfcontentapi.dto.res.FamilySummary;
-import com.cofixer.mf.mfcontentapi.dto.res.GetFamilyInfoRes;
-import com.cofixer.mf.mfcontentapi.dto.res.JoinRequestRes;
+import com.cofixer.mf.mfcontentapi.dto.res.*;
 import com.cofixer.mf.mfcontentapi.exception.FamilyException;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
@@ -126,5 +123,11 @@ public class FamilyService {
     public GetFamilyInfoRes getFamilyInfo(AuthorizedMember authorizedMember) {
         Family family = familyManager.getFamily(authorizedMember.getFamilyId());
         return GetFamilyInfoRes.of(family);
+    }
+
+    @Transactional(readOnly = true)
+    public FamilyMemberInfo getFamilyMemberInfo(AuthorizedMember authorizedMember) {
+        FamilyMember familyMember = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember));
+        return FamilyMemberInfo.of(familyMember);
     }
 }
