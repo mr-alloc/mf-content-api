@@ -1,14 +1,18 @@
 package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
+import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.dto.req.ChangeFamilyMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.GetFamilyCalendarRes;
 import com.cofixer.mf.mfcontentapi.dto.res.*;
+import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.manager.MissionManager;
+import com.cofixer.mf.mfcontentapi.util.ConditionUtil;
 import com.cofixer.mf.mfcontentapi.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,5 +78,32 @@ public class MissionService {
 
         FamilyMission newerMission = missionManager.saveFamilyMission(mission);
         return CreateFamilyMissionRes.of(newerMission);
+    }
+
+    @Transactional(readOnly = true)
+    public MissionValue getMissionDetail(Long memberId, Long missionId) {
+        IndividualMission mission = missionManager.getIndividualMission(missionId);
+        return MissionValue.of(mission);
+    }
+
+    @Transactional(readOnly = true)
+    public FamilyMissionDetailValue getFamilyMissionDetail(AuthorizedMember authorizedMember, Long missionId) {
+        FamilyMission familyMission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
+        return FamilyMissionDetailValue.of(familyMission);
+    }
+
+    @Transactional
+    public ChangeFamilyMissionRes changeFamilyMission(AuthorizedMember authorizedMember, Long missionId, ChangeFamilyMissionReq request) {
+        FamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
+        // 변경할 내용이 없는 경우
+        ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
+        if (request.needChangeAssignee()) {
+            //우리 패밀리에 없는 경우
+            ConditionUtil.throwIfTrue(!familyManager.existMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee())),
+                    () -> new MissionException(DeclaredMissionResult.NOT_FOUND_MEMBER));
+
+            mission.changeAssignee(request.getAssignee(), authorizedMember.getMemberId());
+        }
+        return ChangeFamilyMissionRes.of(mission);
     }
 }

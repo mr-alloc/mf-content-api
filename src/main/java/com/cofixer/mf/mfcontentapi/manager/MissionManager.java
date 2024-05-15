@@ -1,8 +1,10 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
+import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
 import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.repository.FamilyMissionRepository;
 import com.cofixer.mf.mfcontentapi.repository.IndividualMissionRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +38,15 @@ public class MissionManager {
 
     public List<FamilyMission> getFamilyMissions(AuthorizedMember authorizedMember, long startTime, long endTime) {
         return familyMissionRepository.findPeriodMissions(authorizedMember, startTime, endTime);
+    }
+
+    public IndividualMission getIndividualMission(Long missionId) {
+        return individualMissionRepository.findById(missionId)
+                .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_INDIVIDUAL_MISSION));
+    }
+
+    public FamilyMission getFamilyMission(Long missionId, Long familyId) {
+        return familyMissionRepository.findByIdAndFamilyId(missionId, familyId)
+                .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_FAMILY_MISSION));
     }
 }

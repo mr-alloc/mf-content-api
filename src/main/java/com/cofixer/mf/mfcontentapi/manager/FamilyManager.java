@@ -59,7 +59,7 @@ public class FamilyManager {
 
     public FamilyMember getFamilyMember(FamilyMemberId familyMemberId) {
         return memberRepository.findById(familyMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("가족 멤버가 존재하지 않습니다."));
+                .orElseThrow(() -> new FamilyException(DeclaredFamilyResult.NOT_FOUND_MEMBER));
     }
 
     public List<FamilyMember> getAllMembers(Long familyId) {
@@ -119,5 +119,9 @@ public class FamilyManager {
     public Family getFamily(String inviteCode) {
         return familyRepository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new FamilyException(DeclaredFamilyResult.NOT_FOUND_FAMILY));
+    }
+
+    public boolean existMember(FamilyMemberId id) {
+        return memberRepository.existsById(id);
     }
 }

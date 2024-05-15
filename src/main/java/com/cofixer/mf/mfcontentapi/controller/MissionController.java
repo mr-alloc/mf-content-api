@@ -7,6 +7,8 @@ import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.res.CreateMissionRes;
 import com.cofixer.mf.mfcontentapi.dto.res.GetMemberCalendarRes;
+import com.cofixer.mf.mfcontentapi.dto.res.GetMissionDetailRes;
+import com.cofixer.mf.mfcontentapi.dto.res.MissionValue;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
 import com.cofixer.mf.mfcontentapi.service.MissionService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,14 @@ public class MissionController {
     ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         GetMemberCalendarRes response = missionService.getMemberCalendar(authorizedMember.getMemberId(), startDate, endDate);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{missionId}")
+    public ResponseEntity<GetMissionDetailRes> getMissionDetail(@PathVariable("missionId") Long missionId) {
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        MissionValue missionDetail = missionService.getMissionDetail(authorizedMember.getMemberId(), missionId);
+        GetMissionDetailRes response = GetMissionDetailRes.of(missionDetail);
         return ResponseEntity.ok(response);
     }
 }

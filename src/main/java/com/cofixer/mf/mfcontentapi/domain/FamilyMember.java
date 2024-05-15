@@ -2,14 +2,12 @@ package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.MemberRoleType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,6 +16,7 @@ import static org.springframework.util.StringUtils.hasLength;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@DynamicUpdate
 @Entity
 @Table(name = "mf_family_member")
 public class FamilyMember implements Serializable {
@@ -39,6 +38,10 @@ public class FamilyMember implements Serializable {
 
     @Column(name = "registered_at", nullable = false)
     Long registeredAt;
+
+    @JoinColumn(name = "family_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    Family family;
 
     public static FamilyMember forCreate(FamilyMemberId familyMemberId, MemberRoleType memberRoleType) {
         FamilyMember newer = new FamilyMember();

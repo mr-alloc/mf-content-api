@@ -8,12 +8,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
+@DynamicUpdate
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Entity
@@ -39,6 +41,9 @@ public class FamilyMission extends Mission implements Serializable {
     @Column(name = "end_stamp")
     Long endStamp;
 
+    @Column(name = "last_update_member", nullable = false)
+    Long lastUpdateMember;
+
     public FamilyMission(String name, Long reporter, Long assignee, Integer missionType, Long startDate, LocalDateTime now) {
         super(name, reporter, assignee, missionType, startDate, now);
     }
@@ -61,7 +66,14 @@ public class FamilyMission extends Mission implements Serializable {
         //미션 수행자가 설정
         newMission.startStamp = 0L;
         newMission.endStamp = 0L;
+        newMission.lastUpdateMember = authorizedMember.getMemberId();
 
         return newMission;
+    }
+
+    public void changeAssignee(Long assigneeId, Long updateMemberId) {
+        super.assigneeId = assigneeId;
+        this.lastUpdateMember = updateMemberId;
+        super.renewUpdatedAt(LocalDateTime.now());
     }
 }

@@ -19,4 +19,12 @@ public class StringUtil {
         Objects.requireNonNull(value);
         violation.inspect(value, messageFunction);
     }
+
+    public static boolean isNotEmpty(String value) {
+        return value != null && !value.isEmpty();
+    }
+
+    public static boolean isNotNull(String value) {
+        return value != null;
+    }
 }
