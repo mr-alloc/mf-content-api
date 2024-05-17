@@ -54,6 +54,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
                 }
                 return isPassed;
             }
+            return false;
         } catch (TokenExpiredException | SignatureVerificationException ex) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
         } catch (MemberException ex) {

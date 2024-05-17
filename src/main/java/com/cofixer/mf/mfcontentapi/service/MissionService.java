@@ -98,13 +98,13 @@ public class MissionService {
         FamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
         // 변경할 내용이 없는 경우
         ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
-        //우리 패밀리에 없는 경우
-        ConditionUtil.throwIfTrue(!familyManager.existMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee())),
-                () -> new MissionException(DeclaredMissionResult.NOT_FOUND_MEMBER));
 
         LocalDateTime now = LocalDateTime.now();
 
         if (request.needChangeAssignee()) {
+            //우리 패밀리에 없는 경우
+            ConditionUtil.throwIfTrue(!familyManager.existMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee())),
+                    () -> new MissionException(DeclaredMissionResult.NOT_FOUND_MEMBER));
             mission.changeAssignee(request.getAssignee(), authorizedMember.getMemberId(), now);
         } else if (request.needChangeTitle()) {
             mission.changeTitle(request.getTitle(), authorizedMember.getMemberId(), now);

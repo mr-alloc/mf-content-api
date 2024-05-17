@@ -1,10 +1,9 @@
 package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.util.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NoArgsConstructor;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
 
@@ -14,9 +13,7 @@ public class AuthorizedService {
     private static final String AUTHORIZED_KEY = "authorized";
 
     public static AuthorizedMember getMember() {
-        return Optional.ofNullable(RequestContextHolder.getRequestAttributes())
-                .map(ServletRequestAttributes.class::cast)
-                .map(ServletRequestAttributes::getRequest)
+        return Optional.ofNullable(RequestUtil.getRequest())
                 .map(AuthorizedService::getMemberWithRequested)
                 .orElse(null);
     }
