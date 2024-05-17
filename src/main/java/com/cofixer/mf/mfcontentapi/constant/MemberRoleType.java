@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.constant;
 
-import com.cofixer.mf.mfcontentapi.util.IterateUtil;
+import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +15,7 @@ public enum MemberRoleType {
     SUB_MASTER(1),
     MASTER(2);
 
-    private static final Map<Integer, MemberRoleType> CACHED = IterateUtil.toMap(List.of(MemberRoleType.values()), MemberRoleType::getLevel);
+    private static final Map<Integer, MemberRoleType> CACHED = CollectionUtil.toMap(List.of(MemberRoleType.values()), MemberRoleType::getLevel);
     private final int level;
 
 

@@ -5,9 +5,14 @@ import com.cofixer.mf.mfcontentapi.domain.Family;
 public record GetFamilyInfoRes(
         Long id,
 
-        String inviteCode
+        String inviteCode,
+        String name
 ) {
     public static GetFamilyInfoRes of(Family family) {
-        return new GetFamilyInfoRes(family.getId(), family.getInviteCode());
+        return new GetFamilyInfoRes(
+                family.getId(),
+                family.getInviteCode(),
+                family.getName()
+        );
     }
 }

@@ -57,11 +57,11 @@ public class FamilyController {
     }
 
     @GetMapping("/own")
-    public ResponseEntity<GetFamilyRes> getOwnFamilies() {
+    public ResponseEntity<GetOwnFamiliesRes> getOwnFamilies() {
         AuthorizedMember member = AuthorizedService.getMember();
         List<FamilySummary> familySummaries = familyService.getFamilySummaries(member.getMemberId());
 
-        return ResponseEntity.ok(GetFamilyRes.of(familySummaries));
+        return ResponseEntity.ok(GetOwnFamiliesRes.of(familySummaries));
     }
 
     @GetMapping("/members")

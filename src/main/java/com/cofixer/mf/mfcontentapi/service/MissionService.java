@@ -2,6 +2,7 @@ package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
+import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeFamilyMissionReq;
@@ -81,9 +82,9 @@ public class MissionService {
     }
 
     @Transactional(readOnly = true)
-    public MissionValue getMissionDetail(Long memberId, Long missionId) {
+    public MissionDetailValue getMissionDetail(Long memberId, Long missionId) {
         IndividualMission mission = missionManager.getIndividualMission(missionId);
-        return MissionValue.of(mission);
+        return MissionDetailValue.of(mission);
     }
 
     @Transactional(readOnly = true)
@@ -97,12 +98,18 @@ public class MissionService {
         FamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
         // 변경할 내용이 없는 경우
         ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
-        if (request.needChangeAssignee()) {
-            //우리 패밀리에 없는 경우
-            ConditionUtil.throwIfTrue(!familyManager.existMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee())),
-                    () -> new MissionException(DeclaredMissionResult.NOT_FOUND_MEMBER));
+        //우리 패밀리에 없는 경우
+        ConditionUtil.throwIfTrue(!familyManager.existMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee())),
+                () -> new MissionException(DeclaredMissionResult.NOT_FOUND_MEMBER));
 
-            mission.changeAssignee(request.getAssignee(), authorizedMember.getMemberId());
+        LocalDateTime now = LocalDateTime.now();
+
+        if (request.needChangeAssignee()) {
+            mission.changeAssignee(request.getAssignee(), authorizedMember.getMemberId(), now);
+        } else if (request.needChangeTitle()) {
+            mission.changeTitle(request.getTitle(), authorizedMember.getMemberId(), now);
+        } else if (request.needChangeStatus()) {
+            mission.changeStatus(MissionStatus.fromCode(request.getStatus()), authorizedMember.getMemberId(), now);
         }
         return ChangeFamilyMissionRes.of(mission);
     }

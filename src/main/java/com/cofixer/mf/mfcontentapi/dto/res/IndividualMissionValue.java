@@ -5,6 +5,7 @@ public record IndividualMissionValue(
 
         /* 미션 ID */
         Long id,
+        Integer status,
 
         /* 미션명 */
         String name,
@@ -18,6 +19,7 @@ public record IndividualMissionValue(
     public static IndividualMissionValue of(IndividualMission mission) {
         return new IndividualMissionValue(
                 mission.getId(),
+                mission.getStatus(),
                 mission.getName(),
                 mission.getDeadLine(),
                 mission.getStartDate()

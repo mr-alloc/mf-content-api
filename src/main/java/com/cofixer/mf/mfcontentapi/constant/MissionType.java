@@ -1,7 +1,7 @@
 package com.cofixer.mf.mfcontentapi.constant;
 
 import com.cofixer.mf.mfcontentapi.exception.CommonException;
-import com.cofixer.mf.mfcontentapi.util.IterateUtil;
+import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,7 @@ public enum MissionType {
     INTERVAL(9),
     ;
 
-    private static final Map<Integer, MissionType> CACHED = IterateUtil.toMap(List.of(MissionType.values()), MissionType::getValue);
+    private static final Map<Integer, MissionType> CACHED = CollectionUtil.toMap(List.of(MissionType.values()), MissionType::getValue);
     private final int value;
 
     public static boolean has(int type) {

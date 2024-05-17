@@ -13,8 +13,8 @@ import com.cofixer.mf.mfcontentapi.exception.FamilyException;
 import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
+import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import com.cofixer.mf.mfcontentapi.util.ConditionUtil;
-import com.cofixer.mf.mfcontentapi.util.IterateUtil;
 import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,8 +79,8 @@ public class FamilyService {
         FamilyMemberId familyMemberId = FamilyMemberId.of(authorizedMember.getFamilyId(), null);
         List<FamilyMemberConnectRequest> connectRequests = familyManager.getConnectRequests(familyMemberId, direction);
 
-        List<Long> memberIds = IterateUtil.convertList(connectRequests, FamilyMemberConnectRequest::getMemberId);
-        Map<Long, Member> memberMap = IterateUtil.toMap(memberManager.getMembers(memberIds), Member::getId);
+        List<Long> memberIds = CollectionUtil.convertList(connectRequests, FamilyMemberConnectRequest::getMemberId);
+        Map<Long, Member> memberMap = CollectionUtil.toMap(memberManager.getMembers(memberIds), Member::getId);
 
         return connectRequests.stream()
                 .map(request -> JoinRequestRes.of(request, memberMap.get(request.getMemberId())))

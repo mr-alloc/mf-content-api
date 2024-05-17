@@ -14,8 +14,8 @@ import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.AccountManager;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
+import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import com.cofixer.mf.mfcontentapi.util.ConditionUtil;
-import com.cofixer.mf.mfcontentapi.util.IterateUtil;
 import com.cofixer.mf.mfcontentapi.util.StringUtil;
 import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
@@ -81,8 +81,8 @@ public class MemberService {
         FamilyMemberId familyMemberId = FamilyMemberId.of(null, authorizedMember.getMemberId());
         List<FamilyMemberConnectRequest> connectRequests = familyManager.getConnectRequests(familyMemberId, direction);
 
-        List<Long> familyIds = IterateUtil.convertList(connectRequests, FamilyMemberConnectRequest::getFamilyId);
-        Map<Long, Family> familyMap = IterateUtil.toMap(familyManager.getFamilies(familyIds), Family::getId);
+        List<Long> familyIds = CollectionUtil.convertList(connectRequests, FamilyMemberConnectRequest::getFamilyId);
+        Map<Long, Family> familyMap = CollectionUtil.toMap(familyManager.getFamilies(familyIds), Family::getId);
 
         return connectRequests.stream()
                 .map(connectRequest -> InviteRequestRes.of(connectRequest, familyMap.get(connectRequest.getFamilyId())))

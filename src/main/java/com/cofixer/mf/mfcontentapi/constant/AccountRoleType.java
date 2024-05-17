@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.constant;
 
-import com.cofixer.mf.mfcontentapi.util.IterateUtil;
+import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +15,7 @@ public enum AccountRoleType {
     MEMBER(1),
     ADMIN(2);
     private final int level;
-    private static final Map<Integer, AccountRoleType> CACHED = IterateUtil.toMap(List.of(AccountRoleType.values()), AccountRoleType::getLevel);
+    private static final Map<Integer, AccountRoleType> CACHED = CollectionUtil.toMap(List.of(AccountRoleType.values()), AccountRoleType::getLevel);
 
 
     public static boolean exist(int level) {

@@ -1,6 +1,7 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.AppContext;
+import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import jakarta.persistence.*;
@@ -71,9 +72,21 @@ public class FamilyMission extends Mission implements Serializable {
         return newMission;
     }
 
-    public void changeAssignee(Long assigneeId, Long updateMemberId) {
+    public void changeAssignee(Long assigneeId, Long updateMemberId, LocalDateTime now) {
         super.assigneeId = assigneeId;
         this.lastUpdateMember = updateMemberId;
-        super.renewUpdatedAt(LocalDateTime.now());
+        super.renewUpdatedAt(now);
+    }
+
+    public void changeTitle(String title, Long updateMemberId, LocalDateTime now) {
+        super.name = title;
+        this.lastUpdateMember = updateMemberId;
+        super.renewUpdatedAt(now);
+    }
+
+    public void changeStatus(MissionStatus status, Long updateMemberId, LocalDateTime now) {
+        super.changeStatus(status);
+        this.lastUpdateMember = updateMemberId;
+        super.renewUpdatedAt(now);
     }
 }
