@@ -11,7 +11,10 @@ public enum DeclaredMissionResult implements DeclaredResult {
     NOT_FOUND_INDIVIDUAL_MISSION(-1, HttpStatus.BAD_REQUEST),
     NOT_FOUND_FAMILY_MISSION(-2, HttpStatus.BAD_REQUEST),
     NOT_FOUND_MEMBER(-3, HttpStatus.BAD_REQUEST),
-    NO_CHANGED_TARGET(-4, HttpStatus.BAD_REQUEST);
+    NO_CHANGED_TARGET(-4, HttpStatus.BAD_REQUEST),
+    NOT_OWN_MISSION(-5, HttpStatus.BAD_REQUEST),
+    CANNOT_CHANGE_TO_DELETE(-6, HttpStatus.BAD_REQUEST),
+    ;
     private final int code;
     private HttpStatus httpStatus;
 

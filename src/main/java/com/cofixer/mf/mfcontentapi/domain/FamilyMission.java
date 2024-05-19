@@ -1,9 +1,10 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
+import com.cofixer.mf.mfcontentapi.constant.MissionType;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
+import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,17 +37,16 @@ public class FamilyMission extends Mission implements Serializable {
     @Column(name = "family_id")
     Long familyId;
 
-    @Column(name = "start_stamp")
-    Long startStamp;
-
-    @Column(name = "end_stamp")
-    Long endStamp;
+    /* 담당자 아이디 */
+    @Column(name = "assignee_id")
+    Long assigneeId;
 
     @Column(name = "last_update_member", nullable = false)
     Long lastUpdateMember;
 
     public FamilyMission(String name, Long reporter, Long assignee, Integer missionType, Long startDate, LocalDateTime now) {
-        super(name, reporter, assignee, missionType, startDate, now);
+        super(name, reporter, missionType, startDate, now);
+        this.assigneeId = assignee;
     }
 
     public static FamilyMission forCreate(
@@ -54,7 +54,7 @@ public class FamilyMission extends Mission implements Serializable {
             FamilyMember assignee,
             AuthorizedMember authorizedMember
     ) {
-        LocalDateTime now = LocalDateTime.now(AppContext.APP_CLOCK);
+        LocalDateTime now = TemporalUtil.getNow();
         FamilyMission newMission = new FamilyMission(
                 request.getName(),
                 authorizedMember.getMemberId(),
@@ -73,7 +73,7 @@ public class FamilyMission extends Mission implements Serializable {
     }
 
     public void changeAssignee(Long assigneeId, Long updateMemberId, LocalDateTime now) {
-        super.assigneeId = assigneeId;
+        this.assigneeId = assigneeId;
         this.lastUpdateMember = updateMemberId;
         super.renewUpdatedAt(now);
     }
@@ -85,8 +85,27 @@ public class FamilyMission extends Mission implements Serializable {
     }
 
     public void changeStatus(MissionStatus status, Long updateMemberId, LocalDateTime now) {
-        super.changeStatus(status);
+        super.changeStatus(status, now);
         this.lastUpdateMember = updateMemberId;
         super.renewUpdatedAt(now);
+    }
+
+    public void delete(Long updateMemberId) {
+        super.delete();
+        this.lastUpdateMember = updateMemberId;
+    }
+
+    public void changeType(MissionType missionType, Long memberId, LocalDateTime now) {
+        super.changeType(missionType, now);
+        this.lastUpdateMember = memberId;
+    }
+
+    @Override
+    public long getRemainSeconds() {
+        MissionStatus status = getCurrentStatus();
+        return switch (status) {
+            case CREATED, IN_PROGRESS -> Math.subtractExact(this.endStamp, TemporalUtil.getEpochSecond());
+            default -> 0;
+        };
     }
 }

@@ -3,18 +3,18 @@ package com.cofixer.mf.mfcontentapi.service;
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
 import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
+import com.cofixer.mf.mfcontentapi.constant.MissionType;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
-import com.cofixer.mf.mfcontentapi.dto.req.ChangeFamilyMissionReq;
-import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
-import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
-import com.cofixer.mf.mfcontentapi.dto.req.GetFamilyCalendarRes;
+import com.cofixer.mf.mfcontentapi.dto.req.*;
 import com.cofixer.mf.mfcontentapi.dto.res.*;
 import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.manager.FamilyManager;
 import com.cofixer.mf.mfcontentapi.manager.MissionManager;
 import com.cofixer.mf.mfcontentapi.util.ConditionUtil;
 import com.cofixer.mf.mfcontentapi.util.DateTimeUtil;
+import com.cofixer.mf.mfcontentapi.util.ObjectUtil;
+import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,8 +43,8 @@ public class MissionService {
 
     @Transactional(readOnly = true)
     public GetMemberCalendarRes getMemberCalendar(Long mid, String startDate, String endDate) {
-        long startTime = LocalDateTime.of(DateTimeUtil.parseDate(startDate), LocalTime.MIN).toEpochSecond(AppContext.APP_ZONE_OFFSET);
-        long endTime = LocalDateTime.of(DateTimeUtil.parseDate(endDate), LocalTime.MAX).toEpochSecond(AppContext.APP_ZONE_OFFSET);
+        long startTime = TemporalUtil.dateTimeToTimeStamp(startDate, LocalTime.MIN);
+        long endTime = TemporalUtil.dateTimeToTimeStamp(endDate, LocalTime.MAX);
 
         List<IndividualMissionValue> missions = missionManager.getMissions(mid, startTime, endTime).stream()
                 .map(IndividualMissionValue::of)
@@ -96,12 +97,16 @@ public class MissionService {
     @Transactional
     public ChangeFamilyMissionRes changeFamilyMission(AuthorizedMember authorizedMember, Long missionId, ChangeFamilyMissionReq request) {
         FamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
+        //소속 패밀리 미션이 아닌경우
+        ConditionUtil.throwIfTrue(Objects.equals(mission.getFamilyId(), authorizedMember.getFamilyId()), () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
         // 변경할 내용이 없는 경우
         ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
 
-        LocalDateTime now = LocalDateTime.now();
-
-        if (request.needChangeAssignee()) {
+        LocalDateTime now = TemporalUtil.getNow();
+        if (request.needChangeType()) {
+            MissionType missionType = MissionType.fromValue(request.getType());
+            mission.changeType(missionType, authorizedMember.getMemberId(), now);
+        } else if (request.needChangeAssignee()) {
             //우리 패밀리에 없는 경우
             ConditionUtil.throwIfTrue(!familyManager.existMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee())),
                     () -> new MissionException(DeclaredMissionResult.NOT_FOUND_MEMBER));
@@ -112,5 +117,58 @@ public class MissionService {
             mission.changeStatus(MissionStatus.fromCode(request.getStatus()), authorizedMember.getMemberId(), now);
         }
         return ChangeFamilyMissionRes.of(mission);
+    }
+
+    @Transactional
+    public ChangeMissionRes changeMission(Long missionId, ChangeMissionReq req, AuthorizedMember authorizedMember) {
+        IndividualMission mission = missionManager.getIndividualMission(missionId);
+        //나의 미션이 아닌경우
+        ConditionUtil.throwIfTrue(ObjectUtil.notEquals(mission.getReporterId(), authorizedMember.getMemberId()),
+                () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
+        // 변경할 내용이 없는 경우
+        ConditionUtil.throwIfTrue(req.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
+        LocalDateTime now = TemporalUtil.getNow();
+        if (req.needChangeType()) {
+            MissionType missionType = MissionType.fromValue(req.getType());
+            mission.changeType(missionType, now);
+        } else if (req.needChangeTitle()) {
+            mission.changeTitle(req.getTitle(), now);
+        } else if (req.needChangeStatus()) {
+            MissionStatus status = MissionStatus.fromCode(req.getStatus());
+            ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
+                    () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
+            mission.changeStatus(status, now);
+        } else if (req.needChangeDeadline()) {
+            mission.changeDeadLine(req.getDeadline(), now);
+        }
+
+        return ChangeMissionRes.of(mission);
+    }
+
+    @Transactional
+    public DeleteFamilyMissionRes deleteFamilyMission(Long missionId, AuthorizedMember authorizedMember) {
+        FamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
+        //소속 패밀리 미션이 아닌경우
+        ConditionUtil.throwIfTrue(Objects.equals(mission.getFamilyId(), authorizedMember.getFamilyId()),
+                () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
+
+        //공개미션이 아니면서 미션 작성자가 아닌경우
+        ConditionUtil.throwIfTrue(!mission.isPublic() && ObjectUtil.notEquals(mission.getReporterId(), authorizedMember.getMemberId()),
+                () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
+
+        mission.delete(authorizedMember.getMemberId());
+        return DeleteFamilyMissionRes.of(missionId);
+    }
+
+    @Transactional
+    public DeleteMissionRes deleteMission(Long missionId, AuthorizedMember authorizedMember) {
+        IndividualMission mission = missionManager.getIndividualMission(missionId);
+
+        //나의 미션이 아닌경우
+        ConditionUtil.throwIfTrue(ObjectUtil.notEquals(mission.getReporterId(), authorizedMember.getMemberId()),
+                () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
+
+        mission.delete();
+        return DeleteMissionRes.of(missionId);
     }
 }

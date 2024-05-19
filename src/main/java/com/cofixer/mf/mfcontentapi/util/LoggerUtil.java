@@ -8,6 +8,6 @@ public class LoggerUtil {
 
     public static String log(String message) {
         HttpServletRequest request = RequestUtil.getRequest();
-        return String.format("[%s %s] %s", request.getRequestURI(), request.getMethod(), message);
+        return String.format("[%s %s] %s", request.getMethod(), request.getRequestURI(), message);
     }
 }

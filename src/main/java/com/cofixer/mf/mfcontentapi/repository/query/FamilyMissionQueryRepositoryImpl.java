@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.repository.query;
 
+import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -19,7 +20,10 @@ public class FamilyMissionQueryRepositoryImpl implements FamilyMissionQueryRepos
     @Override
     public List<FamilyMission> findPeriodMissions(AuthorizedMember member, long startTime, long endTime) {
         return queryFactory.selectFrom(familyMission)
-                .where(familyMission.familyId.eq(member.getFamilyId()))
+                .where(familyMission.familyId.eq(member.getFamilyId())
+                        .and(familyMission.startDueDate.between(startTime, endTime))
+                        .and(familyMission.status.ne(MissionStatus.DELETED.getCode()))
+                )
                 .fetch();
     }
 }

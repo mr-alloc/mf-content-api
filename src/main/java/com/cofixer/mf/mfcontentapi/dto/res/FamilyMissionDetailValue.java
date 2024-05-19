@@ -4,11 +4,12 @@ import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
 
 public record FamilyMissionDetailValue(
         Long id,
-        String title,
+        String name,
         Integer type,
         Integer status,
         Long assignee,
-        Long reporter
+        Long reporter,
+        Long remainSeconds
 ) {
 
     public static FamilyMissionDetailValue of(FamilyMission mission) {
@@ -18,7 +19,8 @@ public record FamilyMissionDetailValue(
                 mission.getMissionType(),
                 mission.getStatus(),
                 mission.getAssigneeId(),
-                mission.getReporterId()
+                mission.getReporterId(),
+                mission.getRemainSeconds()
         );
     }
 }

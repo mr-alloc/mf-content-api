@@ -4,11 +4,12 @@ import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
 
 public record MissionDetailValue(
         Long id,
-        String title,
+        String name,
         Integer type,
         Integer status,
-        Long assignee,
-        Long reporter
+        Long reporter,
+        Long deadline,
+        Long remainSeconds
 ) {
     public static MissionDetailValue of(IndividualMission mission) {
         return new MissionDetailValue(
@@ -16,8 +17,9 @@ public record MissionDetailValue(
                 mission.getName(),
                 mission.getMissionType(),
                 mission.getStatus(),
-                mission.getAssigneeId(),
-                mission.getReporterId()
+                mission.getReporterId(),
+                mission.getDeadline(),
+                mission.getRemainSeconds()
         );
     }
 }

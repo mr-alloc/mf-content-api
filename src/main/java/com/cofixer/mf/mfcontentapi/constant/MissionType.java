@@ -15,12 +15,12 @@ public enum MissionType {
     MISSION(1),
     PACKAGE(2),
     STEP(3),
-    TIME(4),
-    PROJECT(5),
-    SECRET(6),
-    SURPRISE(7),
-    FIX(8),
-    INTERVAL(9),
+//    TIME(4),
+//    PROJECT(5),
+//    SECRET(6),
+//    SURPRISE(7),
+//    FIX(8),
+//    INTERVAL(9),
     ;
 
     private static final Map<Integer, MissionType> CACHED = CollectionUtil.toMap(List.of(MissionType.values()), MissionType::getValue);

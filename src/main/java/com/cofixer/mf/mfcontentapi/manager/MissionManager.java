@@ -3,6 +3,7 @@ package com.cofixer.mf.mfcontentapi.manager;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
 import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.repository.FamilyMissionRepository;
@@ -42,11 +43,13 @@ public class MissionManager {
 
     public IndividualMission getIndividualMission(Long missionId) {
         return individualMissionRepository.findById(missionId)
+                .filter(Mission::isNotDeleted)
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_INDIVIDUAL_MISSION));
     }
 
     public FamilyMission getFamilyMission(Long missionId, Long familyId) {
         return familyMissionRepository.findByIdAndFamilyId(missionId, familyId)
+                .filter(Mission::isNotDeleted)
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_FAMILY_MISSION));
     }
 }

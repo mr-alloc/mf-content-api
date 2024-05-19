@@ -21,8 +21,8 @@ public record IndividualMissionValue(
                 mission.getId(),
                 mission.getStatus(),
                 mission.getName(),
-                mission.getDeadLine(),
-                mission.getStartDate()
+                mission.getDeadline(),
+                mission.getStartDueDate()
         );
     }
 }

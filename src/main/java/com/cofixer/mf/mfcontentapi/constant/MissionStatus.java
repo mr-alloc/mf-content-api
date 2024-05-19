@@ -10,9 +10,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum MissionStatus {
     CREATED(0),
-    PROGRESS(1),
+    IN_PROGRESS(1),
     COMPLETED(2),
-    PAUSED(3);
+    DELETED(3);
 
     private static final Map<Integer, MissionStatus> CACHED = CollectionUtil.arrayToMap(values(), MissionStatus::getCode);
     private final int code;

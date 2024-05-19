@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.repository.query;
 
+import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,10 @@ public class IndividualMissionQueryRepositoryImpl implements IndividualMissionQu
     @Override
     public List<IndividualMission> findPeriodMissions(Long mid, long startTime, long endTime) {
         return queryFactory.selectFrom(individualMission)
-                .where(individualMission.assigneeId.eq(mid)
-                        .and(individualMission.deadLine.between(startTime, endTime)))
+                .where(individualMission.reporterId.eq(mid)
+                        .and(individualMission.startDueDate.between(startTime, endTime))
+                        .and(individualMission.status.ne(MissionStatus.DELETED.getCode()))
+                )
                 .fetch();
     }
 }

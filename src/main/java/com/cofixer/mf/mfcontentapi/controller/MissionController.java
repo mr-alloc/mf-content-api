@@ -4,11 +4,9 @@ import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
 import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.dto.req.ChangeMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
-import com.cofixer.mf.mfcontentapi.dto.res.CreateMissionRes;
-import com.cofixer.mf.mfcontentapi.dto.res.GetMemberCalendarRes;
-import com.cofixer.mf.mfcontentapi.dto.res.GetMissionDetailRes;
-import com.cofixer.mf.mfcontentapi.dto.res.MissionDetailValue;
+import com.cofixer.mf.mfcontentapi.dto.res.*;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
 import com.cofixer.mf.mfcontentapi.service.MissionService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +47,23 @@ public class MissionController {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         MissionDetailValue missionDetail = missionService.getMissionDetail(authorizedMember.getMemberId(), missionId);
         GetMissionDetailRes response = GetMissionDetailRes.of(missionDetail);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{missionId}")
+    public ResponseEntity<ChangeMissionRes> changeMission(
+            @PathVariable("missionId") Long missionId,
+            @RequestBody ChangeMissionReq req
+    ) {
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        ChangeMissionRes response = missionService.changeMission(missionId, req, authorizedMember);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{missionId}")
+    public ResponseEntity<DeleteMissionRes> deleteMission(@PathVariable("missionId") Long missionId) {
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        DeleteMissionRes response = missionService.deleteMission(missionId, authorizedMember);
         return ResponseEntity.ok(response);
     }
 }

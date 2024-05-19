@@ -21,6 +21,6 @@ public class CreateMissionReq {
     /* 미션 시작일(utc) */
     Long startDate;
 
-    /* 기한(일 단위) */
-    Integer deadline;
+    /* 기한(초) */
+    Long deadline;
 }
