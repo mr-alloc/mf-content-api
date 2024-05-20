@@ -12,7 +12,7 @@ import static com.cofixer.mf.mfcontentapi.domain.QIndividualMission.individualMi
 
 @Repository
 @RequiredArgsConstructor
-public class IndividualMissionQueryRepositoryImpl implements IndividualMissionQueryRepository {
+public class IndividualMissionRepositoryImpl implements IndividualMissionQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -21,7 +21,7 @@ public class IndividualMissionQueryRepositoryImpl implements IndividualMissionQu
     public List<IndividualMission> findPeriodMissions(Long mid, long startTime, long endTime) {
         return queryFactory.selectFrom(individualMission)
                 .where(individualMission.reporterId.eq(mid)
-                        .and(individualMission.startDueDate.between(startTime, endTime))
+                        .and(individualMission.startDueStamp.between(startTime, endTime))
                         .and(individualMission.status.ne(MissionStatus.DELETED.getCode()))
                 )
                 .fetch();

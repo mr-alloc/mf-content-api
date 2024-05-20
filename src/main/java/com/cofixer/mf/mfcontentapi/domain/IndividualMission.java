@@ -66,11 +66,13 @@ public class IndividualMission extends Mission implements Serializable {
     public long getRemainSeconds() {
         MissionStatus currentStatus = getCurrentStatus();
         return switch (currentStatus) {
+            case CREATED -> this.deadline;
             case IN_PROGRESS -> {
                 long now = TemporalUtil.getEpochSecond();
                 long endDueStamp = Math.addExact(this.deadline, super.startStamp);
                 yield Math.subtractExact(endDueStamp, now);
             }
+            case COMPLETED -> Math.subtractExact(this.endStamp, super.startStamp);
             default -> 0;
         };
     }

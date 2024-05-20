@@ -9,7 +9,8 @@ public record FamilyMissionDetailValue(
         Integer status,
         Long assignee,
         Long reporter,
-        Long remainSeconds
+        Long remainSeconds,
+        Long estimatedSeconds
 ) {
 
     public static FamilyMissionDetailValue of(FamilyMission mission) {
@@ -20,7 +21,8 @@ public record FamilyMissionDetailValue(
                 mission.getStatus(),
                 mission.getAssigneeId(),
                 mission.getReporterId(),
-                mission.getRemainSeconds()
+                mission.getRemainSeconds(),
+                mission.getEstimatedSeconds()
         );
     }
 }

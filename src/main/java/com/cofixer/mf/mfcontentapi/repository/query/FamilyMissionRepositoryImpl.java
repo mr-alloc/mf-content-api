@@ -13,7 +13,7 @@ import static com.cofixer.mf.mfcontentapi.domain.QFamilyMission.familyMission;
 
 @Repository
 @RequiredArgsConstructor
-public class FamilyMissionQueryRepositoryImpl implements FamilyMissionQueryRepository {
+public class FamilyMissionRepositoryImpl implements FamilyMissionQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -21,7 +21,7 @@ public class FamilyMissionQueryRepositoryImpl implements FamilyMissionQueryRepos
     public List<FamilyMission> findPeriodMissions(AuthorizedMember member, long startTime, long endTime) {
         return queryFactory.selectFrom(familyMission)
                 .where(familyMission.familyId.eq(member.getFamilyId())
-                        .and(familyMission.startDueDate.between(startTime, endTime))
+                        .and(familyMission.startDueStamp.between(startTime, endTime))
                         .and(familyMission.status.ne(MissionStatus.DELETED.getCode()))
                 )
                 .fetch();

@@ -15,6 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @DynamicUpdate
@@ -41,12 +42,26 @@ public class FamilyMission extends Mission implements Serializable {
     @Column(name = "assignee_id")
     Long assigneeId;
 
+    /* 미션 종료 예정시간 */
+    @Column(name = "end_due_stamp", nullable = false)
+    Long endDueStamp;
+
+    /* 마지막 업데이트 멤버 */
     @Column(name = "last_update_member", nullable = false)
     Long lastUpdateMember;
 
-    public FamilyMission(String name, Long reporter, Long assignee, Integer missionType, Long startDate, LocalDateTime now) {
-        super(name, reporter, missionType, startDate, now);
+    public FamilyMission(
+            String name,
+            Long reporter,
+            Long assignee,
+            Integer missionType,
+            Long startDueDate,
+            Long endDueStamp,
+            LocalDateTime now
+    ) {
+        super(name, reporter, missionType, startDueDate, now);
         this.assigneeId = assignee;
+        this.endDueStamp = endDueStamp;
     }
 
     public static FamilyMission forCreate(
@@ -60,7 +75,8 @@ public class FamilyMission extends Mission implements Serializable {
                 authorizedMember.getMemberId(),
                 assignee.getMemberId(),
                 request.getType(),
-                request.getStartDate(),
+                request.getStartDueDate(),
+                request.getEndDueDate(),
                 now
         );
         newMission.familyId = authorizedMember.getFamilyId();
@@ -105,7 +121,14 @@ public class FamilyMission extends Mission implements Serializable {
         MissionStatus status = getCurrentStatus();
         return switch (status) {
             case CREATED, IN_PROGRESS -> Math.subtractExact(this.endStamp, TemporalUtil.getEpochSecond());
+            case COMPLETED -> Math.subtractExact(this.endStamp, this.startStamp);
             default -> 0;
         };
+    }
+
+    public long getEstimatedSeconds() {
+        return Optional.ofNullable(this.endDueStamp)
+                .map(ownEndDueStamp -> Math.subtractExact(ownEndDueStamp, super.startDueStamp))
+                .orElse(0L);
     }
 }

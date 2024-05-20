@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 @Getter
 @RequiredArgsConstructor
 public enum MissionType {
+    SCHEDULE(0),
     MISSION(1),
     PACKAGE(2),
     STEP(3),

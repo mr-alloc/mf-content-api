@@ -22,7 +22,7 @@ public record IndividualMissionValue(
                 mission.getStatus(),
                 mission.getName(),
                 mission.getDeadline(),
-                mission.getStartDueDate()
+                mission.getStartDueStamp()
         );
     }
 }

@@ -60,9 +60,9 @@ public abstract class Mission implements Serializable {
     @Column(name = "updated_at", nullable = false)
     Long updatedAt;
 
-    /* 미션 시작 예정일 */
-    @Column(name = "start_due_date")
-    Long startDueDate;
+    /* 미션 시작 예정 시간 */
+    @Column(name = "start_due_stamp")
+    Long startDueStamp;
 
     /* 미션 시작시간 (timestamp) */
     @Column(name = "start_stamp")
@@ -95,8 +95,8 @@ public abstract class Mission implements Serializable {
         this.reporterId = reporter;
         this.missionType = missionType;
         this.watchers = "";
-        this.startDueDate = startDate;
-        ;
+        this.startDueStamp = startDate;
+
         this.createdAt = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
         this.updatedAt = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
     }
@@ -107,9 +107,8 @@ public abstract class Mission implements Serializable {
         switch (status) {
             case IN_PROGRESS:
                 long timestamp = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
-                LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(timestamp, 0, AppContext.APP_ZONE_OFFSET);
                 //시작 에정일을 지금로 변경하여 적용
-                this.startDueDate = timestamp;
+                this.startDueStamp = timestamp;
                 this.startStamp = timestamp;
                 break;
             case COMPLETED:

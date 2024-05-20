@@ -19,7 +19,7 @@ public record FamilyMissionValue(
                 mission.getName(),
                 mission.getStartStamp(),
                 mission.getEndStamp(),
-                mission.getStartDueDate()
+                mission.getStartDueStamp()
         );
     }
 }
