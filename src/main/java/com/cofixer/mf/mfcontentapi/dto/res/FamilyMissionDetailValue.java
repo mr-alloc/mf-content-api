@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
+import com.cofixer.mf.mfcontentapi.domain.ExpandedFamilyMission;
 
 public record FamilyMissionDetailValue(
         Long id,
@@ -13,7 +13,7 @@ public record FamilyMissionDetailValue(
         Long estimatedSeconds
 ) {
 
-    public static FamilyMissionDetailValue of(FamilyMission mission) {
+    public static FamilyMissionDetailValue of(ExpandedFamilyMission mission) {
         return new FamilyMissionDetailValue(
                 mission.getId(),
                 mission.getName(),

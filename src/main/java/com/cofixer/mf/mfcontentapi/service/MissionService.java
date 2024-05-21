@@ -36,9 +36,11 @@ public class MissionService {
     private final FamilyManager familyManager;
 
     @Transactional
-    public Mission createMission(CreateMissionReq req, AuthorizedMember authorizedMember) {
-        IndividualMission mission = IndividualMission.forCreate(req, authorizedMember.getMemberId());
-        return missionManager.saveIndividualMission(mission);
+    public CreateMissionRes createMission(CreateMissionReq req, AuthorizedMember authorizedMember) {
+        Mission mission = Mission.forCreate(req, authorizedMember.getMemberId(), TemporalUtil.getEpochSecond());
+        ExpandedMission expandedMission = ExpandedMission.forCreate(req);
+        ExpandedMission newMission = missionManager.saveExpandedMission(mission, expandedMission);
+        return CreateMissionRes.of(newMission);
     }
 
     @Transactional(readOnly = true)
@@ -74,29 +76,30 @@ public class MissionService {
     }
 
     @Transactional
-    public CreateFamilyMissionRes createFamilyMission(CreateFamilyMissionReq request, AuthorizedMember authorizedMember) {
-        FamilyMember assignee = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee()));
-        FamilyMission mission = FamilyMission.forCreate(request, assignee, authorizedMember);
+    public CreateFamilyMissionRes createFamilyMission(CreateFamilyMissionReq req, AuthorizedMember authorizedMember) {
+        FamilyMember assignee = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember.getFamilyId(), req.getAssignee()));
+        Mission mission = Mission.forCreate(req, authorizedMember.getMemberId(), TemporalUtil.getEpochSecond());
+        ExpandedFamilyMission expandedFamilyMission = ExpandedFamilyMission.forCreate(req, assignee, authorizedMember);
 
-        FamilyMission newerMission = missionManager.saveFamilyMission(mission);
+        ExpandedFamilyMission newerMission = missionManager.saveFamilyMission(mission, expandedFamilyMission);
         return CreateFamilyMissionRes.of(newerMission);
     }
 
     @Transactional(readOnly = true)
     public MissionDetailValue getMissionDetail(Long memberId, Long missionId) {
-        IndividualMission mission = missionManager.getIndividualMission(missionId);
+        ExpandedMission mission = missionManager.getIndividualMission(missionId);
         return MissionDetailValue.of(mission);
     }
 
     @Transactional(readOnly = true)
     public FamilyMissionDetailValue getFamilyMissionDetail(AuthorizedMember authorizedMember, Long missionId) {
-        FamilyMission familyMission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
-        return FamilyMissionDetailValue.of(familyMission);
+        ExpandedFamilyMission expandedFamilyMission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
+        return FamilyMissionDetailValue.of(expandedFamilyMission);
     }
 
     @Transactional
     public ChangeFamilyMissionRes changeFamilyMission(AuthorizedMember authorizedMember, Long missionId, ChangeFamilyMissionReq request) {
-        FamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
+        ExpandedFamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
         //소속 패밀리 미션이 아닌경우
         ConditionUtil.throwIfTrue(Objects.equals(mission.getFamilyId(), authorizedMember.getFamilyId()), () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
         // 변경할 내용이 없는 경우
@@ -121,7 +124,7 @@ public class MissionService {
 
     @Transactional
     public ChangeMissionRes changeMission(Long missionId, ChangeMissionReq req, AuthorizedMember authorizedMember) {
-        IndividualMission mission = missionManager.getIndividualMission(missionId);
+        ExpandedMission mission = missionManager.getIndividualMission(missionId);
         //나의 미션이 아닌경우
         ConditionUtil.throwIfTrue(ObjectUtil.notEquals(mission.getReporterId(), authorizedMember.getMemberId()),
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
@@ -147,7 +150,7 @@ public class MissionService {
 
     @Transactional
     public DeleteFamilyMissionRes deleteFamilyMission(Long missionId, AuthorizedMember authorizedMember) {
-        FamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
+        ExpandedFamilyMission mission = missionManager.getFamilyMission(missionId, authorizedMember.getFamilyId());
         //소속 패밀리 미션이 아닌경우
         ConditionUtil.throwIfTrue(Objects.equals(mission.getFamilyId(), authorizedMember.getFamilyId()),
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
@@ -162,7 +165,7 @@ public class MissionService {
 
     @Transactional
     public DeleteMissionRes deleteMission(Long missionId, AuthorizedMember authorizedMember) {
-        IndividualMission mission = missionManager.getIndividualMission(missionId);
+        ExpandedMission mission = missionManager.getIndividualMission(missionId);
 
         //나의 미션이 아닌경우
         ConditionUtil.throwIfTrue(ObjectUtil.notEquals(mission.getReporterId(), authorizedMember.getMemberId()),

@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.domain.ExpandedMission;
 
 public record MissionDetailValue(
         Long id,
@@ -11,7 +11,7 @@ public record MissionDetailValue(
         Long deadline,
         Long remainSeconds
 ) {
-    public static MissionDetailValue of(IndividualMission mission) {
+    public static MissionDetailValue of(ExpandedMission mission) {
         return new MissionDetailValue(
                 mission.getId(),
                 mission.getName(),

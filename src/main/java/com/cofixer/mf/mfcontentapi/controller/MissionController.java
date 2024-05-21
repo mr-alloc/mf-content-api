@@ -2,7 +2,6 @@ package com.cofixer.mf.mfcontentapi.controller;
 
 import com.cofixer.mf.mfcontentapi.aspect.AccountAuth;
 import com.cofixer.mf.mfcontentapi.constant.AccountRoleType;
-import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.ChangeMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
@@ -26,10 +25,10 @@ public class MissionController {
     @PostMapping("/create")
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        Mission mission = missionService.createMission(req, authorizedMember);
+        CreateMissionRes createdResponse = missionService.createMission(req, authorizedMember);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CreateMissionRes(mission.getId()));
+                .body(createdResponse);
     }
 
     @GetMapping("/calendar")

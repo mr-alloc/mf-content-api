@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
+import com.cofixer.mf.mfcontentapi.domain.ExpandedFamilyMission;
 
 public record ChangeFamilyMissionRes(
 
@@ -9,7 +9,7 @@ public record ChangeFamilyMissionRes(
         String title,
         Integer status
 ) {
-    public static ChangeFamilyMissionRes of(FamilyMission mission) {
+    public static ChangeFamilyMissionRes of(ExpandedFamilyMission mission) {
         return new ChangeFamilyMissionRes(
                 mission.getMissionType(),
                 mission.getAssigneeId(),

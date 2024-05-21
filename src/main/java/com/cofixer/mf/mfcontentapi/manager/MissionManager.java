@@ -1,13 +1,14 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
-import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
-import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.domain.ExpandedFamilyMission;
+import com.cofixer.mf.mfcontentapi.domain.ExpandedMission;
 import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.exception.MissionException;
-import com.cofixer.mf.mfcontentapi.repository.FamilyMissionRepository;
-import com.cofixer.mf.mfcontentapi.repository.IndividualMissionRepository;
+import com.cofixer.mf.mfcontentapi.repository.ExpandedFamilyMissionRepository;
+import com.cofixer.mf.mfcontentapi.repository.ExpandedMissionRepository;
+import com.cofixer.mf.mfcontentapi.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,37 +20,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MissionManager {
 
-    private final IndividualMissionRepository individualMissionRepository;
-    private final FamilyMissionRepository familyMissionRepository;
+    private final ExpandedMissionRepository expandedMissionRepository;
+    private final ExpandedFamilyMissionRepository expandedFamilyMissionRepository;
+    private final MissionRepository missionRepository;
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public IndividualMission saveIndividualMission(IndividualMission mission) {
-        return individualMissionRepository.save(mission);
+    public ExpandedMission saveExpandedMission(Mission mission, ExpandedMission expandedMission) {
+        Mission newMission = missionRepository.save(mission);
+        expandedMission.couplingMission(newMission);
+
+        return expandedMissionRepository.save(expandedMission);
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public FamilyMission saveFamilyMission(FamilyMission mission) {
-        return familyMissionRepository.save(mission);
+    public ExpandedFamilyMission saveFamilyMission(Mission mission, ExpandedFamilyMission familyMission) {
+        Mission newMission = missionRepository.save(mission);
+        familyMission.couplingMission(newMission);
+
+        return expandedFamilyMissionRepository.save(familyMission);
     }
 
 
-    public List<IndividualMission> getMissions(Long mid, long startTime, long endTime) {
-        return individualMissionRepository.findPeriodMissions(mid, startTime, endTime);
+    public List<ExpandedMission> getMissions(Long mid, long startTime, long endTime) {
+        return expandedMissionRepository.findPeriodMissions(mid, startTime, endTime);
     }
 
-    public List<FamilyMission> getFamilyMissions(AuthorizedMember authorizedMember, long startTime, long endTime) {
-        return familyMissionRepository.findPeriodMissions(authorizedMember, startTime, endTime);
+    public List<ExpandedFamilyMission> getFamilyMissions(AuthorizedMember authorizedMember, long startTime, long endTime) {
+        return expandedFamilyMissionRepository.findPeriodMissions(authorizedMember, startTime, endTime);
     }
 
-    public IndividualMission getIndividualMission(Long missionId) {
-        return individualMissionRepository.findById(missionId)
-                .filter(Mission::isNotDeleted)
+    public ExpandedMission getIndividualMission(Long missionId) {
+        return expandedMissionRepository.findById(missionId)
+                .filter(ExpandedMission::isNotDeleted)
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_INDIVIDUAL_MISSION));
     }
 
-    public FamilyMission getFamilyMission(Long missionId, Long familyId) {
-        return familyMissionRepository.findByIdAndFamilyId(missionId, familyId)
-                .filter(Mission::isNotDeleted)
+    public ExpandedFamilyMission getFamilyMission(Long missionId, Long familyId) {
+        return expandedFamilyMissionRepository.findByIdAndFamilyId(missionId, familyId)
+                .filter(ExpandedFamilyMission::isNotDeleted)
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_FAMILY_MISSION));
     }
 }

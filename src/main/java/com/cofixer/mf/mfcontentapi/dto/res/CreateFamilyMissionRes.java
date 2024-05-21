@@ -1,11 +1,11 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.FamilyMission;
+import com.cofixer.mf.mfcontentapi.domain.ExpandedFamilyMission;
 
 public record CreateFamilyMissionRes(
         Long createdId
 ) {
-    public static CreateFamilyMissionRes of(FamilyMission newerMission) {
+    public static CreateFamilyMissionRes of(ExpandedFamilyMission newerMission) {
         return new CreateFamilyMissionRes(newerMission.getFamilyId());
     }
 }

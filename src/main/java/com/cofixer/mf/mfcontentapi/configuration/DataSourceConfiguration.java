@@ -44,6 +44,7 @@ public class DataSourceConfiguration {
     ) {
         return builder
                 .dataSource(dataSource)
+                .persistenceUnit("mission")
                 .packages("com.cofixer.mf.mfcontentapi.domain")
                 .build();
     }

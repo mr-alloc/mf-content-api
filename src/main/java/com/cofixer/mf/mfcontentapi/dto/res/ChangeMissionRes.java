@@ -1,6 +1,6 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.IndividualMission;
+import com.cofixer.mf.mfcontentapi.domain.ExpandedMission;
 
 public record ChangeMissionRes(
 
@@ -9,7 +9,7 @@ public record ChangeMissionRes(
         Integer status,
         Long deadline
 ) {
-    public static ChangeMissionRes of(IndividualMission mission) {
+    public static ChangeMissionRes of(ExpandedMission mission) {
         return new ChangeMissionRes(
                 mission.getMissionType(),
                 mission.getName(),

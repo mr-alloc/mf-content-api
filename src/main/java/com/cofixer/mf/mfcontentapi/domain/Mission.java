@@ -3,11 +3,12 @@ package com.cofixer.mf.mfcontentapi.domain;
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
+import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
+import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.util.StringUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
@@ -18,15 +19,24 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@FieldDefaults(level = AccessLevel.PROTECTED)
-@MappedSuperclass
-@NoArgsConstructor
-@DiscriminatorColumn
-public abstract class Mission implements Serializable {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
+@Table(name = "mf_mission", indexes = {
+        @Index(name = "idx_reporter_id", columnList = "reporter_id")
+})
+public class Mission implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    Long id;
 
     @Serial
     private static final long serialVersionUID = -1923390060168771625L;
+
+    /* 미션 부제 */
+    @Column(name = "sub_name")
+    String subName;
 
     /* 상태 */
     @Column(name = "mission_status", nullable = false)
@@ -88,20 +98,51 @@ public abstract class Mission implements Serializable {
         this.currentStatus = MissionStatus.fromCode(status);
     }
 
-    protected Mission(String name, Long reporter, Integer missionType, Long startDate, LocalDateTime now) {
-        this.status = MissionStatus.CREATED.getCode();
-        this.isPublic = true;
-        this.name = name;
-        this.reporterId = reporter;
-        this.missionType = missionType;
-        this.watchers = "";
-        this.startDueStamp = startDate;
+    public static Mission forCreate(CreateMissionReq req, Long reporter, Long timeStamp) {
+        Mission newer = new Mission();
+        newer.status = MissionStatus.CREATED.getCode();
+        newer.isPublic = true;
+        newer.name = req.getName();
+        newer.subName = req.getSubName();
+        newer.reporterId = reporter;
+        newer.missionType = req.getType();
+        newer.watchers = String.valueOf(reporter);
+        newer.startDueStamp = req.getStartDate();
 
-        this.createdAt = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
-        this.updatedAt = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
+        newer.startStamp = 0L;
+        newer.endStamp = 0L;
+
+        newer.createdAt = timeStamp;
+        newer.updatedAt = timeStamp;
+
+        return newer;
     }
 
-    public abstract Long getId();
+    public static Mission forCreate(CreateFamilyMissionReq req, Long reporter, Long timestamp) {
+        Mission newer = new Mission();
+        newer.status = MissionStatus.CREATED.getCode();
+        newer.isPublic = true;
+        newer.subName = req.getSubName();
+        newer.name = req.getName();
+        newer.reporterId = reporter;
+        newer.missionType = req.getType();
+        newer.watchers = String.valueOf(reporter);
+        newer.startDueStamp = req.getStartDueDate();
+
+        newer.startStamp = 0L;
+        newer.endStamp = 0L;
+
+        newer.createdAt = timestamp;
+        newer.updatedAt = timestamp;
+
+        return newer;
+    }
+
+
+    public void changeTitle(String title, LocalDateTime now) {
+        this.name = title;
+        renewUpdatedAt(now);
+    }
 
     public void changeStatus(MissionStatus status, LocalDateTime now) {
         switch (status) {
@@ -140,6 +181,5 @@ public abstract class Mission implements Serializable {
         this.missionType = missionType.getValue();
         this.renewUpdatedAt(now);
     }
-
-    public abstract long getRemainSeconds();
 }
+
