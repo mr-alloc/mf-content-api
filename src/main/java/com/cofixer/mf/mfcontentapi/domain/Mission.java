@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -54,11 +55,14 @@ public class Mission implements Serializable {
     @Column(name = "reporter_id", nullable = false)
     Long reporterId;
 
+    @Column(name = "place_id")
+    Long placeId;
+
     /* 미션 타입 1: 일반미션, 2: 미션팩, 3: 스텝미션 */
     @Column(name = "mission_type", nullable = false)
     Integer missionType;
 
-    /**/
+    /* 관람자, 스케쥴일 경우 참가자 */
     @Column(name = "watcher", nullable = false)
     String watchers;
 
@@ -105,6 +109,7 @@ public class Mission implements Serializable {
         newer.name = req.getName();
         newer.subName = req.getSubName();
         newer.reporterId = reporter;
+        newer.placeId = 0L;
         newer.missionType = req.getType();
         newer.watchers = String.valueOf(reporter);
         newer.startDueStamp = req.getStartDate();
@@ -114,6 +119,12 @@ public class Mission implements Serializable {
 
         newer.createdAt = timeStamp;
         newer.updatedAt = timeStamp;
+
+        Optional.ofNullable(MissionType.fromValue(req.getType()))
+                .filter(MissionType::isSchedule)
+                .ifPresent(type -> {
+                    newer.status = MissionStatus.ALWAYS.getCode();
+                });
 
         return newer;
     }

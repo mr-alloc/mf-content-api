@@ -1,6 +1,7 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
+import com.cofixer.mf.mfcontentapi.constant.MissionType;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import jakarta.persistence.*;
@@ -48,7 +49,7 @@ public class ExpandedMission implements Serializable {
         mission.renewUpdatedAt(now);
     }
 
-    public long getRemainSeconds() {
+    public Long getRemainSeconds() {
         MissionStatus currentStatus = mission.getCurrentStatus();
         return switch (currentStatus) {
             case CREATED -> this.deadline;
@@ -58,11 +59,14 @@ public class ExpandedMission implements Serializable {
                 yield Math.subtractExact(endDueStamp, now);
             }
             case COMPLETED -> Math.subtractExact(mission.getEndStamp(), mission.getStartStamp());
-            default -> 0;
+            default -> 0L;
         };
     }
 
     public void couplingMission(Mission newMission) {
         this.id = newMission.getId();
+        switch (MissionType.fromValue(newMission.getMissionType())) {
+            case SCHEDULE -> this.deadline = 0L;
+        }
     }
 }

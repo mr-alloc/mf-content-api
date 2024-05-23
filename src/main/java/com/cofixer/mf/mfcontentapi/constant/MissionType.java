@@ -42,4 +42,8 @@ public enum MissionType {
 
         return CACHED.get(value);
     }
+
+    public boolean isSchedule() {
+        return this == SCHEDULE;
+    }
 }

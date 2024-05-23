@@ -104,7 +104,7 @@ public class ExpandedFamilyMission implements Serializable {
         };
     }
 
-    public long getEstimatedSeconds() {
+    public Long getEstimatedSeconds() {
         return Optional.ofNullable(this.endDueStamp)
                 .map(ownEndDueStamp -> Math.subtractExact(ownEndDueStamp, mission.getStartDueStamp()))
                 .orElse(0L);

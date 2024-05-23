@@ -12,7 +12,8 @@ public enum MissionStatus {
     CREATED(0),
     IN_PROGRESS(1),
     COMPLETED(2),
-    DELETED(3);
+    DELETED(3),
+    ALWAYS(4);
 
     private static final Map<Integer, MissionStatus> CACHED = CollectionUtil.arrayToMap(values(), MissionStatus::getCode);
     private final int code;
