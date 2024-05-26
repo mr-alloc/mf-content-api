@@ -1,7 +1,12 @@
 package com.cofixer.mf.mfcontentapi.util;
 
 import com.cofixer.mf.mfcontentapi.constant.RegularExpression;
+import com.cofixer.mf.mfcontentapi.exception.ValidateException;
 import lombok.NoArgsConstructor;
+
+import java.util.regex.Matcher;
+
+import static com.cofixer.mf.mfcontentapi.constant.DeclaredValidateResult.FAILED_AT_COMMON_VALIDATION;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class ValidateUtil {
@@ -21,5 +26,18 @@ public class ValidateUtil {
         }
 
         return true;
+    }
+
+    public static Matcher assertValidGetMatcher(String value, RegularExpression regularExpression) {
+        if (!isValid(value, regularExpression)) {
+            throw new ValidateException(FAILED_AT_COMMON_VALIDATION);
+        }
+
+
+        Matcher matcher = regularExpression.getPattern().matcher(value);
+        if (!matcher.matches()) {
+            throw new ValidateException(FAILED_AT_COMMON_VALIDATION);
+        }
+        return matcher;
     }
 }

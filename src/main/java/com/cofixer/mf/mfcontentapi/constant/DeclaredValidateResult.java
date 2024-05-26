@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum DeclaredValidateResult implements DeclaredResult {
-    FAILED_AT_COMMON_VALIDATION(-99, HttpStatus.BAD_REQUEST);
+    FAILED_AT_COMMON_VALIDATION(-99, HttpStatus.BAD_REQUEST),
+    ;
 
     private final int code;
     private HttpStatus httpStatus;
