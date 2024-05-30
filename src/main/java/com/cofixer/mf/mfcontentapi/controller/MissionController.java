@@ -22,7 +22,7 @@ public class MissionController {
     private final MissionService missionService;
 
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         CreateMissionRes createdResponse = missionService.createMission(req, authorizedMember);

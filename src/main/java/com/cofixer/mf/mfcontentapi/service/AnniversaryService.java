@@ -31,7 +31,7 @@ public class AnniversaryService {
     public AnniversaryValue createAnniversary(CreateAnniversaryReq req, AuthorizedMember authorizedMember) {
         Anniversary newer = switch (AnniversaryType.fromValue(req.type())) {
             case PERIOD -> Anniversary.forPeriod(authorizedMember, req);
-            case MULTIPLE -> Anniversary.forMultiple(authorizedMember, req);
+            case SINGLE, MULTIPLE -> Anniversary.forMultiple(authorizedMember, req);
         };
 
         return AnniversaryValue.of(anniversaryManager.saveAnniversary(newer));

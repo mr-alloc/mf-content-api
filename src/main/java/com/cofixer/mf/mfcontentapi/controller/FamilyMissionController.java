@@ -25,8 +25,7 @@ public class FamilyMissionController {
 
     private final MissionService missionService;
 
-    @FamilyMemberAuth(MemberRoleType.NONE)
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<CreateFamilyMissionRes> createFamilyMission(
             @RequestBody CreateFamilyMissionReq request
     ) {

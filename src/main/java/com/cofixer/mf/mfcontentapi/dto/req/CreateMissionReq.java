@@ -19,7 +19,7 @@ public class CreateMissionReq {
     Integer type;
 
     /* 미션 시작일(utc) */
-    Long startDate;
+    Long startDueStamp;
 
     /* 기한(초) */
     Long deadline;

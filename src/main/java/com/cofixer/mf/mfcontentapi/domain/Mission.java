@@ -112,7 +112,7 @@ public class Mission implements Serializable {
         newer.placeId = 0L;
         newer.missionType = req.getType();
         newer.watchers = String.valueOf(reporter);
-        newer.startDueStamp = req.getStartDate();
+        newer.startDueStamp = req.getStartDueStamp();
 
         newer.startStamp = 0L;
         newer.endStamp = 0L;
@@ -138,7 +138,7 @@ public class Mission implements Serializable {
         newer.reporterId = reporter;
         newer.missionType = req.getType();
         newer.watchers = String.valueOf(reporter);
-        newer.startDueStamp = req.getStartDueDate();
+        newer.startDueStamp = req.getStartDueStamp();
 
         newer.startStamp = 0L;
         newer.endStamp = 0L;

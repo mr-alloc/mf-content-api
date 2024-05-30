@@ -24,8 +24,8 @@ public class CreateFamilyMissionReq {
     Integer type;
 
     /* 미션 시작일 */
-    Long startDueDate;
+    Long startDueStamp;
 
     /* 미션 종료일 */
-    Long endDueDate;
+    Long endDueStamp;
 }

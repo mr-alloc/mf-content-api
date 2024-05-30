@@ -43,7 +43,6 @@ public class Anniversary implements Serializable {
 
     Long family;
 
-
     @Column(name = "start_at")
     Long startAt;
 

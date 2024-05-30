@@ -22,7 +22,7 @@ public record CreateAnniversaryReq(
     public CreateAnniversaryReq validate(Supplier<CommonException> validateExceptionSupplier) {
         boolean isValid = switch (AnniversaryType.fromValue(type)) {
             case PERIOD -> ValidateUtil.isValidStampRange(startAt, endAt);
-            case MULTIPLE -> {
+            case SINGLE, MULTIPLE -> {
                 boolean validYearMonth = ValidateUtil.isValid(yearMonth, RegularExpression.YEAR_MONTH);
                 boolean validLength = Days.values().length >= days.size();
                 yield validYearMonth && validLength;

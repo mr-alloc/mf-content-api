@@ -63,7 +63,7 @@ public class ExpandedFamilyMission implements Serializable {
 
         newer.familyId = authorizedMember.getFamilyId();
         newer.assigneeId = assignee.getMemberId();
-        newer.endDueStamp = request.getEndDueDate();
+        newer.endDueStamp = request.getEndDueStamp();
         newer.lastUpdateMember = authorizedMember.getMemberId();
 
         return newer;

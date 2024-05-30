@@ -72,6 +72,7 @@ public class MissionService {
         List<HolidayValue> holidays = holidayManager.getAllHolidays().stream()
                 .map(HolidayValue::of)
                 .toList();
+
         return GetFamilyCalendarRes.of(missions, holidays);
     }
 
