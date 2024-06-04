@@ -33,7 +33,6 @@ public class ValidateUtil {
             throw new ValidateException(FAILED_AT_COMMON_VALIDATION);
         }
 
-
         Matcher matcher = regularExpression.getPattern().matcher(value);
         if (!matcher.matches()) {
             throw new ValidateException(FAILED_AT_COMMON_VALIDATION);

@@ -21,12 +21,13 @@ public class AnniversaryController {
 
     private final AnniversaryService anniversaryService;
 
-    @GetMapping("/{yearMonth}")
+    @GetMapping
     public ResponseEntity<GetAnniversaryRes> getAnniversaries(
-            @PathVariable("yearMonth") String yearMonth
+            @RequestParam("startAt") Long startAt,
+            @RequestParam("endAt") Long endAt
     ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        List<AnniversaryValue> anniversaries = anniversaryService.getAnniversaries(yearMonth, authorizedMember);
+        List<AnniversaryValue> anniversaries = anniversaryService.getAnniversaries(startAt, endAt, authorizedMember);
 
         return ResponseEntity.ok(GetAnniversaryRes.of(anniversaries));
     }
@@ -36,8 +37,8 @@ public class AnniversaryController {
             @RequestBody CreateAnniversaryReq req
     ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        AnniversaryValue anniversaryValue = anniversaryService.createAnniversary(req, authorizedMember);
+        List<AnniversaryValue> anniversaries = anniversaryService.createAnniversaries(req, authorizedMember);
 
-        return ResponseEntity.ok(CreateAnniversaryRes.of(anniversaryValue));
+        return ResponseEntity.ok(CreateAnniversaryRes.of(anniversaries));
     }
 }

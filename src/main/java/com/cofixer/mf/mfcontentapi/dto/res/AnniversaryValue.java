@@ -1,32 +1,19 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.constant.Days;
 import com.cofixer.mf.mfcontentapi.domain.Anniversary;
-
-import java.util.List;
+import com.cofixer.mf.mfcontentapi.domain.Schedule;
+import com.cofixer.mf.mfcontentapi.dto.ScheduleValue;
 
 public record AnniversaryValue(
         Long id,
-        Integer type,
         String name,
-        Long memberId,
-        Long familyId,
-        Long startAt,
-        Long endAt,
-        String yearMonth,
-        List<Integer> days
+        ScheduleValue schedule
 ) {
-    public static AnniversaryValue of(Anniversary anniversary) {
+    public static AnniversaryValue of(Anniversary anniversary, Schedule schedule) {
         return new AnniversaryValue(
                 anniversary.getId(),
-                anniversary.getType(),
                 anniversary.getName(),
-                anniversary.getReporter(),
-                anniversary.getFamily(),
-                anniversary.getStartAt(),
-                anniversary.getEndAt(),
-                anniversary.getYearMonth(),
-                Days.toBits(anniversary.getDays())
+                ScheduleValue.of(schedule)
         );
     }
 }

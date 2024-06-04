@@ -47,4 +47,9 @@ public class AuthorizedMember {
         return familyId != null && !familyId.equals(UserProtocol.NOT_SELECTED_FAMILY_ID);
     }
 
+    public Long getFamilyId() {
+        return forFamilyMember()
+                ? familyId
+                : 0L;
+    }
 }

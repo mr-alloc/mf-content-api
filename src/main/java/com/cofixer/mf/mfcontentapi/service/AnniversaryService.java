@@ -1,39 +1,62 @@
 package com.cofixer.mf.mfcontentapi.service;
 
-import com.cofixer.mf.mfcontentapi.constant.AnniversaryType;
+import com.cofixer.mf.mfcontentapi.constant.DeclaredValidateResult;
+import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
 import com.cofixer.mf.mfcontentapi.domain.Anniversary;
-import com.cofixer.mf.mfcontentapi.dto.AnniversarySearchFilter;
+import com.cofixer.mf.mfcontentapi.domain.Schedule;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAnniversaryReq;
 import com.cofixer.mf.mfcontentapi.dto.res.AnniversaryValue;
+import com.cofixer.mf.mfcontentapi.exception.ValidateException;
 import com.cofixer.mf.mfcontentapi.manager.AnniversaryManager;
+import com.cofixer.mf.mfcontentapi.manager.ScheduleManager;
+import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
+import com.cofixer.mf.mfcontentapi.util.ValidateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
 public class AnniversaryService {
 
     private final AnniversaryManager anniversaryManager;
+    private final ScheduleManager scheduleManager;
 
     @Transactional(readOnly = true)
-    public List<AnniversaryValue> getAnniversaries(String yearMonth, AuthorizedMember authorizedMember) {
-        AnniversarySearchFilter searchFilter = AnniversarySearchFilter.of(authorizedMember, yearMonth);
-        return anniversaryManager.getAnniversaries(searchFilter).stream()
-                .map(AnniversaryValue::of)
+    public List<AnniversaryValue> getAnniversaries(Long startAt, Long endAt, AuthorizedMember authorizedMember) {
+        if (ValidateUtil.isValidStampRange(startAt, endAt)) {
+            throw new ValidateException(DeclaredValidateResult.FAILED_AT_COMMON_VALIDATION);
+        }
+
+        Map<Long, Schedule> scheduleMap = CollectionUtil.toMap(
+                scheduleManager.getSchedules(authorizedMember, startAt, endAt),
+                Schedule::getId
+        );
+
+        return anniversaryManager.getAnniversaries(scheduleMap.keySet()).stream()
+                .filter(anniversary -> scheduleMap.containsKey(anniversary.getScheduleId()))
+                .map(anniversary -> AnniversaryValue.of(anniversary, scheduleMap.get(anniversary.getScheduleId())))
                 .toList();
     }
 
     @Transactional
-    public AnniversaryValue createAnniversary(CreateAnniversaryReq req, AuthorizedMember authorizedMember) {
-        Anniversary newer = switch (AnniversaryType.fromValue(req.type())) {
-            case PERIOD -> Anniversary.forPeriod(authorizedMember, req);
-            case SINGLE, MULTIPLE -> Anniversary.forMultiple(authorizedMember, req);
-        };
+    public List<AnniversaryValue> createAnniversaries(CreateAnniversaryReq req, AuthorizedMember authorizedMember) {
+        List<Schedule> schedules = Schedule.of(authorizedMember, req.scheduleInfo(), ScheduleType.ANNIVERSARY).stream()
+                .map(scheduleManager::saveSchedule)
+                .toList();
 
-        return AnniversaryValue.of(anniversaryManager.saveAnniversary(newer));
+        List<Anniversary> anniversaries = schedules.stream()
+                .map(schedule -> Anniversary.forCreate(req, schedule))
+                .toList();
+
+        Map<Long, Schedule> scheduleMap = CollectionUtil.toMap(schedules, Schedule::getId);
+        return anniversaryManager.saveAnniversaries(anniversaries).stream()
+                .map(anniversary -> AnniversaryValue.of(anniversary, scheduleMap.get(anniversary.getScheduleId())))
+                .toList();
     }
+
 }
