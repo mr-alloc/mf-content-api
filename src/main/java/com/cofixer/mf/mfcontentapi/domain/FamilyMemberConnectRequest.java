@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Getter
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 @Entity
+@Comment("패밀리 연결 요청(양방향)")
 @Table(name = "mf_family_member_connect_request", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"family_id", "member_id", "connect_direction"})
 })
@@ -27,9 +29,11 @@ public class FamilyMemberConnectRequest implements Serializable {
     @EmbeddedId
     Id id;
 
+    @Comment("가입요청 소개")
     @Column(name = "introduce", nullable = false, length = 500)
     String introduce;
 
+    @Comment("요청일시")
     @Column(name = "requested_at", nullable = false)
     Long requestedAt;
 

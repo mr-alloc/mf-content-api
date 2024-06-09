@@ -22,6 +22,7 @@ import java.util.List;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Comment("미션 메인 정보")
 @Table(name = "mf_mission", indexes = {
         @Index(name = "idx_schedule_id", columnList = "schedule_id"),
         @Index(name = "idx_place_id", columnList = "place_id"),

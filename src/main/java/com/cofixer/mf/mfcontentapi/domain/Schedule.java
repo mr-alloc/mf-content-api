@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.List;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Comment("스케쥴 정보")
 @Table(name = "mf_schedule", indexes = {
         @Index(name = "idx_family", columnList = "family"),
         @Index(name = "idx_reporter", columnList = "reporter"),
@@ -33,27 +35,35 @@ public class Schedule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Comment("스케쥴 타입 1: 기념일, 2: 미션")
     @Column(name = "type")
     Integer type;
 
+    @Comment("생성멤버")
     @Column(name = "reporter", nullable = false)
     Long reporter;
 
+    @Comment("패밀리 ID")
     @Column(name = "family")
     Long family;
 
+    @Comment("스케쥴 모드[1: 단일, 2: 다중, 3: 기간, 4: 반복]")
     @Column(name = "mode", nullable = false)
     Integer mode;
 
+    @Comment("시작일")
     @Column(name = "start_at")
     Long startAt;
 
+    @Comment("종료일")
     @Column(name = "end_at")
     Long endAt;
 
+    @Comment("반복 옵션[-1: 없음, 0: 매주, 1: 매월, 2: 매년]")
     @Column(name = "repeat_option", nullable = false)
     Integer repeatOption;
 
+    @Comment("반복 값[repeat_option 0: 각 요일별 Bit 위치 합, 2 또는 3: 기준일]")
     @Column(name = "repeat_value", nullable = false)
     Integer repeatValue;
 

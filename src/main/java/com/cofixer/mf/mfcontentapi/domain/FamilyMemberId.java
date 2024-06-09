@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,9 +21,11 @@ public class FamilyMemberId implements Serializable {
     @Serial
     private static final long serialVersionUID = 7209203449087964255L;
 
+    @Comment("패밀리 ID")
     @Column(name = "family_id", nullable = false)
     Long familyId;
 
+    @Comment("멤버 ID")
     @Column(name = "member_id", nullable = false)
     Long memberId;
 

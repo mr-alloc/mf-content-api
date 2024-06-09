@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
@@ -27,15 +28,19 @@ public class FamilyMember implements Serializable {
     @EmbeddedId
     FamilyMemberId id;
 
+    @Comment("닉네임")
     @Column(name = "nickname", nullable = false)
     String nickname;
 
+    @Comment("멤버 역할")
     @Column(name = "member_role", nullable = false)
     Integer memberRole;
 
+    @Comment("프로필 이미지 URL")
     @Column(name = "profile_image_url")
     String profileImageUrl;
 
+    @Comment("가입일시")
     @Column(name = "registered_at", nullable = false)
     Long registeredAt;
 

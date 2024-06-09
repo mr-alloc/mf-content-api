@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Comment("미션 상세 정보")
 @Table(name = "mf_mission_detail")
 public class MissionDetail implements Serializable {
     @Serial
@@ -22,7 +24,7 @@ public class MissionDetail implements Serializable {
     @Column(name = "mission_id")
     Long missionId;
 
-    /* 데드라인 (초) */
+    @Comment("제한시간(초): 시작 시 적용")
     @Column(name = "deadline")
     Long deadline;
 

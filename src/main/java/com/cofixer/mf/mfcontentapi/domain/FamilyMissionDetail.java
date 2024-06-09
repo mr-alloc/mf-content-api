@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
@@ -17,20 +18,23 @@ import java.io.Serializable;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @DynamicUpdate
 @Entity
+@Comment("패밀리 미션 상세 정보")
 @Table(name = "mf_family_mission_detail")
 public class FamilyMissionDetail implements Serializable {
     @Serial
     private static final long serialVersionUID = -7457655598407925966L;
 
+
     @Id
+    @Comment("미션 ID")
     @Column(name = "mission_id")
     Long missionId;
 
-    /* 담당자 아이디 */
+    @Comment("담당자 아이디")
     @Column(name = "assignee_id")
     Long assigneeId;
 
-    /* 마지막 업데이트 멤버 */
+    @Comment("마지막 업데이트 멤버")
     @Column(name = "last_update_member", nullable = false)
     Long lastUpdateMember;
 

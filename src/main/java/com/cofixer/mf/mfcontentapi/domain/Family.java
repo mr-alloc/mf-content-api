@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @DynamicUpdate
 @Entity
+@Comment("패밀리 정보")
 @Table(name = "mf_family", uniqueConstraints = {
         @UniqueConstraint(name = "uk_invite_code", columnNames = {"invite_code"})
 })
@@ -30,24 +32,31 @@ public class Family implements Serializable {
     @Column(name = "id")
     Long id;
 
+    @Comment("생성자 ID")
     @Column(name = "creator_id", nullable = false)
     Long creatorId;
 
+    @Comment("패밀리명")
     @Column(name = "name", nullable = false)
     String name;
 
+    @Comment("패밀리 설명")
     @Column(name = "description")
     String description;
 
+    @Comment("로고 이미지 URL")
     @Column(name = "logo_image_url")
     String logoImageUrl;
 
+    @Comment("기본 색상 HEX 코드")
     @Column(name = "default_color_hex")
     String defaultColorHex;
 
+    @Comment("초대 코드")
     @Column(name = "invite_code")
     String inviteCode;
 
+    @Comment("생성일시")
     @Column(name = "created_at", nullable = false)
     Long createdAt;
 

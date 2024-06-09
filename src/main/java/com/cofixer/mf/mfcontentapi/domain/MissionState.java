@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Comment("미션 상태 정보")
 @Table(name = "mf_mission_state")
 public class MissionState implements Serializable {
 
@@ -22,19 +24,20 @@ public class MissionState implements Serializable {
     @Id
     Long id;
 
-    /* 미션 ID */
+    @Comment("미션 ID")
     @Column(name = "mission_id", nullable = false)
     Long missionId;
 
     /* 상태 */
+    @Comment("미션 상태[0: 생성, 1: 진행중, 2: 완료, 3: 삭제, 4: 항상진행(일정)]")
     @Column(name = "mission_status", nullable = false)
     Integer status;
 
-    /* 미션 시작시간 (timestamp) */
+    @Comment("미션 시작시간 (timestamp)")
     @Column(name = "start_stamp")
     Long startStamp;
 
-    /* 미션 종료시간 (timestamp) */
+    @Comment("미션 종료시간 (timestamp)")
     @Column(name = "end_stamp")
     Long endStamp;
 
