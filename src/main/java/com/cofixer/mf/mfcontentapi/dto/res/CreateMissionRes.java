@@ -1,12 +1,11 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.ExpandedMission;
+import java.util.List;
 
 public record CreateMissionRes(
-        /* 생성된 미션 ID */
-        Long createdMissionId
+        List<MissionDetailValue> created
 ) {
-    public static CreateMissionRes of(ExpandedMission mission) {
-        return new CreateMissionRes(mission.getId());
+    public static CreateMissionRes of(List<MissionDetailValue> created) {
+        return new CreateMissionRes(created);
     }
 }

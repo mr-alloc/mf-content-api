@@ -12,4 +12,5 @@ public enum ScheduleType {
     ;
 
     private final Integer value;
+
 }

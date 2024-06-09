@@ -13,6 +13,7 @@ public class ChangeFamilyMissionReq {
     Long assignee;
     String title;
     Integer status;
+    Long stateId;
 
     public boolean needChangeType() {
         return type != null && MissionType.has(type);

@@ -12,6 +12,7 @@ public class ChangeMissionReq {
     String title;
     Integer status;
     Long deadline;
+    Long stateId;
 
     public boolean needChangeType() {
         return type != null && MissionType.has(type);

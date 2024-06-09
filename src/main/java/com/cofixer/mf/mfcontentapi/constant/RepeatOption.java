@@ -11,14 +11,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum RepeatOption {
     NONE(-1),
-    WEEKLY(1),
-    MONTHLY(2),
-    YEARLY(3);
+    WEEKLY(0),
+    MONTHLY(1),
+    YEARLY(2);
 
     private static final Map<Integer, RepeatOption> CACHED = CollectionUtil.toMap(List.of(values()), RepeatOption::getValue);
     private final Integer value;
 
     public static RepeatOption fromValue(Integer value) {
         return CACHED.get(value);
+    }
+
+    public boolean isWeek() {
+        return this == WEEKLY;
     }
 }

@@ -64,13 +64,13 @@ public enum Days {
         return CACHED_BY_VALUE.get(value);
     }
 
-    public static List<Days> findDays(List<Integer> tagList) {
+    public static List<Days> findDays(List<Integer> dayList) {
         //변경이 없는경우
-        if (tagList == null) return null;
+        if (dayList == null) return null;
         //아무것도 선택 하지 않은경우
-        if (tagList.isEmpty()) return List.of();
+        if (dayList.isEmpty()) return List.of();
 
-        int selected = tagList.stream()
+        int selected = dayList.stream()
                 .map(Days::fromBitPosition)
                 .filter(Objects::nonNull)
                 .mapToInt(Days::getValue)
@@ -94,25 +94,25 @@ public enum Days {
                 .toList();
     }
 
-    public static int toSelected(Collection<Days> tags) {
-        return tags.stream()
+    public static int toSelected(Collection<Days> days) {
+        return days.stream()
                 .mapToInt(Days::getValue)
                 .sum();
     }
 
-    public static Integer toSelected(List<Integer> tagNumbers) {
-        List<Days> tags = findDays(tagNumbers);
-        if (tags == null || tags.isEmpty()) return 0;
+    public static Integer toSelected(List<Integer> dayNumbers) {
+        List<Days> days = findDays(dayNumbers);
+        if (days == null || days.isEmpty()) return 0;
 
-        return toSelected(tags);
+        return toSelected(days);
     }
 
     public static Integer toSelected(String separated) {
-        List<Integer> tagNumbers = Arrays.stream(separated.split(","))
+        List<Integer> dayNumbers = Arrays.stream(separated.split(","))
                 .filter(StringUtils::hasLength)
                 .map(Integer::parseInt).toList();
 
-        return toSelected(tagNumbers);
+        return toSelected(dayNumbers);
     }
 
 }

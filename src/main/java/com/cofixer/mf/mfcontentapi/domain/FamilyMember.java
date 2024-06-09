@@ -39,8 +39,8 @@ public class FamilyMember implements Serializable {
     @Column(name = "registered_at", nullable = false)
     Long registeredAt;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "family_id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
     Family family;
 
     public static FamilyMember forCreate(FamilyMemberId familyMemberId, MemberRoleType memberRoleType) {

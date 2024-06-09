@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @AccountAuth(AccountRoleType.MEMBER)
@@ -30,20 +32,20 @@ public class FamilyMissionController {
             @RequestBody CreateFamilyMissionReq request
     ) {
         AuthorizedMember member = AuthorizedService.getMember();
-        CreateFamilyMissionRes createdResponse = missionService.createFamilyMission(request, member);
+        List<FamilyMissionDetailValue> created = missionService.createFamilyMission(request, member);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(createdResponse);
+                .body(CreateFamilyMissionRes.of(created));
     }
 
 
     @GetMapping("/calendar")
     public ResponseEntity<GetFamilyCalendarRes> getFamilyCalendar(
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate
+            @RequestParam("startAt") Long startAt,
+            @RequestParam("endAt") Long endAt
     ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        GetFamilyCalendarRes response = missionService.getFamilyCalendar(authorizedMember, startDate, endDate);
+        GetFamilyCalendarRes response = missionService.getFamilyCalendar(authorizedMember, startAt, endAt);
         return ResponseEntity.ok(response);
     }
 

@@ -1,6 +1,5 @@
 package com.cofixer.mf.mfcontentapi.constant;
 
-import com.cofixer.mf.mfcontentapi.exception.ValidateException;
 import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +20,6 @@ public enum ScheduleMode {
     private final Integer value;
 
     public static ScheduleMode fromValue(Integer value) {
-        if (PERIOD.value.equals(value)) {
-            return PERIOD;
-        } else if (MULTIPLE.value.equals(value)) {
-            return MULTIPLE;
-        } else if (SINGLE.value.equals(value)) {
-            return SINGLE;
-        } else {
-            throw new ValidateException(DeclaredValidateResult.FAILED_AT_COMMON_VALIDATION, "Invalid anniversary type value: " + value);
-        }
+        return CACHED.get(value);
     }
 }

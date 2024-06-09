@@ -1,28 +1,43 @@
 package com.cofixer.mf.mfcontentapi.dto.res;
 
-import com.cofixer.mf.mfcontentapi.domain.ExpandedFamilyMission;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMissionDetail;
+import com.cofixer.mf.mfcontentapi.domain.Mission;
+import com.cofixer.mf.mfcontentapi.domain.Schedule;
+import com.cofixer.mf.mfcontentapi.dto.MissionStateValue;
+import com.cofixer.mf.mfcontentapi.dto.ScheduleValue;
+
+import java.util.List;
 
 public record FamilyMissionDetailValue(
         Long id,
         String name,
         Integer type,
-        Integer status,
         Long assignee,
-        Long reporter,
-        Long remainSeconds,
-        Long estimatedSeconds
+        ScheduleValue schedule,
+        List<MissionStateValue> states
+
 ) {
 
-    public static FamilyMissionDetailValue of(ExpandedFamilyMission mission) {
+    public static FamilyMissionDetailValue of(FamilyMissionDetail detail, List<MissionStateValue> states, Schedule schedule) {
+        Mission mission = detail.getMission();
         return new FamilyMissionDetailValue(
-                mission.getId(),
+                detail.getMissionId(),
                 mission.getName(),
                 mission.getMissionType(),
-                mission.getStatus(),
-                mission.getAssigneeId(),
-                mission.getReporterId(),
-                mission.getRemainSeconds(),
-                mission.getEstimatedSeconds()
+                detail.getAssigneeId(),
+                ScheduleValue.of(schedule),
+                states
+        );
+    }
+
+    public static FamilyMissionDetailValue of(FamilyMissionDetail detail, Mission mission, List<MissionStateValue> states, Schedule schedule) {
+        return new FamilyMissionDetailValue(
+                detail.getMissionId(),
+                mission.getName(),
+                mission.getMissionType(),
+                detail.getAssigneeId(),
+                ScheduleValue.of(schedule),
+                states
         );
     }
 }

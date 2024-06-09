@@ -1,26 +1,35 @@
 package com.cofixer.mf.mfcontentapi.dto.req;
 
-import jakarta.validation.constraints.NotEmpty;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import com.cofixer.mf.mfcontentapi.dto.ScheduleInfo;
+import com.cofixer.mf.mfcontentapi.exception.CommonException;
+import com.cofixer.mf.mfcontentapi.util.ValidateUtil;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
-public class CreateMissionReq {
-    /* 미션명 */
-    @NotEmpty
-    String name;
+import java.util.Optional;
+import java.util.function.Supplier;
 
-    /* 미션 부제 */
-    String subName;
+public record CreateMissionReq(
 
-    /* 미션 타입 */
-    Integer type;
+        /* 미션명 */
+        String name,
 
-    /* 미션 시작일(utc) */
-    Long startDueStamp;
+        /* 미션 부제 */
+        String subName,
 
-    /* 기한(초) */
-    Long deadline;
+        /* 미션 타입 */
+        Integer type,
+
+        /* 기한(초) */
+        Optional<Long> deadline,
+
+        ScheduleInfo scheduleInfo
+) implements ValidatableRequest<CreateMissionReq> {
+
+    @Override
+    public CreateMissionReq validate(Supplier<CommonException> validateExceptionSupplier) {
+        if (!ValidateUtil.isValidScheduleInfo(scheduleInfo)) {
+            throw validateExceptionSupplier.get();
+        }
+
+        return this;
+    }
 }

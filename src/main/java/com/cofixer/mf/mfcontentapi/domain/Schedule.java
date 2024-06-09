@@ -3,6 +3,7 @@ package com.cofixer.mf.mfcontentapi.domain;
 import com.cofixer.mf.mfcontentapi.constant.RepeatOption;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleMode;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
+import com.cofixer.mf.mfcontentapi.constant.Weeks;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.ScheduleInfo;
 import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
@@ -54,10 +55,9 @@ public class Schedule implements Serializable {
     Integer repeatOption;
 
     @Column(name = "repeat_value", nullable = false)
-    Long repeatValue;
+    Integer repeatValue;
 
-    public static List<Schedule> of(AuthorizedMember authorizedMember, ScheduleInfo scheduleInfo, ScheduleType scheduleType) {
-
+    public static List<Schedule> forCreate(AuthorizedMember authorizedMember, ScheduleInfo scheduleInfo, ScheduleType scheduleType) {
         ScheduleMode scheduleMode = ScheduleMode.fromValue(scheduleInfo.scheduleMode());
 
         return switch (scheduleMode) {
@@ -70,7 +70,7 @@ public class Schedule implements Serializable {
                 schedule.startAt = scheduleInfo.startAt();
                 schedule.endAt = scheduleInfo.endAt();
                 schedule.repeatOption = RepeatOption.NONE.getValue();
-                schedule.repeatValue = 0L;
+                schedule.repeatValue = 0;
                 yield List.of(schedule);
             }
             case SINGLE, MULTIPLE -> scheduleInfo.selected().stream().map(timestamp -> {
@@ -79,10 +79,10 @@ public class Schedule implements Serializable {
                 schedule.reporter = authorizedMember.getMemberId();
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
-                schedule.startAt = scheduleInfo.startAt();
+                schedule.startAt = scheduleInfo.getFirstSelected();
                 schedule.endAt = Math.addExact(timestamp, TemporalUtil.DAY_IN_SECONDS);
                 schedule.repeatOption = RepeatOption.NONE.getValue();
-                schedule.repeatValue = 0L;
+                schedule.repeatValue = 0;
                 return schedule;
             }).toList();
             case REPEAT -> {
@@ -94,9 +94,15 @@ public class Schedule implements Serializable {
                 schedule.startAt = scheduleInfo.startAt();
                 schedule.endAt = scheduleInfo.endAt();
                 schedule.repeatOption = scheduleInfo.repeatOption();
-                schedule.repeatValue = scheduleInfo.repeatValue();
+                schedule.repeatValue = RepeatOption.fromValue(scheduleInfo.repeatOption()).isWeek()
+                        ? Weeks.toSelected(scheduleInfo.repeatValues())
+                        : scheduleInfo.getFirstRepeatValue();
                 yield List.of(schedule);
             }
         };
+    }
+
+    public void editStartAt(long timestamp) {
+        this.startAt = timestamp;
     }
 }

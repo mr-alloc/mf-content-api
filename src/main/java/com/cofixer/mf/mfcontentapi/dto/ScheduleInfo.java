@@ -11,6 +11,13 @@ public record ScheduleInfo(
         Long endAt,
 
         Integer repeatOption,
-        Long repeatValue
+        List<Integer> repeatValues
 ) {
+    public Long getFirstSelected() {
+        return selected.get(0);
+    }
+
+    public Integer getFirstRepeatValue() {
+        return repeatValues.get(0);
+    }
 }

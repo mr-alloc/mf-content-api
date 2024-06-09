@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @AccountAuth(AccountRoleType.MEMBER)
@@ -25,26 +27,26 @@ public class MissionController {
     @PostMapping
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        CreateMissionRes createdResponse = missionService.createMission(req, authorizedMember);
+        List<MissionDetailValue> missions = missionService.createMission(req, authorizedMember);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(createdResponse);
+                .body(CreateMissionRes.of(missions));
     }
 
     @GetMapping("/calendar")
     public ResponseEntity<GetMemberCalendarRes> getMemberCalendar(
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate
+            @RequestParam("startAt") Long startAt,
+            @RequestParam("endAt") Long endAt
     ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        GetMemberCalendarRes response = missionService.getMemberCalendar(authorizedMember.getMemberId(), startDate, endDate);
+        GetMemberCalendarRes response = missionService.getMemberCalendar(authorizedMember, startAt, endAt);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{missionId}")
     public ResponseEntity<GetMissionDetailRes> getMissionDetail(@PathVariable("missionId") Long missionId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        MissionDetailValue missionDetail = missionService.getMissionDetail(authorizedMember.getMemberId(), missionId);
+        MissionDetailValue missionDetail = missionService.getMissionDetail(authorizedMember, missionId);
         GetMissionDetailRes response = GetMissionDetailRes.of(missionDetail);
         return ResponseEntity.ok(response);
     }

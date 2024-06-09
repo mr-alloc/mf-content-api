@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
+import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
 import com.cofixer.mf.mfcontentapi.domain.Schedule;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.repository.ScheduleRepository;
@@ -21,7 +22,11 @@ public class ScheduleManager {
         return scheduleRepository.save(schedule);
     }
 
-    public List<Schedule> getSchedules(AuthorizedMember authorizedMember, Long startAt, Long endAt) {
-        return scheduleRepository.getSchedulesByRange(authorizedMember, startAt, endAt);
+    public List<Schedule> getSchedules(AuthorizedMember authorizedMember, Long startAt, Long endAt, ScheduleType scheduleType) {
+        return scheduleRepository.getSchedulesByRange(authorizedMember, startAt, endAt, scheduleType);
+    }
+
+    public Schedule getSchedule(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId).orElse(null);
     }
 }

@@ -1,96 +1,84 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import com.cofixer.mf.mfcontentapi.util.StringUtil;
+import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "mf_mission", indexes = {
-        @Index(name = "idx_reporter_id", columnList = "reporter_id")
+        @Index(name = "idx_schedule_id", columnList = "schedule_id"),
+        @Index(name = "idx_place_id", columnList = "place_id"),
 })
 public class Mission implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -1923390060168771625L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Long id;
 
-    @Serial
-    private static final long serialVersionUID = -1923390060168771625L;
-
-    /* 미션 부제 */
-    @Column(name = "sub_name")
-    String subName;
-
-    /* 상태 */
-    @Column(name = "mission_status", nullable = false)
-    Integer status;
-
-    /* 공개 여부 */
+    @Comment("공개 여부")
     @Column(name = "is_public", nullable = false)
     boolean isPublic;
 
-    /* 미션명 */
+    @Comment("미션명")
     @Column(name = "mission_name", nullable = false)
     String name;
 
-    /* 생성자 아이디 */
-    @Column(name = "reporter_id", nullable = false)
-    Long reporterId;
+    @Comment("미션 부제")
+    @Column(name = "sub_name")
+    String subName;
 
+    @Comment("스케쥴 ID")
+    @Column(name = "schedule_id", nullable = false)
+    Long scheduleId;
+
+    @Comment("장소 ID")
     @Column(name = "place_id")
     Long placeId;
 
-    /* 미션 타입 1: 일반미션, 2: 미션팩, 3: 스텝미션 */
+    @Comment("미션 타입 1: 일반미션, 2: 미션팩, 3: 스텝미션")
     @Column(name = "mission_type", nullable = false)
     Integer missionType;
 
-    /* 관람자, 스케쥴일 경우 참가자 */
+    @Comment("관람자, 스케쥴일 경우 참가자")
     @Column(name = "watcher", nullable = false)
     String watchers;
 
-    /* 생성일 */
-    @Column(name = "created_at", nullable = false)
-    Long createdAt;
-
-    /* 수정일 */
+    @Comment("수정일시")
     @Column(name = "updated_at", nullable = false)
     Long updatedAt;
 
-    /* 미션 시작 예정 시간 */
-    @Column(name = "start_due_stamp")
-    Long startDueStamp;
+    @Comment("생성일시")
+    @Column(name = "created_at", nullable = false)
+    Long createdAt;
 
-    /* 미션 시작시간 (timestamp) */
-    @Column(name = "start_stamp")
-    Long startStamp;
-
-    /* 미션 종료시간 (timestamp) */
-    @Column(name = "end_stamp")
-    Long endStamp;
+    @Delegate
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "schedule_id", insertable = false, updatable = false)
+    Schedule schedule;
 
     @Transient
     transient List<Long> watcherList = new ArrayList<>();
-
-    @Transient
-    transient MissionStatus currentStatus;
 
     @PostLoad
     public void init() {
@@ -99,50 +87,32 @@ public class Mission implements Serializable {
                     .map(Long::parseLong)
                     .toList();
         }
-        this.currentStatus = MissionStatus.fromCode(status);
     }
 
-    public static Mission forCreate(CreateMissionReq req, Long reporter, Long timeStamp) {
+    public static Mission forCreate(CreateMissionReq req, Schedule schedule, Long timeStamp) {
         Mission newer = new Mission();
-        newer.status = MissionStatus.CREATED.getCode();
         newer.isPublic = true;
-        newer.name = req.getName();
-        newer.subName = req.getSubName();
-        newer.reporterId = reporter;
+        newer.name = req.name();
+        newer.subName = req.subName();
+        newer.scheduleId = schedule.getId();
         newer.placeId = 0L;
-        newer.missionType = req.getType();
-        newer.watchers = String.valueOf(reporter);
-        newer.startDueStamp = req.getStartDueStamp();
-
-        newer.startStamp = 0L;
-        newer.endStamp = 0L;
-
+        newer.missionType = req.type();
+        newer.watchers = String.valueOf(schedule.getReporter());
         newer.createdAt = timeStamp;
         newer.updatedAt = timeStamp;
-
-        Optional.ofNullable(MissionType.fromValue(req.getType()))
-                .filter(MissionType::isSchedule)
-                .ifPresent(type -> {
-                    newer.status = MissionStatus.ALWAYS.getCode();
-                });
 
         return newer;
     }
 
-    public static Mission forCreate(CreateFamilyMissionReq req, Long reporter, Long timestamp) {
+    public static Mission forCreate(CreateFamilyMissionReq req, Schedule schedule, Long timestamp) {
         Mission newer = new Mission();
-        newer.status = MissionStatus.CREATED.getCode();
         newer.isPublic = true;
-        newer.subName = req.getSubName();
-        newer.name = req.getName();
-        newer.reporterId = reporter;
-        newer.missionType = req.getType();
-        newer.watchers = String.valueOf(reporter);
-        newer.startDueStamp = req.getStartDueStamp();
-
-        newer.startStamp = 0L;
-        newer.endStamp = 0L;
-
+        newer.name = req.name();
+        newer.subName = req.subName();
+        newer.scheduleId = schedule.getId();
+        newer.placeId = 0L;
+        newer.missionType = req.type();
+        newer.watchers = String.valueOf(schedule.getReporter());
         newer.createdAt = timestamp;
         newer.updatedAt = timestamp;
 
@@ -150,47 +120,32 @@ public class Mission implements Serializable {
     }
 
 
-    public void changeTitle(String title, LocalDateTime now) {
+    public void changeTitle(String title, Long timestamp) {
         this.name = title;
-        renewUpdatedAt(now);
+        renewUpdatedAt(timestamp);
     }
 
-    public void changeStatus(MissionStatus status, LocalDateTime now) {
-        switch (status) {
-            case IN_PROGRESS:
-                long timestamp = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
-                //시작 에정일을 지금로 변경하여 적용
-                this.startDueStamp = timestamp;
-                this.startStamp = timestamp;
-                break;
-            case COMPLETED:
-                this.endStamp = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
-                break;
-            default:
-                this.startStamp = null;
-                this.endStamp = null;
-                break;
+    public void changeStatus(MissionStatus status, Long timestamp) {
+        if (status == MissionStatus.IN_PROGRESS) {
+            //시작 에정일을 지금로 변경하여 적용
+            this.schedule.editStartAt(timestamp);
         }
-        this.status = status.getCode();
-        this.renewUpdatedAt(now);
+        this.renewUpdatedAt(timestamp);
     }
 
-    public void renewUpdatedAt(LocalDateTime now) {
-        this.updatedAt = now.toEpochSecond(AppContext.APP_ZONE_OFFSET);
+    public void renewUpdatedAt(Long timestamp) {
+        this.updatedAt = timestamp;
     }
 
-    public boolean isNotDeleted() {
-        return this.currentStatus != MissionStatus.DELETED;
-    }
 
     public void delete() {
-        this.status = MissionStatus.DELETED.getCode();
-        this.renewUpdatedAt(LocalDateTime.now(AppContext.APP_CLOCK));
+        this.renewUpdatedAt(TemporalUtil.getEpochSecond());
     }
 
-    public void changeType(MissionType missionType, LocalDateTime now) {
+    public void changeType(MissionType missionType, Long now) {
         this.missionType = missionType.getValue();
         this.renewUpdatedAt(now);
     }
+
 }
 

@@ -28,12 +28,12 @@ public class AnniversaryService {
 
     @Transactional(readOnly = true)
     public List<AnniversaryValue> getAnniversaries(Long startAt, Long endAt, AuthorizedMember authorizedMember) {
-        if (ValidateUtil.isValidStampRange(startAt, endAt)) {
+        if (!ValidateUtil.isValidStampRange(startAt, endAt)) {
             throw new ValidateException(DeclaredValidateResult.FAILED_AT_COMMON_VALIDATION);
         }
 
         Map<Long, Schedule> scheduleMap = CollectionUtil.toMap(
-                scheduleManager.getSchedules(authorizedMember, startAt, endAt),
+                scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.ANNIVERSARY),
                 Schedule::getId
         );
 
@@ -45,7 +45,7 @@ public class AnniversaryService {
 
     @Transactional
     public List<AnniversaryValue> createAnniversaries(CreateAnniversaryReq req, AuthorizedMember authorizedMember) {
-        List<Schedule> schedules = Schedule.of(authorizedMember, req.scheduleInfo(), ScheduleType.ANNIVERSARY).stream()
+        List<Schedule> schedules = Schedule.forCreate(authorizedMember, req.scheduleInfo(), ScheduleType.ANNIVERSARY).stream()
                 .map(scheduleManager::saveSchedule)
                 .toList();
 
