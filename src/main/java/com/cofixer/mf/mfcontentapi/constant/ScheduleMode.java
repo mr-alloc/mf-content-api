@@ -22,4 +22,8 @@ public enum ScheduleMode {
     public static ScheduleMode fromValue(Integer value) {
         return CACHED.get(value);
     }
+
+    public boolean equalsValue(Integer value) {
+        return this.value.equals(value);
+    }
 }

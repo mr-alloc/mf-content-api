@@ -2,10 +2,7 @@ package com.cofixer.mf.mfcontentapi.util;
 
 import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -18,6 +15,10 @@ public class CollectionUtil {
 
     public static <T, V> List<V> convertList(Collection<T> collection, Function<T, V> extractor) {
         return collection.stream().map(extractor).toList();
+    }
+
+    public static <T, V> Set<V> convertSet(Collection<T> collection, Function<T, V> extractor) {
+        return collection.stream().map(extractor).collect(Collectors.toSet());
     }
 
     public static <T, V> Map<V, T> arrayToMap(T[] types, Function<T, V> keyMapper) {

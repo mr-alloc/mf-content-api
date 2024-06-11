@@ -42,7 +42,7 @@ class AccountServiceTest {
 
     @Test
     @DisplayName("[가입실패] 이메일 중복")
-    void createAccount1() throws Throwable {
+    void createAccount1() {
         /* Given */
         CreateAccountReq req = getCreateAccountReq("testid", "testpassword");
 
@@ -54,4 +54,5 @@ class AccountServiceTest {
         /* Then */
         assertEquals(DeclaredAccountResult.DUPLICATED_EMAIL.getCode(), thrown.getCode());
     }
+
 }

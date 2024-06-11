@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CommonValidator {
 
-    public void validateAccount(String email) {
+    public void validateEmail(String email) {
         //이메일 생성 규칙 확인
         if (ValidateUtil.nonValid(email, RegularExpression.EMAIL)) {
             throw new AccountException(DeclaredAccountResult.EMAIL_RULE_VIOLATION);
@@ -26,7 +26,7 @@ public class CommonValidator {
 
     public void validateAccount(String email, String password) {
         //이메일 생성 규칙 확인
-        validateAccount(email);
+        validateEmail(email);
 
         //비밀번호 생성 규칙 확인
         if (ValidateUtil.nonValid(password, RegularExpression.PASSWORD)) {

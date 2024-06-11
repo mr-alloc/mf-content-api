@@ -1,14 +1,20 @@
 package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
+import com.cofixer.mf.mfcontentapi.constant.MissionType;
+import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.domain.MissionState;
+import com.cofixer.mf.mfcontentapi.domain.Schedule;
 import com.cofixer.mf.mfcontentapi.dto.MissionStateValue;
 import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.manager.MissionStateManager;
 import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,7 +45,7 @@ public class MissionStateService {
         return missionStateManager.getState(missionId, startStamp);
     }
 
-    public Map<Long, List<MissionStateValue>> getStateGroupingMap(List<Long> missionIdList) {
+    public Map<Long, List<MissionStateValue>> getStateGroupingMap(Collection<Long> missionIdList) {
         return missionStateManager.getStateAll(missionIdList).stream()
                 .map(MissionStateValue::of)
                 .collect(Collectors.groupingBy(
@@ -50,5 +56,15 @@ public class MissionStateService {
     public MissionState getState(Long stateId) {
         return missionStateManager.getState(stateId)
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_STATE));
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public MissionState createState(Mission mission, Schedule schedule) {
+        MissionState toBeSaved = MissionState.forMissionCreate(
+                mission.getId(),
+                MissionType.fromValue(mission.getMissionType()),
+                schedule
+        );
+        return missionStateManager.saveState(toBeSaved);
     }
 }

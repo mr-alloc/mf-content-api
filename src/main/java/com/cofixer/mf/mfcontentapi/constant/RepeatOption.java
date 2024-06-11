@@ -25,4 +25,8 @@ public enum RepeatOption {
     public boolean isWeek() {
         return this == WEEKLY;
     }
+
+    public boolean equalsValue(Integer repeatOption) {
+        return this.value.equals(repeatOption);
+    }
 }

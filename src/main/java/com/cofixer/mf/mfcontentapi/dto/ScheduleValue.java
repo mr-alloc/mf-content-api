@@ -2,13 +2,15 @@ package com.cofixer.mf.mfcontentapi.dto;
 
 import com.cofixer.mf.mfcontentapi.domain.Schedule;
 
+import java.util.List;
+
 public record ScheduleValue(
         Long id,
         Integer mode,
         Long startAt,
         Long endAt,
         Integer repeatOption,
-        Integer repeatValue
+        List<Integer> repeatValues
 ) {
     public static ScheduleValue of(Schedule schedule) {
         if (schedule == null) return null;
@@ -19,7 +21,7 @@ public record ScheduleValue(
                 schedule.getStartAt(),
                 schedule.getEndAt(),
                 schedule.getRepeatOption(),
-                schedule.getRepeatValue()
+                schedule.getRepeatValues()
         );
     }
 }

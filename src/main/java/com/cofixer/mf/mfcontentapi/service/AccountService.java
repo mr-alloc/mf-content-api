@@ -107,7 +107,7 @@ public class AccountService {
     @Transactional(readOnly = true)
     public void confirmAccount(ConfirmAccountReq req) {
         //생성규칙 확인
-        commonValidator.validateAccount(req.getEmail());
+        commonValidator.validateEmail(req.getEmail());
 
         //계정 조회
         if (accountManager.isExistAccount(req.getEmail())) {

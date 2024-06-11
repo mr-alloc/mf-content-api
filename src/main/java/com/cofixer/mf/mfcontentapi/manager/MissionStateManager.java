@@ -30,5 +30,9 @@ public class MissionStateManager {
     public Optional<MissionState> getState(Long stateId) {
         return repository.findById(stateId);
     }
+
+    public MissionState saveState(MissionState toBeSaved) {
+        return repository.save(toBeSaved);
+    }
 }
 

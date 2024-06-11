@@ -5,9 +5,7 @@ import com.cofixer.mf.mfcontentapi.domain.MissionState;
 public record MissionStateValue(
         Long missionId,
         Integer status,
-
         Long startAt,
-
         Long endAt
 ) {
 

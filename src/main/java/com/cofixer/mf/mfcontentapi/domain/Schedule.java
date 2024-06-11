@@ -90,7 +90,7 @@ public class Schedule implements Serializable {
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
                 schedule.startAt = scheduleInfo.getFirstSelected();
-                schedule.endAt = Math.addExact(timestamp, TemporalUtil.DAY_IN_SECONDS);
+                schedule.endAt = Math.addExact(timestamp, TemporalUtil.DAY_IN_SECONDS - 1);
                 schedule.repeatOption = RepeatOption.NONE.getValue();
                 schedule.repeatValue = 0;
                 return schedule;
@@ -114,5 +114,13 @@ public class Schedule implements Serializable {
 
     public void editStartAt(long timestamp) {
         this.startAt = timestamp;
+    }
+
+    public List<Integer> getRepeatValues() {
+        if (RepeatOption.WEEKLY.equalsValue(this.repeatOption)) {
+            return Weeks.toBits(this.repeatValue);
+        }
+
+        return List.of(this.repeatValue);
     }
 }
