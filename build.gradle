@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.1.4'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+	id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
 }
 
 group = 'com.co-fixer.mf'
@@ -38,6 +39,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 //	implementation 'org.springframework.cloud:spring-cloud-function-web'
 	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.5.0'
 
 
 	implementation 'kr.devis.util.entityprinter:entity-printer:1.0.11-SNAPSHOT'
@@ -46,6 +48,7 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// QueryDSL
@@ -76,4 +79,21 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
 	inputs.dir snippetsDir
 	dependsOn test
+}
+
+tasks {
+	forkedSpringBootRun {
+		doNotTrackState("See https://github.com/springdoc/springdoc-openapi-gradle-plugin/issues/102")
+	}
+}
+
+openApi {
+	apiDocsUrl.set("http://localhost:9090/v3/api-docs")
+	outputDir.set(file("$DEFAULT_BUILD_DIR_NAME/docs"))
+	waitTimeInSeconds.set(300)
+	customBootRun{
+		args = [
+				"--spring.profiles.active=doc"
+		]
+	}
 }

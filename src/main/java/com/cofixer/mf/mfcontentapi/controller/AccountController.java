@@ -10,6 +10,8 @@ import com.cofixer.mf.mfcontentapi.dto.res.AccountInfoRes;
 import com.cofixer.mf.mfcontentapi.dto.res.VerifiedAccountRes;
 import com.cofixer.mf.mfcontentapi.service.AccountService;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,11 +22,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @AccountAuth(AccountRoleType.GUEST)
 @RestController
+@Tag(name = "/v1/account: 계정")
 @RequestMapping("/v1/account")
 public class AccountController {
 
     private final AccountService accountService;
 
+    @Operation(summary = "/confirm: 계정 확인")
     @PostMapping("/confirm")
     public ResponseEntity<Void> confirmAccount(@RequestBody ConfirmAccountReq req) {
         accountService.confirmAccount(req);

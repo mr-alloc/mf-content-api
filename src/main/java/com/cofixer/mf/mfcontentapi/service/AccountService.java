@@ -107,10 +107,10 @@ public class AccountService {
     @Transactional(readOnly = true)
     public void confirmAccount(ConfirmAccountReq req) {
         //생성규칙 확인
-        commonValidator.validateEmail(req.getEmail());
+        commonValidator.validateEmail(req.email());
 
         //계정 조회
-        if (accountManager.isExistAccount(req.getEmail())) {
+        if (accountManager.isExistAccount(req.email())) {
             throw new AccountException(DeclaredAccountResult.DUPLICATED_EMAIL);
         }
     }
