@@ -35,6 +35,7 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Operation(summary = "/create: 계정 생성")
     @PostMapping("/create")
     public ResponseEntity<Void> createAccount(@RequestBody CreateAccountReq req) {
         accountService.createAccount(req);
@@ -42,14 +43,16 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Operation(summary = "/verify: 계정 확인")
     @PostMapping("/verify")
     public ResponseEntity<VerifiedAccountRes> verifyAccount(@RequestBody VerifyAccountReq req) {
         VerifiedAccountRes verifiedRes = accountService.verifyAccount(req);
         return ResponseEntity.ok(verifiedRes);
     }
 
-    @GetMapping("/info")
     @AccountAuth(AccountRoleType.MEMBER)
+    @Operation(summary = "/info: 계정 정보")
+    @GetMapping("/info")
     public ResponseEntity<AccountInfoRes> getAccountInfo() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
 

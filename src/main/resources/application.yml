@@ -5,6 +5,12 @@ project:
   name: mf-content-api
   version: 0.0.1-SNAPSHOT
 
+logging:
+  level:
+    #    org.hibernate.SQL: WARN
+    com.cofixer.mf.mfcontentapi: DEBUG
+  config: classpath:logback-${spring.profiles.active}.xml
+
 ---
 spring:
   jpa:
@@ -33,7 +39,7 @@ logging:
   level:
 #    org.hibernate.SQL: WARN
     com.cofixer.mf.mfcontentapi: DEBUG
-  config: classpath:logback-${spring.profiles.active}.xml
+  config: classpath:logback-local.xml
 
 springdoc:
   swagger-ui:
@@ -67,6 +73,8 @@ logging:
   level:
     #    org.hibernate.SQL: WARN
     com.cofixer.mf.mfcontentapi: DEBUG
+    org.springdoc: DEBUG
+  config: classpath:logback-local.xml
 
 springdoc:
   swagger-ui:

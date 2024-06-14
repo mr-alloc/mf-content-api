@@ -14,11 +14,15 @@ import java.util.List;
 public class WebConfiguration implements WebMvcConfigurer {
 
     private final AuthenticateInterceptor authenticateInterceptor;
+    private static final String CREATE_ACCOUNT = "/v1/account/create";
+    private static final String VERIFY_ACCOUNT = "/v1/account/verify";
+    private static final String CONFIRM_ACCOUNT = "/v1/account/confirm";
+    private static final String OPENAPI_DOCS = "/v3/api-docs/**";
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticateInterceptor)
-                .excludePathPatterns(List.of("/**/account/create", "/**/account/verify", "/**/account/confirm"));
+                .excludePathPatterns(CREATE_ACCOUNT, VERIFY_ACCOUNT, CONFIRM_ACCOUNT, OPENAPI_DOCS);
     }
 
     @Override
