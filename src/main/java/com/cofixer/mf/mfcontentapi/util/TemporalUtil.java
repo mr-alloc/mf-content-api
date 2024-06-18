@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static com.cofixer.mf.mfcontentapi.AppContext.APP_ZONE_OFFSET_KST;
+
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class TemporalUtil {
 
@@ -36,5 +38,9 @@ public class TemporalUtil {
 
     public static LocalDateTime getNow() {
         return LocalDateTime.now(AppContext.APP_ZONE_OFFSET);
+    }
+
+    public static LocalDateTime toLocalDateTime(Long timestamp) {
+        return LocalDateTime.ofEpochSecond(timestamp, 0, APP_ZONE_OFFSET_KST);
     }
 }

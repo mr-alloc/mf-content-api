@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
+import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.RepeatOption;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleMode;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
@@ -15,6 +16,7 @@ import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -89,8 +91,11 @@ public class Schedule implements Serializable {
                 schedule.reporter = authorizedMember.getMemberId();
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
-                schedule.startAt = scheduleInfo.getFirstSelected();
-                schedule.endAt = Math.addExact(timestamp, TemporalUtil.DAY_IN_SECONDS - 1);
+                schedule.startAt = timestamp;
+                //TODO 종료시간이 그냥 86399로 더해지기때문에 일의 시작과, 스케쥴시작 시간을 따로 받아야함
+                LocalDateTime localDateTime = TemporalUtil.toLocalDateTime(timestamp)
+                        .withHour(23).withMinute(59).withSecond(59);
+                schedule.endAt = localDateTime.toEpochSecond(AppContext.APP_ZONE_OFFSET_KST);
                 schedule.repeatOption = RepeatOption.NONE.getValue();
                 schedule.repeatValue = 0;
                 return schedule;

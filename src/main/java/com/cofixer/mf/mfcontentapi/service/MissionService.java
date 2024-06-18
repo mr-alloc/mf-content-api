@@ -61,7 +61,11 @@ public class MissionService {
                 .map(scheduleManager::saveSchedule)
                 .toList();
         long now = TemporalUtil.getEpochSecond();
-        FamilyMember assignee = familyManager.getFamilyMember(FamilyMemberId.of(authorizedMember.getFamilyId(), req.assignee()));
+        Long memberId = Optional.of(req.assignee())
+                .filter(assignee -> assignee > 0)
+                .orElseGet(authorizedMember::getMemberId);
+        FamilyMemberId familyMemberId = FamilyMemberId.of(authorizedMember.getFamilyId(), memberId);
+        FamilyMember assignee = familyManager.getFamilyMember(familyMemberId);
 
         return schedules.stream()
                 .map(schedule -> {
