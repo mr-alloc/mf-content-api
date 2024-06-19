@@ -8,6 +8,7 @@ public record ScheduleValue(
         Long id,
         Integer mode,
         Long startAt,
+        Long scheduleTime,
         Long endAt,
         Integer repeatOption,
         List<Integer> repeatValues
@@ -19,6 +20,7 @@ public record ScheduleValue(
                 schedule.getId(),
                 schedule.getMode(),
                 schedule.getStartAt(),
+                schedule.getScheduleTime(),
                 schedule.getEndAt(),
                 schedule.getRepeatOption(),
                 schedule.getRepeatValues()

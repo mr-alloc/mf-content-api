@@ -8,6 +8,7 @@ public record ScheduleInfo(
         List<Long> selected,
 
         Long startAt,
+        Long scheduleTime,
         Long endAt,
 
         Integer repeatOption,

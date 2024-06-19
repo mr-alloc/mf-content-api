@@ -1,6 +1,5 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.RepeatOption;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleMode;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
@@ -16,7 +15,6 @@ import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -57,6 +55,10 @@ public class Schedule implements Serializable {
     @Column(name = "start_at")
     Long startAt;
 
+    @Comment("스케쥴 시간")
+    @Column(name = "schedule_time")
+    Long scheduleTime;
+
     @Comment("종료일")
     @Column(name = "end_at")
     Long endAt;
@@ -80,6 +82,7 @@ public class Schedule implements Serializable {
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
                 schedule.startAt = scheduleInfo.startAt();
+                schedule.scheduleTime = scheduleInfo.scheduleTime();
                 schedule.endAt = scheduleInfo.endAt();
                 schedule.repeatOption = RepeatOption.NONE.getValue();
                 schedule.repeatValue = 0;
@@ -92,10 +95,8 @@ public class Schedule implements Serializable {
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
                 schedule.startAt = timestamp;
-                //TODO 종료시간이 그냥 86399로 더해지기때문에 일의 시작과, 스케쥴시작 시간을 따로 받아야함
-                LocalDateTime localDateTime = TemporalUtil.toLocalDateTime(timestamp)
-                        .withHour(23).withMinute(59).withSecond(59);
-                schedule.endAt = localDateTime.toEpochSecond(AppContext.APP_ZONE_OFFSET_KST);
+                schedule.scheduleTime = scheduleInfo.scheduleTime();
+                schedule.endAt = timestamp + TemporalUtil.DAY_IN_SECONDS - 1;
                 schedule.repeatOption = RepeatOption.NONE.getValue();
                 schedule.repeatValue = 0;
                 return schedule;
@@ -107,6 +108,7 @@ public class Schedule implements Serializable {
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
                 schedule.startAt = scheduleInfo.startAt();
+                schedule.scheduleTime = scheduleInfo.scheduleTime();
                 schedule.endAt = scheduleInfo.endAt();
                 schedule.repeatOption = scheduleInfo.repeatOption();
                 schedule.repeatValue = RepeatOption.fromValue(scheduleInfo.repeatOption()).isWeek()
