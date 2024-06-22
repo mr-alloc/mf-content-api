@@ -6,6 +6,7 @@ import com.cofixer.mf.mfcontentapi.util.ValidateUtil;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public record CreateFamilyMissionReq(
@@ -30,5 +31,11 @@ public record CreateFamilyMissionReq(
             throw validateExceptionSupplier.get();
         }
         return this;
+    }
+
+    public Long getAssigneeSafe(long defaultAssignee) {
+        return Optional.of(assignee)
+                .filter(id -> id != 0)
+                .orElse(defaultAssignee);
     }
 }

@@ -22,7 +22,6 @@ public class MissionState implements Serializable {
     private static final long serialVersionUID = 1041801005363871285L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Comment("미션 ID")
@@ -50,15 +49,14 @@ public class MissionState implements Serializable {
         this.currentStatus = MissionStatus.fromCode(status);
     }
 
-    //미션 생성시점에 필요한 경우에만 사용
-    public static MissionState forMissionCreate(Long missionId, MissionType missionType, Schedule schedule) {
+    public static MissionState forCreate(Long missionId, MissionType missionType) {
         MissionState missionState = new MissionState();
         missionState.missionId = missionId;
         missionState.status = missionType.isSchedule()
                 ? MissionStatus.ALWAYS.getCode()
                 : MissionStatus.CREATED.getCode();
-        missionState.startStamp = schedule.getStartAt();
-        missionState.endStamp = schedule.getEndAt();
+        missionState.startStamp = 0L;
+        missionState.endStamp = 0L;
         return missionState;
     }
 

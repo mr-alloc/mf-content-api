@@ -55,10 +55,6 @@ public class Schedule implements Serializable {
     @Column(name = "start_at")
     Long startAt;
 
-    @Comment("스케쥴 시간")
-    @Column(name = "schedule_time")
-    Long scheduleTime;
-
     @Comment("종료일")
     @Column(name = "end_at")
     Long endAt;
@@ -82,7 +78,6 @@ public class Schedule implements Serializable {
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
                 schedule.startAt = scheduleInfo.startAt();
-                schedule.scheduleTime = scheduleInfo.scheduleTime();
                 schedule.endAt = scheduleInfo.endAt();
                 schedule.repeatOption = RepeatOption.NONE.getValue();
                 schedule.repeatValue = 0;
@@ -94,9 +89,8 @@ public class Schedule implements Serializable {
                 schedule.reporter = authorizedMember.getMemberId();
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
-                schedule.startAt = timestamp;
-                schedule.scheduleTime = scheduleInfo.scheduleTime();
-                schedule.endAt = timestamp + TemporalUtil.DAY_IN_SECONDS - 1;
+                schedule.startAt = scheduleInfo.getFirstSelected();
+                schedule.endAt = Math.addExact(timestamp, TemporalUtil.DAY_IN_SECONDS);
                 schedule.repeatOption = RepeatOption.NONE.getValue();
                 schedule.repeatValue = 0;
                 return schedule;
@@ -108,7 +102,6 @@ public class Schedule implements Serializable {
                 schedule.family = authorizedMember.getFamilyId();
                 schedule.mode = scheduleMode.getValue();
                 schedule.startAt = scheduleInfo.startAt();
-                schedule.scheduleTime = scheduleInfo.scheduleTime();
                 schedule.endAt = scheduleInfo.endAt();
                 schedule.repeatOption = scheduleInfo.repeatOption();
                 schedule.repeatValue = RepeatOption.fromValue(scheduleInfo.repeatOption()).isWeek()
@@ -121,13 +114,5 @@ public class Schedule implements Serializable {
 
     public void editStartAt(long timestamp) {
         this.startAt = timestamp;
-    }
-
-    public List<Integer> getRepeatValues() {
-        if (RepeatOption.WEEKLY.equalsValue(this.repeatOption)) {
-            return Weeks.toBits(this.repeatValue);
-        }
-
-        return List.of(this.repeatValue);
     }
 }
