@@ -11,6 +11,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum RepeatOption {
     NONE(-1),
+
     WEEKLY(0),
     MONTHLY(1),
     YEARLY(2);

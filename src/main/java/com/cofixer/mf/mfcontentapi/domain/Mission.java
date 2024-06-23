@@ -148,5 +148,8 @@ public class Mission implements Serializable {
         this.renewUpdatedAt(now);
     }
 
+    public boolean isReportedBy(Long memberId) {
+        return this.getReporter().equals(memberId);
+    }
 }
 

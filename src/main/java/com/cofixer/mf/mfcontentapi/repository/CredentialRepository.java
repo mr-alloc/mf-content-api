@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CredentialRepository extends JpaRepository<AccessCredential, Long> {
 
-    AccessCredential findByCredential(String credential);
+    AccessCredential findByDeviceTypeAndCredential(Integer deviceType, String credential);
+
+
 }

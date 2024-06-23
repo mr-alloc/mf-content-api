@@ -2,6 +2,8 @@ package com.cofixer.mf.mfcontentapi.domain;
 
 import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
+import com.cofixer.mf.mfcontentapi.constant.ScheduleMode;
+import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +24,7 @@ public class MissionState implements Serializable {
     private static final long serialVersionUID = 1041801005363871285L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Comment("미션 ID")
@@ -49,14 +52,33 @@ public class MissionState implements Serializable {
         this.currentStatus = MissionStatus.fromCode(status);
     }
 
-    public static MissionState forCreate(Long missionId, MissionType missionType) {
+    public static MissionState forMissionCreate(Long missionId, MissionType missionType, Schedule schedule) {
         MissionState missionState = new MissionState();
         missionState.missionId = missionId;
         missionState.status = missionType.isSchedule()
                 ? MissionStatus.ALWAYS.getCode()
                 : MissionStatus.CREATED.getCode();
-        missionState.startStamp = 0L;
-        missionState.endStamp = 0L;
+        missionState.startStamp = schedule.getStartAt();
+        missionState.endStamp = schedule.getEndAt();
+        return missionState;
+    }
+
+    public static MissionState forLazyCreate(Long missionId, MissionType missionType, Schedule schedule, Long timestamp) {
+        MissionState missionState = new MissionState();
+        missionState.missionId = missionId;
+        missionState.status = missionType.isSchedule()
+                ? MissionStatus.ALWAYS.getCode()
+                : MissionStatus.CREATED.getCode();
+
+        if (ScheduleMode.REPEAT.equalsValue(schedule.getMode())) {
+            missionState.startStamp = timestamp;
+            missionState.endStamp = timestamp + (TemporalUtil.DAY_IN_SECONDS - 1);
+            return missionState;
+        }
+
+        missionState.startStamp = schedule.getStartAt();
+        missionState.endStamp = schedule.getEndAt();
+
         return missionState;
     }
 
@@ -84,17 +106,4 @@ public class MissionState implements Serializable {
         return this.currentStatus != MissionStatus.DELETED;
     }
 
-//    public Long getRemainSeconds() {
-//        MissionStatus currentStatus = getCurrentStatus();
-//        return switch (currentStatus) {
-//            case CREATED -> this.deadline;
-//            case IN_PROGRESS -> {
-//                long now = TemporalUtil.getEpochSecond();
-//                long endDueStamp = Math.addExact(this.deadline, mission.getStartStamp());
-//                yield Math.subtractExact(endDueStamp, now);
-//            }
-//            case COMPLETED -> Math.subtractExact(mission.getEndStamp(), mission.getStartStamp());
-//            default -> 0L;
-//        };
-//    }
 }

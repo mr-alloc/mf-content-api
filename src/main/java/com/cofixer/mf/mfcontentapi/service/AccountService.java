@@ -1,13 +1,17 @@
 package com.cofixer.mf.mfcontentapi.service;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cofixer.mf.mfcontentapi.AppContext;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
+import com.cofixer.mf.mfcontentapi.constant.DeviceType;
 import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
+import com.cofixer.mf.mfcontentapi.domain.AccessCredential;
 import com.cofixer.mf.mfcontentapi.domain.Account;
 import com.cofixer.mf.mfcontentapi.domain.Member;
 import com.cofixer.mf.mfcontentapi.dto.req.ConfirmAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
+import com.cofixer.mf.mfcontentapi.dto.req.RefreshTokenReq;
 import com.cofixer.mf.mfcontentapi.dto.req.VerifyAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.res.AccountInfoRes;
 import com.cofixer.mf.mfcontentapi.dto.res.VerifiedAccountRes;
@@ -18,6 +22,7 @@ import com.cofixer.mf.mfcontentapi.manager.CredentialManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
 import com.cofixer.mf.mfcontentapi.util.EncryptUtil;
 import com.cofixer.mf.mfcontentapi.util.JwtUtil;
+import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import com.cofixer.mf.mfcontentapi.validator.CommonValidator;
 import kr.devis.util.entityprinter.print.printer.EntityPrinter;
 import kr.devis.util.entityprinter.print.setting.ExpandableEntitySetting;
@@ -27,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -86,14 +90,15 @@ public class AccountService {
         Instant instant = AppContext.APP_CLOCK.instant();
         log.info(printer.drawEntity(found, es.getConfig()));
 
-        String accessToken = JwtUtil.createToken(found.getId(), instant);
-        String refreshToken = UUID.randomUUID().toString();
+        //TODO 토큰생성시 deviceCode를 추가할지 검토
+        String accessToken = JwtUtil.createToken(found.getId(), instant, AppContext.ACCESS_TOKEN_EXPIRE_SECOND);
+        String refreshToken = JwtUtil.createToken(found.getId(), instant, AppContext.REFRESH_TOKEN_EXPIRE_SECOND);
 
         //로그인 일시 수정
         found.renewSignedInAt(instant);
 
         //토큰 등록
-        credentialManager.registerCredential(found.getId(), refreshToken);
+        credentialManager.registerCredential(found.getId(), req.getDeviceCode(), accessToken, refreshToken);
 
         return new VerifiedAccountRes(accessToken, refreshToken);
     }
@@ -113,5 +118,32 @@ public class AccountService {
         if (accountManager.isExistAccount(req.email())) {
             throw new AccountException(DeclaredAccountResult.DUPLICATED_EMAIL);
         }
+    }
+
+    @Transactional
+    public String createAccessToken(RefreshTokenReq request) {
+        DecodedJWT decodedRefreshToken = JwtUtil.decode(request.refreshToken());
+        long refreshTokenExpiry = decodedRefreshToken.getExpiresAtAsInstant().getEpochSecond();
+        if (TemporalUtil.getEpochSecond() > refreshTokenExpiry) {
+            throw new AccountException(DeclaredAccountResult.EXPIRED_REFRESH_TOKEN);
+        }
+        DecodedJWT decodedAccessToken = JwtUtil.decodeWithoutExpiry(request.accessToken());
+        long refreshTokenIssuer = Long.parseLong(decodedRefreshToken.getIssuer());
+        long accessTokenIssuer = Long.parseLong(decodedAccessToken.getIssuer());
+
+        if (refreshTokenIssuer != accessTokenIssuer) {
+            throw new AccountException(DeclaredAccountResult.INVALID_ACCESS_TOKEN);
+        }
+
+        DeviceType deviceType = DeviceType.fromCode(request.deviceCode());
+        AccessCredential credential = credentialManager.getCredential(deviceType, request.refreshToken());
+        if (credential.isNotEqualsAccessToken(request.accessToken())) {
+            throw new AccountException(DeclaredAccountResult.INVALID_ACCESS_TOKEN);
+        }
+
+        String newAccessToken = JwtUtil.createToken(refreshTokenIssuer, AppContext.APP_CLOCK.instant(), AppContext.ACCESS_TOKEN_EXPIRE_SECOND);
+        credentialManager.updateAccessToken(credential, newAccessToken);
+
+        return newAccessToken;
     }
 }

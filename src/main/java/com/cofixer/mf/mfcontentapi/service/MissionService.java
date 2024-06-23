@@ -1,9 +1,6 @@
 package com.cofixer.mf.mfcontentapi.service;
 
-import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
-import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
-import com.cofixer.mf.mfcontentapi.constant.MissionType;
-import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
+import com.cofixer.mf.mfcontentapi.constant.*;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.MissionStateValue;
@@ -22,10 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,10 +43,18 @@ public class MissionService {
                 .map(schedule -> {
                     Mission mission = Mission.forCreate(req, schedule, now);
                     MissionDetail missionDetail = missionManager.saveMissionDetail(mission, MissionDetail.forCreate(req));
+                    processCreateState(mission, schedule);
                     return MissionDetailValue.of(missionDetail, mission, List.of(), schedule);
                 })
                 .toList();
     }
+
+    private void processCreateState(Mission mission, Schedule schedule) {
+        if (!ScheduleMode.REPEAT.equalsValue(schedule.getMode())) {
+            missionStateService.createState(mission, schedule);
+        }
+    }
+
 
     @Transactional
     public List<FamilyMissionDetailValue> createFamilyMission(CreateFamilyMissionReq req, AuthorizedMember authorizedMember) {
@@ -67,7 +69,7 @@ public class MissionService {
         return schedules.stream()
                 .map(schedule -> {
                     Mission mission = Mission.forCreate(req, schedule, now);
-                    FamilyMissionDetail detail = missionManager.saveFamilyMission(mission, FamilyMissionDetail.forCreate(req, assignee, authorizedMember));
+                    FamilyMissionDetail detail = missionManager.saveFamilyMissionDetail(mission, FamilyMissionDetail.forCreate(req, assignee, authorizedMember));
                     return FamilyMissionDetailValue.of(detail, mission, List.of(), schedule);
                 })
                 .toList();
@@ -77,11 +79,12 @@ public class MissionService {
     @Transactional(readOnly = true)
     public GetMemberCalendarRes getMemberCalendar(AuthorizedMember authorizedMember, Long startAt, Long endAt) {
         List<Schedule> schedules = scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.MISSION);
-        List<Long> scheduleIds = CollectionUtil.convertList(schedules, Schedule::getId);
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getId);
         List<MissionDetail> details = missionManager.getMissions(scheduleIds);
-        List<Long> missionIds = CollectionUtil.convertList(details, MissionDetail::getMissionId);
 
+        Set<Long> missionIds = CollectionUtil.convertSet(details, MissionDetail::getMissionId);
         Map<Long, List<MissionStateValue>> stateGroupingMap = missionStateService.getStateGroupingMap(missionIds);
+
         Map<Long, Schedule> scheduleMap = scheduleService.getScheduleMap(authorizedMember, startAt, endAt, ScheduleType.MISSION);
 
         List<MissionDetailValue> detailValues = details.stream()
@@ -103,9 +106,11 @@ public class MissionService {
     @Transactional(readOnly = true)
     public GetFamilyCalendarRes getFamilyCalendar(AuthorizedMember authorizedMember, Long startAt, Long endAt) {
         List<Schedule> schedules = scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.MISSION);
-        List<Long> scheduleIds = CollectionUtil.convertList(schedules, Schedule::getId);
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getId);
+
         List<FamilyMissionDetail> details = missionManager.getFamilyMissions(scheduleIds);
-        List<Long> missionIdList = CollectionUtil.convertList(details, FamilyMissionDetail::getMissionId);
+        Set<Long> missionIdList = CollectionUtil.convertSet(details, FamilyMissionDetail::getMissionId);
+
         Map<Long, List<MissionStateValue>> stateGroupingMap = missionStateService.getStateGroupingMap(missionIdList);
         Map<Long, Schedule> scheduleMap = scheduleService.getScheduleMap(authorizedMember, startAt, endAt, ScheduleType.MISSION);
 

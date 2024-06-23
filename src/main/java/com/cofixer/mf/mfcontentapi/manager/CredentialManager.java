@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
+import com.cofixer.mf.mfcontentapi.constant.DeviceType;
 import com.cofixer.mf.mfcontentapi.domain.AccessCredential;
 import com.cofixer.mf.mfcontentapi.repository.CredentialRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,21 @@ public class CredentialManager {
     private final CredentialRepository credentialRepository;
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public void registerCredential(Long id, String credential) {
-        credentialRepository.save(AccessCredential.of(id, credential));
+    public void registerCredential(Long id, Integer deviceCode, String latestAccessToken, String credential) {
+        DeviceType deviceType = DeviceType.fromCode(deviceCode);
+        credentialRepository.save(AccessCredential.of(id, deviceType, credential, latestAccessToken));
     }
 
     public Optional<AccessCredential> getMayCredential(Long accountId) {
         return credentialRepository.findById(accountId);
+    }
+
+    public AccessCredential getCredential(DeviceType deviceType, String refreshToken) {
+        return credentialRepository.findByDeviceTypeAndCredential(deviceType.getCode(), refreshToken);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void updateAccessToken(AccessCredential credential, String newAccessToken) {
+        credential.updateAccessToken(newAccessToken);
     }
 }

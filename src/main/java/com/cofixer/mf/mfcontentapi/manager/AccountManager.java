@@ -43,4 +43,5 @@ public class AccountManager {
         return repository.findById(accountId)
                 .orElseThrow(() -> new AccountException(DeclaredAccountResult.NOT_FOUND_ACCOUNT));
     }
+
 }

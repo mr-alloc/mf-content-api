@@ -27,7 +27,7 @@ public class MissionController {
     private final MissionService missionService;
 
 
-    @Operation(summary = "/create: 생성")
+    @Operation(summary = "/: 생성")
     @PostMapping
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();

@@ -1,6 +1,8 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
+import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
 import com.cofixer.mf.mfcontentapi.domain.MissionState;
+import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.repository.MissionStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,10 @@ public class MissionStateManager {
 
     public Optional<MissionState> getState(Long stateId) {
         return repository.findById(stateId);
+    }
+
+    public MissionState getStateSafe(Long stateId) {
+        return getState(stateId).orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_STATE));
     }
 
     public MissionState saveState(MissionState toBeSaved) {

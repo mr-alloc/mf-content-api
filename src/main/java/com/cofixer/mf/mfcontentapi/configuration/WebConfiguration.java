@@ -7,8 +7,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
@@ -17,12 +15,13 @@ public class WebConfiguration implements WebMvcConfigurer {
     private static final String CREATE_ACCOUNT = "/v1/account/create";
     private static final String VERIFY_ACCOUNT = "/v1/account/verify";
     private static final String CONFIRM_ACCOUNT = "/v1/account/confirm";
+    private static final String REFRESH_TOKEN = "/v1/account/refresh";
     private static final String OPENAPI_DOCS = "/v3/api-docs/**";
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticateInterceptor)
-                .excludePathPatterns(CREATE_ACCOUNT, VERIFY_ACCOUNT, CONFIRM_ACCOUNT, OPENAPI_DOCS);
+                .excludePathPatterns(CREATE_ACCOUNT, VERIFY_ACCOUNT, CONFIRM_ACCOUNT, REFRESH_TOKEN, OPENAPI_DOCS);
     }
 
     @Override

@@ -21,7 +21,6 @@ public class CorsFilter implements Filter {
     private static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
     private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
-    private static final String ACCESS_ORIGIN_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
 
     private static final String ALLOWED_ORIGIN = "http://localhost:5173";
     private static final String ALLOWED_CREDENTIALS = "true";

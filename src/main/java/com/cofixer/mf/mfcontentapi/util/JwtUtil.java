@@ -21,12 +21,12 @@ public class JwtUtil {
 
     private static final Algorithm ALGORITHM = getAlgorithm();
 
-    public static String createToken(long accountId, Instant currentInstant) {
+    public static String createToken(long accountId, Instant currentInstant, long expireSecond) {
         try {
             return JWT.create()
                     .withIssuer(String.valueOf(accountId))
                     .withIssuedAt(currentInstant)
-                    .withExpiresAt(currentInstant.plusSeconds(AppContext.CREDENTIAL_EXPIRE_SECOND))
+                    .withExpiresAt(currentInstant.plusSeconds(expireSecond))
                     .sign(ALGORITHM);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -39,6 +39,11 @@ public class JwtUtil {
         return verifier.verify(token);
     }
 
+    public static DecodedJWT decodeWithoutExpiry(String token) {
+        JWTVerifier verifier = JWT.require(ALGORITHM).acceptExpiresAt(AppContext.REFRESH_TOKEN_EXPIRE_SECOND).build();
+        return verifier.verify(token);
+    }
+
     private static Algorithm getAlgorithm() {
         try {
             KeyPairGenerator instance = KeyPairGenerator.getInstance(EncryptAlgorithm.RSA.getAlgorithm());
@@ -47,7 +52,7 @@ public class JwtUtil {
             return Algorithm.RSA256((RSAPublicKey) keyPair.getPublic(), (RSAPrivateKey) keyPair.getPrivate());
         } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            throw new IllegalStateException("Failed to create Algorithm");
         }
     }
 }

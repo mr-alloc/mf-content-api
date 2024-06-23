@@ -17,7 +17,10 @@ public enum DeclaredAccountResult implements DeclaredResult {
     EMAIL_RULE_VIOLATION(-1),
     PASSWORD_RULE_VIOLATION(-2),
     DUPLICATED_EMAIL(-3),
-    NOT_FOUND_ACCOUNT(-4, HttpStatus.BAD_REQUEST);
+    NOT_FOUND_ACCOUNT(-4, HttpStatus.BAD_REQUEST),
+    INVALID_DEVICE_TYPE(-5, HttpStatus.BAD_REQUEST),
+    INVALID_ACCESS_TOKEN(-6, HttpStatus.BAD_REQUEST),
+    EXPIRED_REFRESH_TOKEN(-7, HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private HttpStatus httpStatus;
