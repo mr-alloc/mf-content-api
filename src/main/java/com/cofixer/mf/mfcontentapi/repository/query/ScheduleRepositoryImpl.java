@@ -21,16 +21,15 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
 
     @Override
     public List<Schedule> getSchedulesByRange(AuthorizedMember authorizedMember, Long startAt, Long endAt, ScheduleType scheduleType) {
-        BooleanBuilder condition = new BooleanBuilder();
+        BooleanBuilder condition = new BooleanBuilder(schedule.reporter.eq(authorizedMember.getMemberId()));
         if (authorizedMember.forFamilyMember()) {
             condition.and(schedule.family.eq(authorizedMember.getFamilyId()));
-        } else {
-            schedule.reporter.eq(authorizedMember.getMemberId());
         }
         condition.and(
                         schedule.mode.in(ScheduleMode.PERIOD.getValue(), ScheduleMode.REPEAT.getValue())
                                 //범위 조건이면
                                 .and(
+
                                         schedule.startAt.loe(startAt).and(schedule.endAt.goe(endAt))
                                                 .or(schedule.startAt.loe(startAt).and(schedule.endAt.loe(endAt)))
                                                 .or(schedule.startAt.goe(startAt).and(schedule.endAt.goe(endAt)))
