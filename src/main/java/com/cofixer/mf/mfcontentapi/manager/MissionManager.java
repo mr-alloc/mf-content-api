@@ -34,7 +34,7 @@ public class MissionManager {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public FamilyMissionDetail saveFamilyMission(Mission mission, FamilyMissionDetail familyMission) {
+    public FamilyMissionDetail saveFamilyMissionDetail(Mission mission, FamilyMissionDetail familyMission) {
         Mission newMission = missionRepository.save(mission);
         familyMission.couplingMission(newMission);
 
@@ -58,5 +58,10 @@ public class MissionManager {
     public FamilyMissionDetail getFamilyMissionDetail(Long missionId, Long familyId) {
         return Optional.ofNullable(familyMissionDetailRepository.getFamilyMission(missionId, familyId))
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_FAMILY_MISSION));
+    }
+
+    public Mission getMission(Long missionId) {
+        return missionRepository.findById(missionId)
+                .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_MISSION));
     }
 }
