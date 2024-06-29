@@ -3,10 +3,11 @@ run-name: Build And Push images to github container registry
 on:
   push:
     branches:
-      - ^feature/.*
+      - '^feature/.*'
 jobs:
   build-and-push-to-github-container-registry:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    #double quotes
 
     steps:
       - name: Checkout Repository
