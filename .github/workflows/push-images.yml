@@ -1,5 +1,5 @@
 name: push-images
-run-name: Push images to github container registry
+run-name: Build And Push images to github container registry
 on:
   push:
     branches:
