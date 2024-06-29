@@ -24,10 +24,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-      - name: Build and push
-        uses: docker/build-push-action@v4
+
+      - name: Build image
         run:
           ./gradlew clean build --refresh-dependencies
+
+      - name: Push image to GitHub Container Registry
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
