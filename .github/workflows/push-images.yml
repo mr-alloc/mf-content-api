@@ -5,7 +5,7 @@ on:
     branches:
       - ^feature/.*
 jobs:
-  build:
+  build-and-push-to-github-container-registry:
     runs-on: ubuntu-24.04
 
     steps:
@@ -26,8 +26,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Build image
-        run:
-          ./gradlew clean build --refresh-dependencies
+        run: ./gradlew clean build --refresh-dependencies
 
       - name: Push image to GitHub Container Registry
         uses: docker/build-push-action@v4
