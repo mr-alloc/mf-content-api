@@ -29,7 +29,7 @@ datasource:
     # 도커파일로 실행시
     #    url: jdbc:mysql://mission-db:3306/mf_dev?cacheCallableStmts=true&serverTimezone=Asia/Seoul&useServerPrepStmts=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
     url: jdbc:mysql://localhost:3306/mf_dev?cacheCallableStmts=true&serverTimezone=Asia/Seoul&useServerPrepStmts=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
-    username: root
+    username: missionfamilydev
     password: devis
     driver-class-name: com.mysql.cj.jdbc.Driver
     pull-name: mission
