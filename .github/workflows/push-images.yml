@@ -1,7 +1,7 @@
 name: push-images
 run-name: Build And Push images to github container registry
 on:
-  push:
+  pull_request:
     branches:
       - 'feature/.*'
 jobs:
