@@ -1,6 +1,9 @@
+## DB 컨테이너 생성
+`docker run --name zibi-db -e MYSQL_ROOT_PASSWORD=<root-password> -d mysql:8.4.0`
+
 ## Database 생성
 
-`create database mf_dev default character set utf8 collate utf8_general_ci;`
+`create database mf_dev default character set utf8mb4 collate utf8mb4_general_ci;`
 
 ## Docker Network 사용
 

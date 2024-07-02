@@ -3,7 +3,7 @@ run-name: Build And Push images to github container registry
 on:
   push:
     branches:
-      - '^feature/.*'
+      - 'feature/.*'
 jobs:
   build-and-push-to-github-container-registry:
     runs-on: ubuntu-latest
@@ -36,4 +36,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{github.actor}}/${{ github.repository }}:latest
+          tags: ghcr.io/${{ github.actor }}/${{ github.repository }}:latest
