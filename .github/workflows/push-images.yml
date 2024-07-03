@@ -53,15 +53,12 @@ jobs:
         run: ssh-keyscan -t rsa ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to SSH
-        uses: easingthemes/ssh-deploy@v5.0.3
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc -i"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          EXCLUDE: ".git*"
-          SCRIPT_BEFORE: 1s
-          SCRIPT_AFTER: |
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
             echo $CR_PAT | docker login ghcr.io -u devisitem --password-stdin
             docker pull ghcr.io/devisitem/mf-content-api:latest
             docker service update --replicas 2 --network mf_network --image ghcr.io/devisitem/mf-content-api:latest --update-parallelism 1 --update-delay 5s mf-content-api
