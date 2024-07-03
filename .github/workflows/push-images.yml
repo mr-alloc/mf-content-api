@@ -42,7 +42,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ github.repository }}:0.0.1-$(date "+%Y%m%d-%H%M%S")
 
       - name: Deploy to SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -54,6 +54,3 @@ jobs:
             echo $CR_PAT | docker login ghcr.io -u devisitem --password-stdin
             docker pull ghcr.io/devisitem/mf-content-api:latest
             docker service update --replicas 2 --image ghcr.io/devisitem/mf-content-api:latest --update-parallelism 1 --update-delay 5s mf-content-api
-            echo "in zibi-server"
-            whoami
-            ls -al
