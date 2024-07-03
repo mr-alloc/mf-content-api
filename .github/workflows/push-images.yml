@@ -42,7 +42,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}:0.0.1-$(date "+%Y%m%d-%H%M%S")
+          tags: ghcr.io/${{ github.repository }}:0.0.1
 
       - name: Deploy to SSH
         uses: appleboy/ssh-action@v1.0.3
