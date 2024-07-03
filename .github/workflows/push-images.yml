@@ -53,7 +53,7 @@ jobs:
           script: |
             echo $CR_PAT | docker login ghcr.io -u devisitem --password-stdin
             docker pull ghcr.io/devisitem/mf-content-api:latest
-            docker service update --replicas 2 --image mf-content-api:latest --update-parallelism 1 --update-delay 5s mf-content-api
+            docker service update --replicas 2 --image ghcr.io/devisitem/mf-content-api:latest --update-parallelism 1 --update-delay 5s mf-content-api
             echo "in zibi-server"
             whoami
             ls -al
