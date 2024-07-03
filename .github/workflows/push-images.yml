@@ -60,9 +60,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           EXCLUDE: ".git*"
-          SCRIPT_BEFORE: |
-            whoami
-            ls -al
+          SCRIPT_BEFORE: 1s
           SCRIPT_AFTER: |
             echo $CR_PAT | docker login ghcr.io -u devisitem --password-stdin
             docker pull ghcr.io/devisitem/mf-content-api:latest
