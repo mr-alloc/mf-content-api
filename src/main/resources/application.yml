@@ -5,12 +5,41 @@ project:
   name: mf-content-api
   version: 0.0.1-SNAPSHOT
 
+datasource:
+  mission:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    pull-name: mission
+    auto-commit: false
+
 logging:
   level:
     #    org.hibernate.SQL: WARN
     com.cofixer.mf.mfcontentapi: DEBUG
-  config: classpath:logback-${spring.profiles.active}.xml
+  config: classpath:logback-local.xml
 
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
+---
+spring:
+  jpa:
+    open-in-view: false #요청이 끝날때까지 오픈된 세션을 유지하지 않는다.
+    properties:
+      hibernate.hbm2ddl.auto: create-drop #create-drop : 시작할때 테이블을 삭제 후 생성하고 종료할때 테이블을 삭제한다.
+      hibernate:
+        show_sql: true
+        format_sql: true
+  config:
+    activate:
+      on-profile: local
+
+datasource:
+  mission:
+    url: jdbc:mysql://localhost:3306/mf_dev?cacheCallableStmts=true&serverTimezone=Asia/Seoul&useServerPrepStmts=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: 1111
 ---
 spring:
   jpa:
@@ -21,27 +50,13 @@ spring:
         format_sql: true
   config:
     activate:
-      on-profile: local
+      on-profile: dev
 
 datasource:
   mission:
     url: jdbc:mysql://zibi-db/mf_dev?cacheCallableStmts=true&serverTimezone=Asia/Seoul&useServerPrepStmts=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
     username: missionfamilydev
     password: devis
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    pull-name: mission
-    auto-commit: false
-
-logging:
-  level:
-#    org.hibernate.SQL: WARN
-    com.cofixer.mf.mfcontentapi: DEBUG
-  config: classpath:logback-local.xml
-
-springdoc:
-  swagger-ui:
-    enabled: false
-  default-produces-media-type: application/json
 ---
 
 spring:
@@ -63,17 +78,10 @@ datasource:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-    pull-name: mission
-    auto-commit: false
-
-logging:
-  level:
-    #    org.hibernate.SQL: WARN
-    com.cofixer.mf.mfcontentapi: DEBUG
-    org.springdoc: DEBUG
-  config: classpath:logback-local.xml
 
 springdoc:
+  api-docs:
+    enabled: true
   swagger-ui:
     enabled: false
   default-produces-media-type: application/json

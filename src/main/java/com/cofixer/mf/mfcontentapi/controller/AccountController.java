@@ -34,7 +34,7 @@ public class AccountController {
     @PostMapping("/confirm")
     public ResponseEntity<Void> confirmAccount(@RequestBody ConfirmAccountReq req) {
         accountService.confirmAccount(req);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "/create: 계정 생성")

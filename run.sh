@@ -2,6 +2,6 @@
 
 exec /usr/bin/java \
     -Duser.timezone="UTC" \
-    -Dspring.profiles.active=local \
+    -Dspring.profiles.active=dev \
     $JAVA_OPTS \
     -jar /app/application.jar
