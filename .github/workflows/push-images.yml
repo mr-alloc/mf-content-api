@@ -33,7 +33,11 @@ jobs:
           java-version: '17'
 
       - name: Build image
-        run: ./gradlew clean bootJar -PprojVersion=$(date "+%Y%m%d-%H%M%S")
+        run: |
+          ./gradlew clean bootJar -PprojVersion=$(date "+%Y%m%d-%H%M%S")
+          echo "to be tag: $GITHUB_REPOSITORY:$GITHUB_SHA"
+          
+        
 
       - name: Push image to GitHub Container Registry
         uses: docker/build-push-action@v4
