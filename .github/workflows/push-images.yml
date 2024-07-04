@@ -44,13 +44,3 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:0.0.1
 
-      - name: Deploy to SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          password: ${{ secrets.REMOTE_PASSWORD }}
-          script: |
-            echo $CR_PAT | docker login ghcr.io -u devisitem --password-stdin
-            docker pull ghcr.io/devisitem/mf-content-api:latest
-            docker service update --replicas 2 --image ghcr.io/devisitem/mf-content-api:latest --update-parallelism 1 --update-delay 5s mf-content-api
