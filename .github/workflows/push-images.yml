@@ -43,7 +43,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ GITHUB_REPOSITORY }}:${{ GITHUB_SHA}}, ghcr.io/${{ GITHUB_REPOSITORY }}:latest
+          tags: ghcr.io/${{ github.action_repository }}:${{ github.sha }}, ghcr.io/${{ github.action_repository }}:latest
 
       - name: Deploy to SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -53,5 +53,5 @@ jobs:
           password: ${{ secrets.REMOTE_PASSWORD }}
           script: |
             echo $CR_PAT | docker login ghcr.io -u devisitem --password-stdin
-            docker pull ghcr.io/${{ GITHUB_REPOSITORY }}:latest
-            docker service update --replicas 2 --image "ghcr.io/${{ GITHUB_REPOSITORY }}:latest" --update-parallelism 1 --update-delay 5s mf-content-api
+            docker pull ghcr.io/${{ github.action_repository }}:latest
+            docker service update --replicas 2 --image "ghcr.io/${{ github.action_repository }}:latest" --update-parallelism 1 --update-delay 5s mf-content-api
