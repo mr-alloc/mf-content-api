@@ -35,9 +35,6 @@ jobs:
       - name: Build image
         run: |
           ./gradlew clean bootJar -PprojVersion=$(date "+%Y%m%d-%H%M%S")
-          echo "to be tag: $GITHUB_REPOSITORY:$GITHUB_SHA"
-          
-        
 
       - name: Push image to GitHub Container Registry
         uses: docker/build-push-action@v4
@@ -46,7 +43,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/$GITHUB_REPOSITORY:$GITHUB_SHA, ghcr.io/$GITHUB_REPOSITORY:latest
+          tags: "ghcr.io/$GITHUB_REPOSITORY:$GITHUB_SHA, ghcr.io/$GITHUB_REPOSITORY:latest"
 
       - name: Deploy to SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -57,4 +54,4 @@ jobs:
           script: |
             echo $CR_PAT | docker login ghcr.io -u devisitem --password-stdin
             docker pull ghcr.io/$GITHUB_REPOSITORY:latest
-            docker service update --replicas 2 --image ghcr.io/$GITHUB_REPOSITORY:latest --update-parallelism 1 --update-delay 5s mf-content-api
+            docker service update --replicas 2 --image "ghcr.io/$GITHUB_REPOSITORY:latest" --update-parallelism 1 --update-delay 5s mf-content-api
