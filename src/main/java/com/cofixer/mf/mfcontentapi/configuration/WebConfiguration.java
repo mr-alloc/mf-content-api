@@ -28,7 +28,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("*")
-                .allowedOrigins("http://mf-service-web")
+                .allowedOrigins("http://mimily.dev.zibi.co")
                 .exposedHeaders("User-Status");
     }
 }
