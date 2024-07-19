@@ -28,7 +28,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("*")
-                .allowedOrigins("http://localhost:5173")
+                .allowedOrigins("http://mf-service-web")
                 .exposedHeaders("User-Status");
     }
 }

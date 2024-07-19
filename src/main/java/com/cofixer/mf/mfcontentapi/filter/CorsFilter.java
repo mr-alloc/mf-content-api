@@ -22,7 +22,7 @@ public class CorsFilter implements Filter {
     private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
 
-    private static final String ALLOWED_ORIGIN = "http://localhost:5173";
+    private static final String ALLOWED_ORIGIN = "http://mf-service-web";
     private static final String ALLOWED_CREDENTIALS = "true";
 
     private static final String USER_AGENT = "User-Agent";
