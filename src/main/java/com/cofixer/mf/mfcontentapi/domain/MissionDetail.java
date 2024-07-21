@@ -1,5 +1,6 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
+import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import jakarta.persistence.*;
@@ -28,6 +29,9 @@ public class MissionDetail implements Serializable {
     @Column(name = "deadline")
     Long deadline;
 
+    @Column(name = "concreate_start_time")
+    Long startTime;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "mission_id", insertable = false, updatable = false)
     Mission mission;
@@ -55,5 +59,11 @@ public class MissionDetail implements Serializable {
 
     public Long getScheduleId() {
         return mission.getScheduleId();
+    }
+
+    public void changeStatus(MissionStatus status, long now) {
+        if (status == MissionStatus.IN_PROGRESS) {
+            this.startTime = now;
+        }
     }
 }

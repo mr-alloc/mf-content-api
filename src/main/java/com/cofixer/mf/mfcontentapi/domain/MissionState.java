@@ -82,19 +82,7 @@ public class MissionState implements Serializable {
         return missionState;
     }
 
-    public void changeStatus(MissionStatus status, Long timestamp) {
-        switch (status) {
-            case IN_PROGRESS:
-                this.startStamp = timestamp;
-                break;
-            case COMPLETED:
-                this.endStamp = timestamp;
-                break;
-            default:
-                this.startStamp = 0L;
-                this.endStamp = 0L;
-                break;
-        }
+    public void changeStatus(MissionStatus status) {
         this.status = status.getCode();
     }
 

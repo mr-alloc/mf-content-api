@@ -11,6 +11,7 @@ import java.util.List;
 public record MissionDetailValue(
         Long id,
         String name,
+        String description,
         Integer type,
         Long deadline,
         ScheduleValue schedule,
@@ -21,6 +22,7 @@ public record MissionDetailValue(
         return new MissionDetailValue(
                 detail.getMissionId(),
                 mission.getName(),
+                mission.getDescription(),
                 mission.getMissionType(),
                 detail.getDeadline(),
                 ScheduleValue.of(schedule),
@@ -33,6 +35,7 @@ public record MissionDetailValue(
         return new MissionDetailValue(
                 detail.getMissionId(),
                 mission.getName(),
+                mission.getDescription(),
                 mission.getMissionType(),
                 detail.getDeadline(),
                 ScheduleValue.of(schedule),

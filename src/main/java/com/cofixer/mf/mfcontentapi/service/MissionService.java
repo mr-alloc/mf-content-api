@@ -171,7 +171,7 @@ public class MissionService {
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
             detail.changeStatus(status, authorizedMember.getMemberId(), now);
             MissionState state = missionStateService.getState(request.getStateId());
-            state.changeStatus(status, now);
+            state.changeStatus(status);
         }
 
         List<MissionStateValue> states = missionStateService.getStates(detail.getMissionId());
@@ -200,7 +200,8 @@ public class MissionService {
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
             MissionState state = missionStateService.getState(missionId, mission.getStartAt());
-            state.changeStatus(status, now);
+            state.changeStatus(status);
+            detail.changeStatus(status, now);
         } else if (request.needChangeDeadline()) {
             detail.changeDeadLine(request.getDeadline(), now);
         }

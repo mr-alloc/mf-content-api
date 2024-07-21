@@ -45,9 +45,9 @@ public class Mission implements Serializable {
     @Column(name = "mission_name", nullable = false)
     String name;
 
-    @Comment("미션 부제")
-    @Column(name = "sub_name")
-    String subName;
+    @Comment("미션 설명")
+    @Column(name = "description")
+    String description;
 
     @Comment("스케쥴 ID")
     @Column(name = "schedule_id", nullable = false)
@@ -94,7 +94,7 @@ public class Mission implements Serializable {
         Mission newer = new Mission();
         newer.isPublic = true;
         newer.name = req.name();
-        newer.subName = req.subName();
+        newer.description = req.subName();
         newer.scheduleId = schedule.getId();
         newer.placeId = 0L;
         newer.missionType = req.type();
@@ -109,7 +109,7 @@ public class Mission implements Serializable {
         Mission newer = new Mission();
         newer.isPublic = true;
         newer.name = req.name();
-        newer.subName = req.subName();
+        newer.description = req.subName();
         newer.scheduleId = schedule.getId();
         newer.placeId = 0L;
         newer.missionType = req.type();

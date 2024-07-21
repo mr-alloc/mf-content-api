@@ -37,10 +37,6 @@ public class DataSourceConfiguration {
             @Qualifier("dataSourceProperties")
             DataSourceProperties dataSourceProperties
     ) {
-
-        log.info("url: {}", dataSourceProperties.getUrl());
-        log.info("username: {}", dataSourceProperties.getUsername());
-        log.info("password: {}", dataSourceProperties.getPassword());
         return dataSourceProperties
                 .initializeDataSourceBuilder()
                 .build();

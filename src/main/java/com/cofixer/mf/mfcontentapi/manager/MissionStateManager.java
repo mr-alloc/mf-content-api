@@ -6,6 +6,8 @@ import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.repository.MissionStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +39,7 @@ public class MissionStateManager {
         return getState(stateId).orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_STATE));
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public MissionState saveState(MissionState toBeSaved) {
         return repository.save(toBeSaved);
     }

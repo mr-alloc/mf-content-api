@@ -11,6 +11,7 @@ import java.util.List;
 public record FamilyMissionDetailValue(
         Long id,
         String name,
+        String description,
         Integer type,
         Long assignee,
         ScheduleValue schedule,
@@ -23,6 +24,7 @@ public record FamilyMissionDetailValue(
         return new FamilyMissionDetailValue(
                 detail.getMissionId(),
                 mission.getName(),
+                mission.getDescription(),
                 mission.getMissionType(),
                 detail.getAssigneeId(),
                 ScheduleValue.of(schedule),
@@ -34,6 +36,7 @@ public record FamilyMissionDetailValue(
         return new FamilyMissionDetailValue(
                 detail.getMissionId(),
                 mission.getName(),
+                mission.getDescription(),
                 mission.getMissionType(),
                 detail.getAssigneeId(),
                 ScheduleValue.of(schedule),
