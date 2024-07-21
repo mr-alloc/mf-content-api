@@ -46,7 +46,7 @@ public class Mission implements Serializable {
     String name;
 
     @Comment("미션 설명")
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     String description;
 
     @Comment("스케쥴 ID")

@@ -29,7 +29,8 @@ public class MissionDetail implements Serializable {
     @Column(name = "deadline")
     Long deadline;
 
-    @Column(name = "concreate_start_time")
+    @Comment("실제 시작시간")
+    @Column(name = "concrete_start_time", nullable = false)
     Long startTime;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
