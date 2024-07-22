@@ -43,7 +43,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}:1.0.0-SNAPSHOT
+          tags: ghcr.io/${{ github.repository }}:1.0.0-SNAPSHOT, ghcr.io/${{ github.repository }}:latest
 
       - name: Deploy to SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -54,4 +54,4 @@ jobs:
           script: |
             echo $CR_PAT | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ghcr.io/${{ github.repository }}:latest
-            docker service update --replicas 1 --image "ghcr.io/${{ github.repository }}:latest" mf-content-api
+            docker stack deploy -c stack-deploy.yml mf-content-api

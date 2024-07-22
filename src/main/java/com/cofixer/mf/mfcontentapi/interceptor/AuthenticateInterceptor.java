@@ -54,11 +54,14 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
                 }
                 return isPassed;
             }
+            log.error("[AUTHENTICATE FAIL] No token present in request");
             return false;
         } catch (TokenExpiredException | SignatureVerificationException ex) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            log.error("[TOKEN VALIDATE FAIL] Some token has problems with: {}", ex.getMessage());
         } catch (MemberException ex) {
             handleMemberException(ex, request, response);
+            log.error("[AUTHENTICATE FAIL] {}", ex.getMessage());
         } catch (Exception ex) {
             log.error("Failed to authenticate", ex);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -73,7 +76,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
                 .orElseGet(HttpStatus.INTERNAL_SERVER_ERROR::value);
 
         switch (result) {
-            case BLOCKED_MEMBER -> {
+            case BLOCKED_MEMBER: {
                 response.setStatus(statusCode);
                 response.setHeader(UserProtocol.USER_STATUS, MemberStatus.BLOCKED.getCode());
             }

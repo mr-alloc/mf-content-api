@@ -1,0 +1,9 @@
+name: mf-content-api
+
+services:
+  app:
+    image: ghcr.io/devisitem/mf-content-api
+    ports:
+      - "9090:9090"
+    networks:
+      - mf_network
