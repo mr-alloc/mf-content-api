@@ -56,8 +56,6 @@ jobs:
           script: |
             echo $CR_PAT | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ghcr.io/${{ github.repository }}:latest
-            apt-get install gh
-            gh api auth
             gh api \
               -H "Accept: application/vnd.github+json" \
               -H "X-Github-Api-Version: 2022-11-28" \
