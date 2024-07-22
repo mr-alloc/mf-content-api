@@ -17,11 +17,13 @@ public class WebConfiguration implements WebMvcConfigurer {
     private static final String CONFIRM_ACCOUNT = "/v1/account/confirm";
     private static final String REFRESH_TOKEN = "/v1/account/refresh";
     private static final String OPENAPI_DOCS = "/v3/api-docs/**";
+    private static final String HEALTH_CHECK = "/v1/health/check";
+
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticateInterceptor)
-                .excludePathPatterns(CREATE_ACCOUNT, VERIFY_ACCOUNT, CONFIRM_ACCOUNT, REFRESH_TOKEN, OPENAPI_DOCS);
+                .excludePathPatterns(HEALTH_CHECK, CREATE_ACCOUNT, VERIFY_ACCOUNT, CONFIRM_ACCOUNT, REFRESH_TOKEN, OPENAPI_DOCS);
     }
 
     @Override

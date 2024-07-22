@@ -40,7 +40,6 @@ public class CorsFilter implements Filter {
             return;
         }
 
-
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_ORIGIN);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, ALLOWED_CREDENTIALS);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, ALLOWED_HEADERS);
