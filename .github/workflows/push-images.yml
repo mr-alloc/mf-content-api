@@ -61,4 +61,4 @@ jobs:
               -H "X-Github-Api-Version: 2022-11-28" \
               /repos/devisitem/mf-content-api/contents/stack-deploy.yml?ref=feature/base_setting --jq '.content' \
               | base64 --decode \
-              | docker stack deploy --compose-file - mf-content-api
+              | docker stack deploy --detach=true --compose-file - mf-content-api
