@@ -1,5 +1,3 @@
-name: mf-content-api
-
 services:
   app:
     image: ghcr.io/devisitem/mf-content-api
