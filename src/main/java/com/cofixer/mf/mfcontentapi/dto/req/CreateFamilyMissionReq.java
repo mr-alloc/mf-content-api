@@ -19,6 +19,9 @@ public record CreateFamilyMissionReq(
 
         Integer type,
 
+        /* 기한(초) */
+        Optional<Long> deadline,
+
         @NotNull
         Long assignee,
 

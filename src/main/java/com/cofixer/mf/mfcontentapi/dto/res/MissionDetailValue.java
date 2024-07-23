@@ -24,7 +24,7 @@ public record MissionDetailValue(
                 mission.getName(),
                 mission.getDescription(),
                 mission.getMissionType(),
-                detail.getDeadline(),
+                mission.getDeadline(),
                 ScheduleValue.of(schedule),
                 states
         );
@@ -37,7 +37,7 @@ public record MissionDetailValue(
                 mission.getName(),
                 mission.getDescription(),
                 mission.getMissionType(),
-                detail.getDeadline(),
+                mission.getDeadline(),
                 ScheduleValue.of(schedule),
                 states
         );

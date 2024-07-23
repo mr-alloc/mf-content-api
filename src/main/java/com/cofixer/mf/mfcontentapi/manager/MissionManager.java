@@ -1,9 +1,11 @@
 package com.cofixer.mf.mfcontentapi.manager;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
+import com.cofixer.mf.mfcontentapi.domain.FamilyMember;
 import com.cofixer.mf.mfcontentapi.domain.FamilyMissionDetail;
 import com.cofixer.mf.mfcontentapi.domain.Mission;
 import com.cofixer.mf.mfcontentapi.domain.MissionDetail;
+import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.repository.FamilyMissionDetailRepository;
 import com.cofixer.mf.mfcontentapi.repository.MissionDetailRepository;
@@ -26,17 +28,16 @@ public class MissionManager {
     private final MissionRepository missionRepository;
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public MissionDetail saveMissionDetail(Mission mission, MissionDetail missionDetail) {
+    public MissionDetail saveMissionDetail(Mission mission) {
         Mission newMission = missionRepository.save(mission);
-        missionDetail.couplingMission(newMission);
 
-        return missionDetailRepository.save(missionDetail);
+        return missionDetailRepository.save(MissionDetail.forCreate(newMission));
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public FamilyMissionDetail saveFamilyMissionDetail(Mission mission, FamilyMissionDetail familyMission) {
+    public FamilyMissionDetail saveFamilyMissionDetail(Mission mission, FamilyMember assignee, AuthorizedMember authorizedMember) {
         Mission newMission = missionRepository.save(mission);
-        familyMission.couplingMission(newMission);
+        FamilyMissionDetail familyMission = FamilyMissionDetail.forCreate(newMission, assignee, authorizedMember);
 
         return familyMissionDetailRepository.save(familyMission);
     }

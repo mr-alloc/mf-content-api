@@ -1,9 +1,7 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
-import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -43,7 +41,7 @@ public class FamilyMissionDetail implements Serializable {
     Mission mission;
 
     public static FamilyMissionDetail forCreate(
-            CreateFamilyMissionReq request,
+            Mission mission,
             FamilyMember assignee,
             AuthorizedMember authorizedMember
     ) {
@@ -66,9 +64,8 @@ public class FamilyMissionDetail implements Serializable {
         this.lastUpdateMember = updateMemberId;
     }
 
-    public void changeStatus(MissionStatus status, Long updateMemberId, Long now) {
+    public void renewLastUpdateMember(Long updateMemberId) {
         this.lastUpdateMember = updateMemberId;
-        mission.changeStatus(status, now);
     }
 
     public void delete(Long updateMemberId) {
@@ -79,9 +76,5 @@ public class FamilyMissionDetail implements Serializable {
     public void changeType(MissionType missionType, Long memberId, Long now) {
         mission.changeType(missionType, now);
         this.lastUpdateMember = memberId;
-    }
-
-    public void couplingMission(Mission newMission) {
-        this.missionId = newMission.getId();
     }
 }

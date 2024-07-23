@@ -13,6 +13,7 @@ public class ChangeFamilyMissionReq {
     Long assignee;
     String title;
     Integer status;
+    Long deadline;
     Long stateId;
 
     public boolean needChangeType() {
@@ -29,6 +30,10 @@ public class ChangeFamilyMissionReq {
 
     public boolean needChangeStatus() {
         return status != null && MissionStatus.has(status);
+    }
+
+    public boolean needChangeDeadline() {
+        return deadline != null && deadline > 0;
     }
 
     public boolean hasNotChanged() {

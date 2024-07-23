@@ -1,13 +1,11 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
-import com.cofixer.mf.mfcontentapi.constant.MissionType;
-import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,6 +14,7 @@ import java.io.Serializable;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Comment("미션 상세 정보")
+@DynamicUpdate
 @Table(name = "mf_mission_detail")
 public class MissionDetail implements Serializable {
     @Serial
@@ -25,46 +24,19 @@ public class MissionDetail implements Serializable {
     @Column(name = "mission_id")
     Long missionId;
 
-    @Comment("제한시간(초): 시작 시 적용")
-    @Column(name = "deadline")
-    Long deadline;
-
-    @Comment("실제 시작시간")
-    @Column(name = "concrete_start_time", nullable = false)
-    Long startTime;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "mission_id", insertable = false, updatable = false)
     Mission mission;
 
 
-    public static MissionDetail forCreate(CreateMissionReq req) {
-        MissionDetail newMission = new MissionDetail();
-
-        req.deadline().ifPresent(deadline -> newMission.deadline = deadline);
-
-        return newMission;
-    }
-
-    public void changeDeadLine(Long deadline, Long now) {
-        this.deadline = deadline;
-        mission.renewUpdatedAt(now);
-    }
-
-    public void couplingMission(Mission newMission) {
-        this.missionId = newMission.getId();
-        if (MissionType.fromValue(newMission.getMissionType()) == MissionType.SCHEDULE) {
-            this.deadline = 0L;
-        }
+    public static MissionDetail forCreate(Mission newMission) {
+        MissionDetail newMissionDetail = new MissionDetail();
+        newMissionDetail.missionId = newMission.getId();
+        return newMissionDetail;
     }
 
     public Long getScheduleId() {
         return mission.getScheduleId();
     }
 
-    public void changeStatus(MissionStatus status, long now) {
-        if (status == MissionStatus.IN_PROGRESS) {
-            this.startTime = now;
-        }
-    }
 }

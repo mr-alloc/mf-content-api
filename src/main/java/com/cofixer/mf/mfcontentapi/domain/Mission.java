@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Comment("미션 메인 정보")
+@DynamicUpdate
 @Table(name = "mf_mission", indexes = {
         @Index(name = "idx_schedule_id", columnList = "schedule_id"),
         @Index(name = "idx_place_id", columnList = "place_id"),
@@ -65,6 +67,18 @@ public class Mission implements Serializable {
     @Column(name = "watcher", nullable = false)
     String watchers;
 
+    @Comment("제한시간(초): 시작 시 적용")
+    @Column(name = "deadline", nullable = false)
+    Long deadline;
+
+    @Comment("실제 시작시간")
+    @Column(name = "concrete_start_time", nullable = false)
+    Long startTime;
+
+    @Comment("실제 완료시간")
+    @Column(name = "concrete_complete_time", nullable = false)
+    Long completeTime;
+
     @Comment("수정일시")
     @Column(name = "updated_at", nullable = false)
     Long updatedAt;
@@ -99,6 +113,11 @@ public class Mission implements Serializable {
         newer.placeId = 0L;
         newer.missionType = req.type();
         newer.watchers = String.valueOf(schedule.getReporter());
+        newer.deadline = req.deadline()
+                .filter(deadline -> !MissionType.fromValue(newer.missionType).isSchedule())
+                .orElse(0L);
+        newer.startTime = 0L;
+        newer.completeTime = 0L;
         newer.createdAt = timeStamp;
         newer.updatedAt = timeStamp;
 
@@ -114,6 +133,11 @@ public class Mission implements Serializable {
         newer.placeId = 0L;
         newer.missionType = req.type();
         newer.watchers = String.valueOf(schedule.getReporter());
+        newer.deadline = req.deadline()
+                .filter(deadline -> !MissionType.fromValue(newer.missionType).isSchedule())
+                .orElse(0L);
+        newer.startTime = 0L;
+        newer.completeTime = 0L;
         newer.createdAt = timestamp;
         newer.updatedAt = timestamp;
 
@@ -128,10 +152,15 @@ public class Mission implements Serializable {
 
     public void changeStatus(MissionStatus status, Long timestamp) {
         if (status == MissionStatus.IN_PROGRESS) {
-            //시작 에정일을 지금로 변경하여 적용
-            this.schedule.editStartAt(timestamp);
+            //실제 시작시간을 적용
+            this.startTime = timestamp;
         }
         this.renewUpdatedAt(timestamp);
+    }
+
+    public void changeDeadLine(Long deadline, Long now) {
+        this.deadline = deadline;
+        renewUpdatedAt(now);
     }
 
     public void renewUpdatedAt(Long timestamp) {

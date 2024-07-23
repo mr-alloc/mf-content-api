@@ -42,7 +42,7 @@ public class MissionService {
         return schedules.stream()
                 .map(schedule -> {
                     Mission mission = Mission.forCreate(req, schedule, now);
-                    MissionDetail missionDetail = missionManager.saveMissionDetail(mission, MissionDetail.forCreate(req));
+                    MissionDetail missionDetail = missionManager.saveMissionDetail(mission);
                     processCreateState(mission, schedule);
                     return MissionDetailValue.of(missionDetail, mission, List.of(), schedule);
                 })
@@ -69,7 +69,7 @@ public class MissionService {
         return schedules.stream()
                 .map(schedule -> {
                     Mission mission = Mission.forCreate(req, schedule, now);
-                    FamilyMissionDetail detail = missionManager.saveFamilyMissionDetail(mission, FamilyMissionDetail.forCreate(req, assignee, authorizedMember));
+                    FamilyMissionDetail detail = missionManager.saveFamilyMissionDetail(mission, assignee, authorizedMember);
                     return FamilyMissionDetailValue.of(detail, mission, List.of(), schedule);
                 })
                 .toList();
@@ -169,9 +169,12 @@ public class MissionService {
             MissionStatus status = MissionStatus.fromCode(request.getStatus());
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
-            detail.changeStatus(status, authorizedMember.getMemberId(), now);
+            detail.renewLastUpdateMember(authorizedMember.getMemberId());
+            mission.changeStatus(status, now);
             MissionState state = missionStateService.getState(request.getStateId());
             state.changeStatus(status);
+        } else if (request.needChangeDeadline()) {
+            mission.changeDeadLine(request.getDeadline(), now);
         }
 
         List<MissionStateValue> states = missionStateService.getStates(detail.getMissionId());
@@ -200,10 +203,10 @@ public class MissionService {
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
             MissionState state = missionStateService.getState(missionId, mission.getStartAt());
+            mission.changeStatus(status, now);
             state.changeStatus(status);
-            detail.changeStatus(status, now);
         } else if (request.needChangeDeadline()) {
-            detail.changeDeadLine(request.getDeadline(), now);
+            mission.changeDeadLine(request.getDeadline(), now);
         }
         List<MissionStateValue> states = missionStateService.getStates(detail.getMissionId());
         Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());

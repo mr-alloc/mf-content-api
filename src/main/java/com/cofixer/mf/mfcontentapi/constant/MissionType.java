@@ -14,8 +14,8 @@ import java.util.function.Supplier;
 public enum MissionType {
     SCHEDULE(0),
     MISSION(1),
-    PACKAGE(2),
-    STEP(3),
+//    PACKAGE(2),
+//    STEP(3),
 //    TIME(4),
 //    PROJECT(5),
 //    SECRET(6),
