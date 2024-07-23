@@ -8,8 +8,6 @@ services:
     deploy:
       update_config:
         order: start-first
-    environment:
-      - FORCE_UPDATE=$(date +%s)
     networks:
       - mf_network
 
