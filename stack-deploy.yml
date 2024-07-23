@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/devisitem/mf-content-api
+    image: ghcr.io/devisitem/mf-content-api:latest
     ports:
       - "9090:9090"
     networks:
