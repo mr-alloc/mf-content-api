@@ -5,6 +5,9 @@ services:
     image: ghcr.io/devisitem/mf-content-api:latest
     ports:
       - "9090:9090"
+    deploy:
+      update_config:
+        order: start-first
     environment:
       - FORCE_UPDATE=$(date +%s)
     networks:

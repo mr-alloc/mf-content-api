@@ -43,7 +43,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}, ghcr.io/${{ github.repository }}:latest경
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}, ghcr.io/${{ github.repository }}:latest
 
       - name: Deploy to SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -61,4 +61,4 @@ jobs:
               -H "X-Github-Api-Version: 2022-11-28" \
               /repos/${{ github.repository }}/contents/stack-deploy.yml?ref=feature/base_setting --jq '.content' \
               | base64 --decode \
-              | docker stack deploy --detach=true --compose-file - mf-content-api
+              | docker stack deploy --with-registry-ath --detach=true --compose-file - mf-content-api
