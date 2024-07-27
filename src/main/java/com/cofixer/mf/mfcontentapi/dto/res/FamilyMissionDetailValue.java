@@ -13,6 +13,7 @@ public record FamilyMissionDetailValue(
         String name,
         String description,
         Integer type,
+        Long deadline,
         Long assignee,
         ScheduleValue schedule,
         List<MissionStateValue> states
@@ -26,6 +27,7 @@ public record FamilyMissionDetailValue(
                 mission.getName(),
                 mission.getDescription(),
                 mission.getMissionType(),
+                mission.getDeadline(),
                 detail.getAssigneeId(),
                 ScheduleValue.of(schedule),
                 states
@@ -38,6 +40,7 @@ public record FamilyMissionDetailValue(
                 mission.getName(),
                 mission.getDescription(),
                 mission.getMissionType(),
+                mission.getDeadline(),
                 detail.getAssigneeId(),
                 ScheduleValue.of(schedule),
                 states

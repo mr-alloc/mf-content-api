@@ -27,6 +27,7 @@ public class MissionStateService {
     private final MissionStateManager missionStateManager;
     private final MissionManager missionManager;
     private final MissionCommentManager missionCommentManager;
+    private final ScheduleService scheduleService;
 
     public List<MissionStateValue> getStates(Long missionId) {
         return missionStateManager.getStates(missionId).stream()
@@ -118,5 +119,10 @@ public class MissionStateService {
                 .sorted(MissionComment.DEFAULT_SORT_CONDITION)
                 .map(MissionCommentValue::of)
                 .toList();
+    }
+
+    public MissionState createStateLazy(Mission mission, Long startStamp) {
+        MissionState missionState = MissionState.forLazyCreate(mission.getId(), MissionType.MISSION, mission.getSchedule(), startStamp);
+        return missionStateManager.saveState(missionState);
     }
 }

@@ -1,6 +1,5 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateFamilyMissionReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateMissionReq;
@@ -71,14 +70,6 @@ public class Mission implements Serializable {
     @Column(name = "deadline", nullable = false)
     Long deadline;
 
-    @Comment("실제 시작시간")
-    @Column(name = "concrete_start_time", nullable = false)
-    Long startTime;
-
-    @Comment("실제 완료시간")
-    @Column(name = "concrete_complete_time", nullable = false)
-    Long completeTime;
-
     @Comment("수정일시")
     @Column(name = "updated_at", nullable = false)
     Long updatedAt;
@@ -116,8 +107,6 @@ public class Mission implements Serializable {
         newer.deadline = req.deadline()
                 .filter(deadline -> !MissionType.fromValue(newer.missionType).isSchedule())
                 .orElse(0L);
-        newer.startTime = 0L;
-        newer.completeTime = 0L;
         newer.createdAt = timeStamp;
         newer.updatedAt = timeStamp;
 
@@ -136,8 +125,6 @@ public class Mission implements Serializable {
         newer.deadline = req.deadline()
                 .filter(deadline -> !MissionType.fromValue(newer.missionType).isSchedule())
                 .orElse(0L);
-        newer.startTime = 0L;
-        newer.completeTime = 0L;
         newer.createdAt = timestamp;
         newer.updatedAt = timestamp;
 
@@ -148,14 +135,6 @@ public class Mission implements Serializable {
     public void changeTitle(String title, Long timestamp) {
         this.name = title;
         renewUpdatedAt(timestamp);
-    }
-
-    public void changeStatus(MissionStatus status, Long timestamp) {
-        if (status == MissionStatus.IN_PROGRESS) {
-            //실제 시작시간을 적용
-            this.startTime = timestamp;
-        }
-        this.renewUpdatedAt(timestamp);
     }
 
     public void changeDeadLine(Long deadline, Long now) {

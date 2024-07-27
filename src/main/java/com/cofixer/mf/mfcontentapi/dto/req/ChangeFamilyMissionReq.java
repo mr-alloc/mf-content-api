@@ -15,6 +15,7 @@ public class ChangeFamilyMissionReq {
     Integer status;
     Long deadline;
     Long stateId;
+    Long startStamp;
 
     public boolean needChangeType() {
         return type != null && MissionType.has(type);

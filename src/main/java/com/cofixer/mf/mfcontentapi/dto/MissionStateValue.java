@@ -8,7 +8,9 @@ public record MissionStateValue(
         Long missionId,
         Integer status,
         Long startAt,
-        Long endAt
+        Long endAt,
+        Long concreteStartAt,
+        Long concreteCompleteAt
 ) {
 
     public static MissionStateValue of(MissionState state) {
@@ -17,7 +19,9 @@ public record MissionStateValue(
                 state.getMissionId(),
                 state.getStatus(),
                 state.getStartStamp(),
-                state.getEndStamp()
+                state.getEndStamp(),
+                state.getStartTime(),
+                state.getCompleteTime()
         );
     }
 }

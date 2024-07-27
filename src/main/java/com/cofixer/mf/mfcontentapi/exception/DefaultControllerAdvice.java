@@ -18,7 +18,7 @@ public class DefaultControllerAdvice {
     @ExceptionHandler(MissionException.class)
     public ResponseEntity<CommonErrorRes> missionExceptionHandler(MissionException ex) {
         DeclaredMissionResult result = ex.getResult();
-        log.error(LoggerUtil.log(ex.getMessage()), ex);
+        log.error(LoggerUtil.logWithLastTrace(ex));
         return Optional.ofNullable(result.getHttpStatus())
                 .map(ResponseEntity::status)
                 .orElseGet(ResponseEntity::internalServerError)
@@ -28,7 +28,7 @@ public class DefaultControllerAdvice {
     @ExceptionHandler(AccountException.class)
     public ResponseEntity<CommonErrorRes> accountExceptionHandler(AccountException ex) {
         DeclaredAccountResult result = ex.getResult();
-        log.error(LoggerUtil.log(ex.getMessage()), ex);
+        log.error(LoggerUtil.logWithLastTrace(ex));
         return Optional.ofNullable(result.getHttpStatus())
                 .map(ResponseEntity::status)
                 .orElseGet(ResponseEntity::internalServerError)
@@ -38,7 +38,7 @@ public class DefaultControllerAdvice {
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<CommonErrorRes> memberExceptionHandler(MemberException ex) {
         DeclaredMemberResult result = ex.getResult();
-        log.error(LoggerUtil.log(ex.getMessage()), ex);
+        log.error(LoggerUtil.logWithLastTrace(ex));
 
         return Optional.ofNullable(result.getHttpStatus())
                 .map(ResponseEntity::status)
@@ -51,7 +51,7 @@ public class DefaultControllerAdvice {
     @ExceptionHandler(FamilyException.class)
     public ResponseEntity<CommonErrorRes> familyExceptionHandler(FamilyException ex) {
         DeclaredFamilyResult result = ex.getResult();
-        log.error(LoggerUtil.log(ex.getMessage()), ex);
+        log.error(LoggerUtil.logWithLastTrace(ex));
         return Optional.ofNullable(result.getHttpStatus())
                 .map(ResponseEntity::status)
                 .orElseGet(ResponseEntity::internalServerError)

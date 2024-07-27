@@ -22,7 +22,6 @@ public class FamilyMissionDetail implements Serializable {
     @Serial
     private static final long serialVersionUID = -7457655598407925966L;
 
-
     @Id
     @Comment("미션 ID")
     @Column(name = "mission_id")
@@ -46,7 +45,7 @@ public class FamilyMissionDetail implements Serializable {
             AuthorizedMember authorizedMember
     ) {
         FamilyMissionDetail newer = new FamilyMissionDetail();
-
+        newer.missionId = mission.getId();
         newer.assigneeId = assignee.getMemberId();
         newer.lastUpdateMember = authorizedMember.getMemberId();
 

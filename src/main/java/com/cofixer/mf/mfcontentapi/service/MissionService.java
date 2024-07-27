@@ -70,6 +70,7 @@ public class MissionService {
                 .map(schedule -> {
                     Mission mission = Mission.forCreate(req, schedule, now);
                     FamilyMissionDetail detail = missionManager.saveFamilyMissionDetail(mission, assignee, authorizedMember);
+                    processCreateState(mission, schedule);
                     return FamilyMissionDetailValue.of(detail, mission, List.of(), schedule);
                 })
                 .toList();
@@ -150,7 +151,7 @@ public class MissionService {
         FamilyMissionDetail detail = missionManager.getFamilyMissionDetail(missionId, authorizedMember.getFamilyId());
         Mission mission = detail.getMission();
         //소속 패밀리 미션이 아닌경우
-        ConditionUtil.throwIfTrue(Objects.equals(mission.getSchedule().getFamily(), authorizedMember.getFamilyId()), () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
+        ConditionUtil.throwIfTrue(!Objects.equals(mission.getSchedule().getFamily(), authorizedMember.getFamilyId()), () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
         // 변경할 내용이 없는 경우
         ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
 
@@ -170,8 +171,10 @@ public class MissionService {
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
             detail.renewLastUpdateMember(authorizedMember.getMemberId());
-            mission.changeStatus(status, now);
-            MissionState state = missionStateService.getState(request.getStateId());
+            mission.renewUpdatedAt(now);
+            MissionState state = Optional.ofNullable(request.getStateId())
+                    .map(missionStateService::getState)
+                    .orElseGet(() -> missionStateService.createStateLazy(mission, request.getStartStamp()));
             state.changeStatus(status);
         } else if (request.needChangeDeadline()) {
             mission.changeDeadLine(request.getDeadline(), now);
@@ -203,7 +206,7 @@ public class MissionService {
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
             MissionState state = missionStateService.getState(missionId, mission.getStartAt());
-            mission.changeStatus(status, now);
+            mission.renewUpdatedAt(now);
             state.changeStatus(status);
         } else if (request.needChangeDeadline()) {
             mission.changeDeadLine(request.getDeadline(), now);

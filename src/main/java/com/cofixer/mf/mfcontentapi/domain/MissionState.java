@@ -44,6 +44,14 @@ public class MissionState implements Serializable {
     @Column(name = "end_stamp")
     Long endStamp;
 
+    @Comment("실제 시작시간")
+    @Column(name = "concrete_start_time", nullable = false)
+    Long startTime;
+
+    @Comment("실제 완료시간")
+    @Column(name = "concrete_complete_time", nullable = false)
+    Long completeTime;
+
     @Transient
     transient MissionStatus currentStatus;
 
@@ -60,6 +68,8 @@ public class MissionState implements Serializable {
                 : MissionStatus.CREATED.getCode();
         missionState.startStamp = schedule.getStartAt();
         missionState.endStamp = schedule.getEndAt();
+        missionState.startTime = 0L;
+        missionState.completeTime = 0L;
         return missionState;
     }
 
@@ -78,11 +88,19 @@ public class MissionState implements Serializable {
 
         missionState.startStamp = schedule.getStartAt();
         missionState.endStamp = schedule.getEndAt();
+        missionState.startTime = 0L;
+        missionState.completeTime = 0L;
 
         return missionState;
     }
 
     public void changeStatus(MissionStatus status) {
+        if (status == MissionStatus.IN_PROGRESS) {
+            //실제 시작시간을 적용
+            this.startTime = TemporalUtil.getEpochSecond();
+        } else if (status == MissionStatus.COMPLETED) {
+            this.completeTime = TemporalUtil.getEpochSecond();
+        }
         this.status = status.getCode();
     }
 

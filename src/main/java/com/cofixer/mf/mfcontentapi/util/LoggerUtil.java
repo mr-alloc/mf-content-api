@@ -10,4 +10,12 @@ public class LoggerUtil {
         HttpServletRequest request = RequestUtil.getRequest();
         return String.format("[%s %s] %s", request.getMethod(), request.getRequestURI(), message);
     }
+
+    public static String logWithLastTrace(Exception ex) {
+        StackTraceElement[] stackTrace = ex.getStackTrace();
+        StackTraceElement stackTraceElement = stackTrace[0];
+        String lineTrace = String.format("%s", stackTraceElement);
+        HttpServletRequest request = RequestUtil.getRequest();
+        return String.format("[%s %s:%s] %s", request.getMethod(), request.getRequestURI(), lineTrace, ex.getMessage());
+    }
 }
