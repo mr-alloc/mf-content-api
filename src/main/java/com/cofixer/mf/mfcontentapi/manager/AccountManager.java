@@ -2,8 +2,10 @@ package com.cofixer.mf.mfcontentapi.manager;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
 import com.cofixer.mf.mfcontentapi.domain.Account;
+import com.cofixer.mf.mfcontentapi.domain.PreflightTester;
 import com.cofixer.mf.mfcontentapi.exception.AccountException;
 import com.cofixer.mf.mfcontentapi.repository.AccountRepository;
+import com.cofixer.mf.mfcontentapi.repository.PreflightTesterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,6 +21,7 @@ public class AccountManager {
      * Required Bean
      */
     private final AccountRepository repository;
+    private final PreflightTesterRepository testerRepository;
 
     @Transactional(propagation = Propagation.MANDATORY)
     public Account createAccount(Account newer) {
@@ -44,4 +47,14 @@ public class AccountManager {
                 .orElseThrow(() -> new AccountException(DeclaredAccountResult.NOT_FOUND_ACCOUNT));
     }
 
+    public PreflightTester checkPreflightTester(String email) {
+        return testerRepository.findById(email)
+                .filter(PreflightTester::isNotJoined)
+                .orElseThrow(() -> new AccountException(DeclaredAccountResult.NOT_PREFLIGHT_TESTER));
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void markTesterJoin(PreflightTester tester) {
+        tester.recordJoinedAt();
+    }
 }

@@ -20,7 +20,8 @@ public enum DeclaredAccountResult implements DeclaredResult {
     NOT_FOUND_ACCOUNT(-4, HttpStatus.BAD_REQUEST),
     INVALID_DEVICE_TYPE(-5, HttpStatus.BAD_REQUEST),
     INVALID_ACCESS_TOKEN(-6, HttpStatus.BAD_REQUEST),
-    EXPIRED_REFRESH_TOKEN(-7, HttpStatus.UNAUTHORIZED);
+    EXPIRED_REFRESH_TOKEN(-7, HttpStatus.UNAUTHORIZED),
+    NOT_PREFLIGHT_TESTER(-8, HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private HttpStatus httpStatus;

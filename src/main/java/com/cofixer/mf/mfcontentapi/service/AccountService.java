@@ -9,6 +9,7 @@ import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
 import com.cofixer.mf.mfcontentapi.domain.AccessCredential;
 import com.cofixer.mf.mfcontentapi.domain.Account;
 import com.cofixer.mf.mfcontentapi.domain.Member;
+import com.cofixer.mf.mfcontentapi.domain.PreflightTester;
 import com.cofixer.mf.mfcontentapi.dto.req.ConfirmAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.RefreshTokenReq;
@@ -55,6 +56,9 @@ public class AccountService {
             throw new AccountException(DeclaredAccountResult.DUPLICATED_EMAIL);
         }
 
+        //테스터 여부 확인
+        PreflightTester tester = accountManager.checkPreflightTester(req.getEmail());
+
         //계정 생성
         Account saved = accountManager.createAccount(
                 Account.forCreate(
@@ -63,6 +67,7 @@ public class AccountService {
                 )
         );
         memberManager.createMember(saved.getId());
+        accountManager.markTesterJoin(tester);
         return saved;
     }
 
@@ -118,6 +123,8 @@ public class AccountService {
         if (accountManager.isExistAccount(req.email())) {
             throw new AccountException(DeclaredAccountResult.DUPLICATED_EMAIL);
         }
+        //테스터 여부 확인
+        accountManager.checkPreflightTester(req.email());
     }
 
     @Transactional
