@@ -25,7 +25,7 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
         if (authorizedMember.forFamilyMember()) {
             condition.and(schedule.family.eq(authorizedMember.getFamilyId()));
         } else {
-            schedule.reporter.eq(authorizedMember.getMemberId());
+            condition.and(schedule.reporter.eq(authorizedMember.getMemberId()));
         }
         condition.and(
                         schedule.mode.in(ScheduleMode.PERIOD.getValue(), ScheduleMode.REPEAT.getValue())
