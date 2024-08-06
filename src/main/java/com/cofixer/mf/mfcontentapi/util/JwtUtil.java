@@ -40,7 +40,9 @@ public class JwtUtil {
     }
 
     public static DecodedJWT decodeWithoutExpiry(String token) {
-        JWTVerifier verifier = JWT.require(ALGORITHM).acceptExpiresAt(AppContext.REFRESH_TOKEN_EXPIRE_SECOND).build();
+        JWTVerifier verifier = JWT.require(ALGORITHM)
+                .acceptExpiresAt(AppContext.REFRESH_TOKEN_EXPIRE_SECOND)
+                .build();
         return verifier.verify(token);
     }
 

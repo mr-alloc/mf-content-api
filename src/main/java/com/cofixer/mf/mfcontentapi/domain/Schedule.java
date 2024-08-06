@@ -131,4 +131,10 @@ public class Schedule implements Serializable {
 
         return List.of(this.repeatValue);
     }
+
+    public boolean isNotAccessibleFrom(AuthorizedMember authorizedMember) {
+        return authorizedMember.forFamilyMember()
+                ? this.family.equals(authorizedMember.getFamilyId())
+                : this.reporter.equals(authorizedMember.getMemberId());
+    }
 }

@@ -111,7 +111,8 @@ public class MissionStateService {
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_STATE));
 
         Mission mission = missionManager.getMission(missionState.getMissionId());
-        if (!mission.isReportedBy(authorizedMember.getMemberId())) {
+        Schedule schedule = mission.getSchedule();
+        if (schedule.isNotAccessibleFrom(authorizedMember)) {
             return Collections.emptyList();
         }
 
