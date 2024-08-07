@@ -134,7 +134,7 @@ public class Schedule implements Serializable {
 
     public boolean isNotAccessibleFrom(AuthorizedMember authorizedMember) {
         return authorizedMember.forFamilyMember()
-                ? this.family.equals(authorizedMember.getFamilyId())
-                : this.reporter.equals(authorizedMember.getMemberId());
+                ? !this.family.equals(authorizedMember.getFamilyId())
+                : !this.reporter.equals(authorizedMember.getMemberId());
     }
 }

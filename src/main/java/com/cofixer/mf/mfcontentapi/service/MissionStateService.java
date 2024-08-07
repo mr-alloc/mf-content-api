@@ -80,10 +80,10 @@ public class MissionStateService {
                 .orElseGet(() -> {
                     MissionDetail missionDetail = missionManager.getMissionDetail(req.missionId());
                     Mission mission = missionDetail.getMission();
-                    if (!mission.getReporter().equals(authorizedMember.getMemberId())) {
+                    Schedule schedule = mission.getSchedule();
+                    if (schedule.isNotAccessibleFrom(authorizedMember)) {
                         throw new MissionException(DeclaredMissionResult.NOT_OWN_MISSION);
                     }
-                    Schedule schedule = mission.getSchedule();
                     boolean isRange = schedule.getStartAt() <= req.timestamp() && req.timestamp() <= schedule.getEndAt();
 
                     return Optional.of(isRange)
