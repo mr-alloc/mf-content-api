@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @AccountAuth(AccountRoleType.MEMBER)
-@Tag(name = "/mission: 미션")
+@Tag(name = "/v1/mission: 미션")
 @RequestMapping("/v1/mission")
 public class MissionController {
 
@@ -73,6 +73,15 @@ public class MissionController {
     public ResponseEntity<DeleteMissionRes> deleteMission(@PathVariable("missionId") Long missionId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
         DeleteMissionRes response = missionService.deleteMission(missionId, authorizedMember);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @Operation(summary = "/coming-missions: 다가오는 미션 목록 조회")
+    @GetMapping("/coming-missions")
+    public ResponseEntity<GetComingMissionsRes> getComingMissions() {
+        AuthorizedMember authorizedMember = AuthorizedService.getMember();
+        GetComingMissionsRes response = missionService.getComingMissions(authorizedMember);
         return ResponseEntity.ok(response);
     }
 }

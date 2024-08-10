@@ -45,7 +45,7 @@ public class FamilyMissionDetail implements Serializable {
             AuthorizedMember authorizedMember
     ) {
         FamilyMissionDetail newer = new FamilyMissionDetail();
-        newer.missionId = mission.getId();
+        newer.missionId = mission.getMissionId();
         newer.assigneeId = assignee.getMemberId();
         newer.lastUpdateMember = authorizedMember.getMemberId();
 
@@ -75,5 +75,9 @@ public class FamilyMissionDetail implements Serializable {
     public void changeType(MissionType missionType, Long memberId, Long now) {
         mission.changeType(missionType, now);
         this.lastUpdateMember = memberId;
+    }
+
+    public boolean isMyMission(AuthorizedMember authorizedMember) {
+        return this.assigneeId.equals(authorizedMember.getMemberId());
     }
 }

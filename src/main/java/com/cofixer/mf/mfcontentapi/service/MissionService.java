@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,8 +82,8 @@ public class MissionService {
     @Transactional(readOnly = true)
     public GetMemberCalendarRes getMemberCalendar(AuthorizedMember authorizedMember, Long startAt, Long endAt) {
         List<Schedule> schedules = scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.MISSION);
-        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getId);
-        List<MissionDetail> details = missionManager.getMissions(scheduleIds);
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getScheduleId);
+        List<MissionDetail> details = missionManager.getMissionDetails(scheduleIds);
 
         Set<Long> missionIds = CollectionUtil.convertSet(details, MissionDetail::getMissionId);
         Map<Long, List<MissionStateValue>> stateGroupingMap = missionStateService.getStateGroupingMap(missionIds);
@@ -107,9 +109,9 @@ public class MissionService {
     @Transactional(readOnly = true)
     public GetFamilyCalendarRes getFamilyCalendar(AuthorizedMember authorizedMember, Long startAt, Long endAt) {
         List<Schedule> schedules = scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.MISSION);
-        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getId);
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getScheduleId);
 
-        List<FamilyMissionDetail> details = missionManager.getFamilyMissions(scheduleIds);
+        List<FamilyMissionDetail> details = missionManager.getFamilyMissionDetails(scheduleIds);
         Set<Long> missionIdList = CollectionUtil.convertSet(details, FamilyMissionDetail::getMissionId);
 
         Map<Long, List<MissionStateValue>> stateGroupingMap = missionStateService.getStateGroupingMap(missionIdList);
@@ -159,14 +161,20 @@ public class MissionService {
         if (request.needChangeType()) {
             MissionType missionType = MissionType.fromValue(request.getType());
             detail.changeType(missionType, authorizedMember.getMemberId(), now);
-        } else if (request.needChangeAssignee()) {
+        }
+
+        if (request.needChangeAssignee()) {
             //우리 패밀리에 없는 경우
             ConditionUtil.throwIfTrue(!familyManager.existMember(FamilyMemberId.of(authorizedMember.getFamilyId(), request.getAssignee())),
                     () -> new MissionException(DeclaredMissionResult.NOT_FOUND_MEMBER));
             detail.changeAssignee(request.getAssignee(), authorizedMember.getMemberId(), now);
-        } else if (request.needChangeTitle()) {
+        }
+
+        if (request.needChangeTitle()) {
             detail.changeTitle(request.getTitle(), authorizedMember.getMemberId(), now);
-        } else if (request.needChangeStatus()) {
+        }
+
+        if (request.needChangeStatus()) {
             MissionStatus status = MissionStatus.fromCode(request.getStatus());
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
@@ -175,9 +183,18 @@ public class MissionService {
             MissionState state = Optional.ofNullable(request.getStateId())
                     .map(missionStateService::getState)
                     .orElseGet(() -> missionStateService.createStateLazy(mission, request.getStartStamp()));
+            if (state.getStatus().equals(request.getStatus())) {
+                throw new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET);
+            }
             state.changeStatus(status);
-        } else if (request.needChangeDeadline()) {
+        }
+
+        if (request.needChangeDeadline()) {
             mission.changeDeadLine(request.getDeadline(), now);
+        }
+
+        if (request.needChangeDescription()) {
+            mission.changeDescription(request.getDescription(), now);
         }
 
         List<MissionStateValue> states = missionStateService.getStates(detail.getMissionId());
@@ -199,18 +216,35 @@ public class MissionService {
         if (request.needChangeType()) {
             MissionType missionType = MissionType.fromValue(request.getType());
             mission.changeType(missionType, now);
-        } else if (request.needChangeTitle()) {
+        }
+
+        if (request.needChangeTitle()) {
             mission.changeTitle(request.getTitle(), now);
-        } else if (request.needChangeStatus()) {
+        }
+
+        if (request.needChangeStatus()) {
             MissionStatus status = MissionStatus.fromCode(request.getStatus());
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
-            MissionState state = missionStateService.getState(missionId, mission.getStartAt());
             mission.renewUpdatedAt(now);
+            MissionState state = Optional.ofNullable(request.getStateId())
+                    .map(missionStateService::getState)
+                    .orElseGet(() -> missionStateService.createStateLazy(mission, request.getStartStamp()));
+            if (state.getStatus().equals(request.getStatus())) {
+                throw new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET);
+            }
             state.changeStatus(status);
-        } else if (request.needChangeDeadline()) {
+        }
+
+        if (request.needChangeDeadline()) {
             mission.changeDeadLine(request.getDeadline(), now);
         }
+
+
+        if (request.needChangeDescription()) {
+            mission.changeDescription(request.getDescription(), now);
+        }
+
         List<MissionStateValue> states = missionStateService.getStates(detail.getMissionId());
         Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());
         MissionDetailValue detailValue = MissionDetailValue.of(detail, states, schedule);
@@ -244,5 +278,54 @@ public class MissionService {
 
         mission.delete();
         return DeleteMissionRes.of(missionId);
+    }
+
+    @Transactional(readOnly = true)
+    public GetComingFamilyMissionsRes getComingFamilyMissions(AuthorizedMember authorizedMember) {
+        Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION).stream()
+                .collect(Collectors.toMap(Schedule::getScheduleId, Function.identity()));
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getScheduleId);
+
+        Map<Long, FamilyMissionDetail> detailsMap = missionManager.getFamilyMissionDetails(scheduleIds).stream()
+                .filter(detail -> detail.isMyMission(authorizedMember))
+                .collect(Collectors.toMap(
+                        FamilyMissionDetail::getMissionId,
+                        Function.identity()
+                ));
+        Set<Long> missionIds = CollectionUtil.convertSet(detailsMap.values(), FamilyMissionDetail::getMissionId);
+        Map<Long, List<MissionStateValue>> stateMap = missionStateService.getStateGroupingMap(missionIds);
+
+        List<FamilyMissionDetailValue> detailValues = missionManager.getMissions(missionIds).stream()
+                .map(mission -> FamilyMissionDetailValue.of(
+                        detailsMap.get(mission.getMissionId()),
+                        mission,
+                        stateMap.get(mission.getMissionId()),
+                        schedules.get(mission.getScheduleId())
+                ))
+                .toList();
+
+        return GetComingFamilyMissionsRes.of(detailValues);
+    }
+
+    public GetComingMissionsRes getComingMissions(AuthorizedMember authorizedMember) {
+        Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION).stream()
+                .collect(Collectors.toMap(Schedule::getScheduleId, Function.identity()));
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getScheduleId);
+
+        Map<Long, MissionDetail> detailsMap = missionManager.getMissionDetailsMap(scheduleIds);
+        Set<Long> missionIds = CollectionUtil.convertSet(detailsMap.values(), MissionDetail::getMissionId);
+        Map<Long, List<MissionStateValue>> stateMap = missionStateService.getStateGroupingMap(missionIds);
+
+        List<MissionDetailValue> detailValues = missionManager.getMissions(missionIds).stream()
+                .map(mission -> MissionDetailValue.of(
+                        detailsMap.get(mission.getMissionId()),
+                        mission,
+                        stateMap.get(mission.getMissionId()),
+                        schedules.get(mission.getScheduleId())
+                ))
+                .toList();
+
+        return GetComingMissionsRes.of(detailValues);
+
     }
 }

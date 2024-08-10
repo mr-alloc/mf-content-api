@@ -4,7 +4,6 @@ import com.cofixer.mf.mfcontentapi.domain.Family;
 
 public record GetFamilyInfoRes(
         Long id,
-
         String inviteCode,
         String name
 ) {

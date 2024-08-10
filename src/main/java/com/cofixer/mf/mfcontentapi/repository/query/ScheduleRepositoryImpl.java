@@ -4,6 +4,7 @@ import com.cofixer.mf.mfcontentapi.constant.ScheduleMode;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
 import com.cofixer.mf.mfcontentapi.domain.Schedule;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +44,32 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
                 )
                 .and(schedule.type.eq(scheduleType.getValue()));
 
-        return queryFactory.select(schedule)
-                .from(schedule)
+        return queryFactory.selectFrom(schedule)
                 .where(condition)
+                .fetch();
+    }
+
+    @Override
+    public List<Schedule> getComingSchedules(
+            AuthorizedMember authorizedMember,
+            ScheduleType scheduleType
+    ) {
+        BooleanBuilder condition = new BooleanBuilder();
+
+        long now = TemporalUtil.getEpochSecond();
+        long tenDay = TemporalUtil.DAY_IN_SECONDS * 10;
+        condition.and(schedule.startAt.goe(now)
+                .and(schedule.startAt.loe(now + tenDay)));
+        if (authorizedMember.forFamilyMember()) {
+            condition.and(schedule.family.eq(authorizedMember.getFamilyId()));
+        } else {
+            condition.and(schedule.reporter.eq(authorizedMember.getMemberId()));
+        }
+
+        return queryFactory.selectFrom(schedule)
+                .where(condition.and(schedule.type.eq(scheduleType.getValue())))
+                .limit(30)
+                .orderBy(schedule.startAt.desc())
                 .fetch();
     }
 }

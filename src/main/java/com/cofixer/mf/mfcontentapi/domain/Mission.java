@@ -36,7 +36,7 @@ public class Mission implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    Long missionId;
 
     @Comment("공개 여부")
     @Column(name = "is_public", nullable = false)
@@ -100,7 +100,7 @@ public class Mission implements Serializable {
         newer.isPublic = true;
         newer.name = req.name();
         newer.description = req.subName();
-        newer.scheduleId = schedule.getId();
+        newer.scheduleId = schedule.getScheduleId();
         newer.placeId = 0L;
         newer.missionType = req.type();
         newer.watchers = String.valueOf(schedule.getReporter());
@@ -118,7 +118,7 @@ public class Mission implements Serializable {
         newer.isPublic = true;
         newer.name = req.name();
         newer.description = req.subName();
-        newer.scheduleId = schedule.getId();
+        newer.scheduleId = schedule.getScheduleId();
         newer.placeId = 0L;
         newer.missionType = req.type();
         newer.watchers = String.valueOf(schedule.getReporter());
@@ -159,5 +159,11 @@ public class Mission implements Serializable {
     public boolean isReportedBy(Long memberId) {
         return this.getReporter().equals(memberId);
     }
+
+    public void changeDescription(String description, long now) {
+        this.description = description;
+        this.renewUpdatedAt(now);
+    }
+
 }
 

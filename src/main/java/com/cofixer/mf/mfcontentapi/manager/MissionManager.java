@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,12 +43,20 @@ public class MissionManager {
     }
 
 
-    public List<MissionDetail> getMissions(Collection<Long> scheduleIds) {
-        return missionDetailRepository.getMissionInPeriod(scheduleIds);
+    public List<MissionDetail> getMissionDetails(Collection<Long> scheduleIds) {
+        return missionDetailRepository.getMissionsInPeriod(scheduleIds);
     }
 
-    public List<FamilyMissionDetail> getFamilyMissions(Collection<Long> scheduleIds) {
+    public List<FamilyMissionDetail> getFamilyMissionDetails(Collection<Long> scheduleIds) {
         return familyMissionDetailRepository.getMissionsInPeriod(scheduleIds);
+    }
+
+    public Map<Long, FamilyMissionDetail> getFamilyMissionDetailsMap(Collection<Long> scheduleIds) {
+        return familyMissionDetailRepository.getMissionsInPeriod(scheduleIds).stream()
+                .collect(Collectors.toMap(
+                        FamilyMissionDetail::getMissionId,
+                        Function.identity()
+                ));
     }
 
     public MissionDetail getMissionDetail(Long missionId) {
@@ -64,5 +72,25 @@ public class MissionManager {
     public Mission getMission(Long missionId) {
         return missionRepository.findById(missionId)
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_MISSION));
+    }
+
+    public Map<Long, Mission> getMissionsMap(Set<Long> missionIds) {
+        return missionRepository.findAllById(missionIds).stream()
+                .collect(Collectors.toMap(
+                        Mission::getMissionId,
+                        Function.identity()
+                ));
+    }
+
+    public List<Mission> getMissions(Set<Long> missionIds) {
+        return missionRepository.findAllById(missionIds);
+    }
+
+    public Map<Long, MissionDetail> getMissionDetailsMap(Set<Long> scheduleIds) {
+        return getMissionDetails(scheduleIds).stream()
+                .collect(Collectors.toMap(
+                        MissionDetail::getMissionId,
+                        Function.identity()
+                ));
     }
 }

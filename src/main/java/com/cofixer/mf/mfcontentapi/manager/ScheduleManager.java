@@ -29,4 +29,11 @@ public class ScheduleManager {
     public Schedule getSchedule(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).orElse(null);
     }
+
+    public List<Schedule> getComingMissionSchedules(
+            AuthorizedMember authorizedMember,
+            ScheduleType scheduleType
+    ) {
+        return scheduleRepository.getComingSchedules(authorizedMember, scheduleType);
+    }
 }

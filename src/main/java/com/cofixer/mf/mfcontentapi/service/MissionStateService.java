@@ -66,7 +66,7 @@ public class MissionStateService {
     @Transactional(propagation = Propagation.MANDATORY)
     public MissionState createState(Mission mission, Schedule schedule) {
         MissionState toBeSaved = MissionState.forMissionCreate(
-                mission.getId(),
+                mission.getMissionId(),
                 MissionType.fromValue(mission.getMissionType()),
                 schedule
         );
@@ -88,7 +88,7 @@ public class MissionStateService {
 
                     return Optional.of(isRange)
                             .filter(isValidRange -> isValidRange)
-                            .map(isValidRange -> missionStateManager.getState(mission.getId(), req.timestamp()))
+                            .map(isValidRange -> missionStateManager.getState(mission.getMissionId(), req.timestamp()))
                             .orElseGet(() -> missionStateManager.saveState(MissionState.forLazyCreate(
                                     req.missionId(),
                                     MissionType.fromValue(mission.getType()),
@@ -123,7 +123,7 @@ public class MissionStateService {
     }
 
     public MissionState createStateLazy(Mission mission, Long startStamp) {
-        MissionState missionState = MissionState.forLazyCreate(mission.getId(), MissionType.MISSION, mission.getSchedule(), startStamp);
+        MissionState missionState = MissionState.forLazyCreate(mission.getMissionId(), MissionType.MISSION, mission.getSchedule(), startStamp);
         return missionStateManager.saveState(missionState);
     }
 }

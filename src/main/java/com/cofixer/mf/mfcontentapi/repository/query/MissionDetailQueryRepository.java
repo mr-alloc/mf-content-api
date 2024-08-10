@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MissionDetailQueryRepository {
 
-    List<MissionDetail> getMissionInPeriod(Collection<Long> scheduleIds);
+    List<MissionDetail> getMissionsInPeriod(Collection<Long> scheduleIds);
 }

@@ -17,7 +17,7 @@ public record ScheduleValue(
         if (schedule == null) return null;
 
         return new ScheduleValue(
-                schedule.getId(),
+                schedule.getScheduleId(),
                 schedule.getMode(),
                 schedule.getStartAt(),
                 schedule.getScheduleTime(),

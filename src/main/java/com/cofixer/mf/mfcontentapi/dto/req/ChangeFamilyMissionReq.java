@@ -2,6 +2,7 @@ package com.cofixer.mf.mfcontentapi.dto.req;
 
 import com.cofixer.mf.mfcontentapi.constant.MissionStatus;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
+import com.cofixer.mf.mfcontentapi.util.StringUtil;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -12,13 +13,19 @@ public class ChangeFamilyMissionReq {
     Integer type;
     Long assignee;
     String title;
+    String description;
     Integer status;
     Long deadline;
+
     Long stateId;
     Long startStamp;
 
     public boolean needChangeType() {
         return type != null && MissionType.has(type);
+    }
+
+    public boolean needChangeDescription() {
+        return StringUtil.isNotEmpty(description);
     }
 
     public boolean needChangeAssignee() {

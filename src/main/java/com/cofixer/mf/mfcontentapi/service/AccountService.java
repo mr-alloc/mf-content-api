@@ -6,10 +6,7 @@ import com.cofixer.mf.mfcontentapi.constant.DeclaredAccountResult;
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMemberResult;
 import com.cofixer.mf.mfcontentapi.constant.DeviceType;
 import com.cofixer.mf.mfcontentapi.constant.EncryptAlgorithm;
-import com.cofixer.mf.mfcontentapi.domain.AccessCredential;
-import com.cofixer.mf.mfcontentapi.domain.Account;
-import com.cofixer.mf.mfcontentapi.domain.Member;
-import com.cofixer.mf.mfcontentapi.domain.PreflightTester;
+import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.req.ConfirmAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateAccountReq;
 import com.cofixer.mf.mfcontentapi.dto.req.RefreshTokenReq;
@@ -21,6 +18,7 @@ import com.cofixer.mf.mfcontentapi.exception.MemberException;
 import com.cofixer.mf.mfcontentapi.manager.AccountManager;
 import com.cofixer.mf.mfcontentapi.manager.CredentialManager;
 import com.cofixer.mf.mfcontentapi.manager.MemberManager;
+import com.cofixer.mf.mfcontentapi.manager.UserSettingManager;
 import com.cofixer.mf.mfcontentapi.util.EncryptUtil;
 import com.cofixer.mf.mfcontentapi.util.JwtUtil;
 import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
@@ -42,6 +40,7 @@ public class AccountService {
     private final CommonValidator commonValidator;
     private final AccountManager accountManager;
     private final MemberManager memberManager;
+    private final UserSettingManager userSettingManager;
     private final CredentialManager credentialManager;
     private final EntityPrinter printer;
     private final ExpandableEntitySetting es;
@@ -66,8 +65,9 @@ public class AccountService {
                         EncryptUtil.encrypt(req.getPassword(), EncryptAlgorithm.SHA256)
                 )
         );
-        memberManager.createMember(saved.getId());
+        Member member = memberManager.createMember(saved.getId());
         accountManager.markTesterJoin(tester);
+        userSettingManager.saveUserSetting(UserSetting.forBeginner(member.getId()));
         return saved;
     }
 

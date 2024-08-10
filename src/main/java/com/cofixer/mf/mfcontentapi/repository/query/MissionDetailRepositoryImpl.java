@@ -20,11 +20,11 @@ public class MissionDetailRepositoryImpl implements MissionDetailQueryRepository
 
 
     @Override
-    public List<MissionDetail> getMissionInPeriod(Collection<Long> scheduleIds) {
+    public List<MissionDetail> getMissionsInPeriod(Collection<Long> scheduleIds) {
         return queryFactory.selectFrom(missionDetail)
-                .join(mission).on(missionDetail.missionId.eq(mission.id))
-                .join(schedule).on(mission.scheduleId.eq(schedule.id))
-                .where(schedule.id.in(scheduleIds))
+                .join(mission).on(missionDetail.missionId.eq(mission.missionId))
+                .join(schedule).on(mission.scheduleId.eq(schedule.scheduleId))
+                .where(schedule.scheduleId.in(scheduleIds))
                 .fetch();
     }
 }
