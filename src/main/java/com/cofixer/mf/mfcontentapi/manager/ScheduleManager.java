@@ -36,4 +36,8 @@ public class ScheduleManager {
     ) {
         return scheduleRepository.getComingSchedules(authorizedMember, scheduleType);
     }
+
+    public Schedule getScheduleByMissionId(Long missionId) {
+        return scheduleRepository.getScheduleByMissionId(missionId);
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.cofixer.mf.mfcontentapi.domain.QMission.mission;
 import static com.cofixer.mf.mfcontentapi.domain.QSchedule.schedule;
 
 @Repository
@@ -70,5 +71,14 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
                 .limit(30)
                 .orderBy(schedule.startAt.desc())
                 .fetch();
+    }
+
+    @Override
+    public Schedule getScheduleByMissionId(Long missionId) {
+        return queryFactory
+                .select(schedule)
+                .join(mission).on(mission.scheduleId.eq(schedule.scheduleId))
+                .where(mission.missionId.eq(missionId))
+                .fetchOne();
     }
 }

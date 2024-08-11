@@ -134,17 +134,24 @@ public class MissionService {
 
     @Transactional(readOnly = true)
     public MissionDetailValue getMissionDetail(AuthorizedMember authorizedMember, Long missionId) {
+        Schedule schedule = scheduleManager.getScheduleByMissionId(missionId);
+        if (schedule.isNotAccessibleFrom(authorizedMember)) {
+            throw new MissionException(DeclaredMissionResult.NOT_OWN_MISSION);
+        }
+
         MissionDetail detail = missionManager.getMissionDetail(missionId);
         List<MissionStateValue> states = missionStateService.getStates(missionId);
-        Schedule schedule = scheduleManager.getSchedule(detail.getMission().getScheduleId());
         return MissionDetailValue.of(detail, states, schedule);
     }
 
     @Transactional(readOnly = true)
     public FamilyMissionDetailValue getFamilyMissionDetail(AuthorizedMember authorizedMember, Long missionId) {
+        Schedule schedule = scheduleManager.getScheduleByMissionId(missionId);
+        if (schedule.isNotAccessibleFrom(authorizedMember)) {
+            throw new MissionException(DeclaredMissionResult.NOT_OWN_MISSION);
+        }
         FamilyMissionDetail detail = missionManager.getFamilyMissionDetail(missionId, authorizedMember.getFamilyId());
         List<MissionStateValue> states = missionStateService.getStates(missionId);
-        Schedule schedule = scheduleManager.getSchedule(detail.getMission().getScheduleId());
         return FamilyMissionDetailValue.of(detail, states, schedule);
     }
 
