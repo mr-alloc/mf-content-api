@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface MissionRepository extends JpaRepository<Mission, Long> {
+public interface MissionRepository extends JpaRepository<Mission, Long>, MissionQueryRepository {
 
     List<Mission> findByMissionIdIn(Collection<Long> ids);
+
 }

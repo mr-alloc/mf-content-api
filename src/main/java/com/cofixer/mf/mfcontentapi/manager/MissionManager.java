@@ -83,7 +83,7 @@ public class MissionManager {
     }
 
     public List<Mission> getMissions(Set<Long> missionIds) {
-        return missionRepository.findByMissionIdIn(missionIds);
+        return missionRepository.getMissionsByIds(missionIds);
     }
 
     public Map<Long, MissionDetail> getMissionDetailsMap(Set<Long> scheduleIds) {
