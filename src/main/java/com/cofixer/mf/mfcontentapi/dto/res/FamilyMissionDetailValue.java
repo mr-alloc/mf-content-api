@@ -15,6 +15,7 @@ public record FamilyMissionDetailValue(
         Integer type,
         Long deadline,
         Long assignee,
+        Long reporter,
         ScheduleValue schedule,
         List<MissionStateValue> states
 
@@ -29,6 +30,7 @@ public record FamilyMissionDetailValue(
                 mission.getMissionType(),
                 mission.getDeadline(),
                 detail.getAssigneeId(),
+                mission.getReporter(),
                 ScheduleValue.of(schedule),
                 states
         );
@@ -42,6 +44,7 @@ public record FamilyMissionDetailValue(
                 mission.getMissionType(),
                 mission.getDeadline(),
                 detail.getAssigneeId(),
+                mission.getReporter(),
                 ScheduleValue.of(schedule),
                 states
         );

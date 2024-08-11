@@ -263,7 +263,7 @@ public class MissionService {
         FamilyMissionDetail detail = missionManager.getFamilyMissionDetail(missionId, authorizedMember.getFamilyId());
         Mission mission = detail.getMission();
         //소속 패밀리 미션이 아닌경우
-        ConditionUtil.throwIfTrue(Objects.equals(mission.getFamily(), authorizedMember.getFamilyId()),
+        ConditionUtil.throwIfTrue(!Objects.equals(mission.getFamily(), authorizedMember.getFamilyId()),
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         //공개미션이 아니면서 미션 작성자가 아닌경우
@@ -271,6 +271,7 @@ public class MissionService {
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         detail.delete(authorizedMember.getMemberId());
+        //TODO State로 개별삭제 삭제 또는 전체삭제 추가
         return DeleteFamilyMissionRes.of(missionId);
     }
 
@@ -284,6 +285,7 @@ public class MissionService {
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         mission.delete();
+        //TODO State로 개별삭제 삭제 또는 전체삭제 추가
         return DeleteMissionRes.of(missionId);
     }
 
