@@ -302,6 +302,7 @@ public class MissionService {
         Set<Long> missionIds = CollectionUtil.convertSet(detailsMap.values(), FamilyMissionDetail::getMissionId);
         Map<Long, List<MissionStateValue>> stateMap = missionStateService.getStateGroupingMap(missionIds);
 
+        log.info("Searched coming missions: {}", missionIds);
         List<FamilyMissionDetailValue> detailValues = missionManager.getMissions(missionIds).stream()
                 .map(mission -> FamilyMissionDetailValue.of(
                         detailsMap.get(mission.getMissionId()),

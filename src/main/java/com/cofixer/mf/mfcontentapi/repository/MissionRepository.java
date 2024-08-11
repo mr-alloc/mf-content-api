@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface MissionRepository extends JpaRepository<Mission, Long> {
 
-    List<Mission> findAllByMissionIdIn(Collection<Long> ids);
+    List<Mission> findByMissionIdIn(Collection<Long> ids);
 }
