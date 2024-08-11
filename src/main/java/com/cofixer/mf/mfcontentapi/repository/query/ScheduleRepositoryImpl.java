@@ -58,8 +58,7 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
 
         long now = TemporalUtil.getEpochSecond();
         long tenDay = TemporalUtil.DAY_IN_SECONDS * 10;
-        condition.and(schedule.startAt.goe(now)
-                .and(schedule.startAt.loe(now + tenDay)));
+        condition.and(schedule.startAt.goe(now).and(schedule.startAt.loe(now + tenDay)));
         if (authorizedMember.forFamilyMember()) {
             condition.and(schedule.family.eq(authorizedMember.getFamilyId()));
         } else {
