@@ -40,6 +40,13 @@ datasource:
     url: jdbc:mysql://localhost:3306/mf_dev?cacheCallableStmts=true&serverTimezone=Asia/Seoul&useServerPrepStmts=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
     username: root
     password: 1111
+
+logging:
+  level:
+    org.hibernate:
+      SQL: DEBUG
+      type:
+        trace
 ---
 spring:
   jpa:

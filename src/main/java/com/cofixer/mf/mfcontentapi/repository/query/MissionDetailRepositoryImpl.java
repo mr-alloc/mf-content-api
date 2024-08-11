@@ -10,7 +10,6 @@ import java.util.List;
 
 import static com.cofixer.mf.mfcontentapi.domain.QMission.mission;
 import static com.cofixer.mf.mfcontentapi.domain.QMissionDetail.missionDetail;
-import static com.cofixer.mf.mfcontentapi.domain.QSchedule.schedule;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,10 +20,10 @@ public class MissionDetailRepositoryImpl implements MissionDetailQueryRepository
 
     @Override
     public List<MissionDetail> getMissionsInPeriod(Collection<Long> scheduleIds) {
-        return queryFactory.selectFrom(missionDetail)
-                .join(mission).on(missionDetail.missionId.eq(mission.missionId))
-                .join(schedule).on(mission.scheduleId.eq(schedule.scheduleId))
-                .where(schedule.scheduleId.in(scheduleIds))
+        return queryFactory.select(missionDetail)
+                .from(mission)
+                .join(missionDetail).on(mission.missionId.eq(missionDetail.missionId))
+                .where(mission.scheduleId.in(scheduleIds))
                 .fetch();
     }
 }

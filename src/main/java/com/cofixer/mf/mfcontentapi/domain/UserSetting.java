@@ -34,4 +34,8 @@ public class UserSetting {
 
         return userSetting;
     }
+
+    public void changeMainFamily(Long familyId) {
+        this.mainFamilyId = familyId;
+    }
 }

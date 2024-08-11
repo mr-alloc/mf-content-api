@@ -8,6 +8,7 @@ import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 import static com.cofixer.mf.mfcontentapi.domain.QMission.mission;
 import static com.cofixer.mf.mfcontentapi.domain.QSchedule.schedule;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
@@ -58,6 +60,7 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
         BooleanBuilder condition = new BooleanBuilder();
 
         long now = TemporalUtil.getEpochSecond();
+        log.info("timestamp: {}", now);
         long tenDay = TemporalUtil.DAY_IN_SECONDS * 10;
         condition.and(schedule.startAt.goe(now).and(schedule.startAt.loe(now + tenDay)));
         if (authorizedMember.forFamilyMember()) {
@@ -76,7 +79,7 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
     @Override
     public Schedule getScheduleByMissionId(Long missionId) {
         return queryFactory
-                .select(schedule)
+                .selectFrom(schedule)
                 .join(mission).on(mission.scheduleId.eq(schedule.scheduleId))
                 .where(mission.missionId.eq(missionId))
                 .fetchOne();
