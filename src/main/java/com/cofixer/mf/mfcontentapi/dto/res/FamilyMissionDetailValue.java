@@ -30,7 +30,7 @@ public record FamilyMissionDetailValue(
                 mission.getMissionType(),
                 mission.getDeadline(),
                 detail.getAssigneeId(),
-                mission.getReporter(),
+                schedule.getReporter(),
                 ScheduleValue.of(schedule),
                 states
         );
@@ -44,7 +44,7 @@ public record FamilyMissionDetailValue(
                 mission.getMissionType(),
                 mission.getDeadline(),
                 detail.getAssigneeId(),
-                mission.getReporter(),
+                schedule.getReporter(),
                 ScheduleValue.of(schedule),
                 states
         );
