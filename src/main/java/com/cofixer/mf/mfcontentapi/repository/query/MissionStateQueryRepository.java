@@ -11,4 +11,6 @@ public interface MissionStateQueryRepository {
     MissionState getState(Long missionId, Long startStamp);
 
     List<MissionState> getStateAllByMissionIdList(Collection<Long> missionIdList);
+
+    List<MissionState> getStateAllByScheduleIds(Collection<Long> scheduleIds);
 }

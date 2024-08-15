@@ -40,4 +40,8 @@ public class ScheduleManager {
     public Schedule getScheduleByMissionId(Long missionId) {
         return scheduleRepository.getScheduleByMissionId(missionId);
     }
+
+    public List<Schedule> getAllSchedules(AuthorizedMember authorizedMember, ScheduleType scheduleType) {
+        return scheduleRepository.getAllSchedules(authorizedMember, scheduleType);
+    }
 }

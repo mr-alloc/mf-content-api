@@ -1,6 +1,7 @@
-package com.cofixer.mf.mfcontentapi.repository;
+package com.cofixer.mf.mfcontentapi.repository.query;
 
 import com.cofixer.mf.mfcontentapi.domain.Mission;
+import com.cofixer.mf.mfcontentapi.repository.MissionQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

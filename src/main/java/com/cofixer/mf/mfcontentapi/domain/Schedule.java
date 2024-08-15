@@ -6,6 +6,7 @@ import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
 import com.cofixer.mf.mfcontentapi.constant.Weeks;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.ScheduleInfo;
+import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,6 +17,7 @@ import org.hibernate.annotations.Comment;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -137,5 +139,11 @@ public class Schedule implements Serializable {
         return authorizedMember.forFamilyMember()
                 ? !this.family.equals(authorizedMember.getFamilyId())
                 : !this.reporter.equals(authorizedMember.getMemberId());
+    }
+
+    public void isNotAccessibleFrom(AuthorizedMember authorizedMember, Supplier<MissionException> exceptionSupplier) {
+        if (isNotAccessibleFrom(authorizedMember)) {
+            throw exceptionSupplier.get();
+        }
     }
 }

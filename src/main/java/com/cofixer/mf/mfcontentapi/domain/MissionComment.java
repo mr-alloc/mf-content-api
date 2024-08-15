@@ -29,8 +29,8 @@ public class MissionComment implements Serializable {
     Long id;
 
     @Comment("미션 상태 ID")
-    @Column(name = "state_id", nullable = false)
-    Long stateId;
+    @Column(name = "discussion_id", nullable = false)
+    Long discussionId;
 
     @Comment("작성자 ID")
     @Column(name = "member_id", nullable = false)
@@ -44,9 +44,9 @@ public class MissionComment implements Serializable {
     @Column(name = "created_at", nullable = false)
     Long createdAt;
 
-    public static MissionComment forCreate(MissionState missionState, AuthorizedMember authorizedMember, String comment) {
+    public static MissionComment forCreate(Discussion discussion, AuthorizedMember authorizedMember, String comment) {
         MissionComment missionComment = new MissionComment();
-        missionComment.stateId = missionState.getId();
+        missionComment.discussionId = discussion.getId();
         missionComment.memberId = authorizedMember.getMemberId();
         missionComment.content = comment;
         missionComment.createdAt = TemporalUtil.getEpochSecond();

@@ -233,14 +233,15 @@ public class MissionService {
             MissionStatus status = MissionStatus.fromCode(request.getStatus());
             ConditionUtil.throwIfTrue(status == MissionStatus.DELETED,
                     () -> new MissionException(DeclaredMissionResult.CANNOT_CHANGE_TO_DELETE));
-            mission.renewUpdatedAt(now);
             MissionState state = Optional.ofNullable(request.getStateId())
+                    .filter(stateId -> stateId > 0)
                     .map(missionStateService::getState)
                     .orElseGet(() -> missionStateService.createStateLazy(mission, request.getStartStamp()));
             if (state.getStatus().equals(request.getStatus())) {
                 throw new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET);
             }
             state.changeStatus(status);
+            mission.renewUpdatedAt(now);
         }
 
         if (request.needChangeDeadline()) {

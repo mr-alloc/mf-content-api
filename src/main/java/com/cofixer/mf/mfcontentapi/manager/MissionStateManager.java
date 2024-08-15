@@ -43,5 +43,9 @@ public class MissionStateManager {
     public MissionState saveState(MissionState toBeSaved) {
         return repository.save(toBeSaved);
     }
+
+    public List<MissionState> getStatesByScheduleIds(Collection<Long> scheduleIds) {
+        return repository.getStateAllByScheduleIds(scheduleIds);
+    }
 }
 

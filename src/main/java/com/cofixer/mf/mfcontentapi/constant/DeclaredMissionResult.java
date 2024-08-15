@@ -15,7 +15,8 @@ public enum DeclaredMissionResult implements DeclaredResult {
     NOT_OWN_MISSION(-5, HttpStatus.FORBIDDEN),
     CANNOT_CHANGE_TO_DELETE(-6, HttpStatus.BAD_REQUEST),
     NOT_FOUND_STATE(-7, HttpStatus.BAD_REQUEST),
-    NOT_FOUND_MISSION(-8, HttpStatus.BAD_REQUEST);
+    NOT_FOUND_MISSION(-8, HttpStatus.BAD_REQUEST),
+    NOT_SCHEDULE_RANGE(-9, HttpStatus.BAD_REQUEST);
     private final int code;
     private HttpStatus httpStatus;
 

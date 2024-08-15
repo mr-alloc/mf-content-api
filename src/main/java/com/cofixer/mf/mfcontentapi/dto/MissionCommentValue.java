@@ -8,6 +8,9 @@ public record MissionCommentValue(
         @Schema(description = "댓글 ID")
         Long id,
 
+        @Schema(description = "미션 상태 ID")
+        Long discussionId,
+
         @Schema(description = "작성자 ID")
         Long memberId,
 
@@ -20,6 +23,7 @@ public record MissionCommentValue(
     public static MissionCommentValue of(MissionComment missionComment) {
         return new MissionCommentValue(
                 missionComment.getId(),
+                missionComment.getDiscussionId(),
                 missionComment.getMemberId(),
                 missionComment.getContent(),
                 missionComment.getCreatedAt()

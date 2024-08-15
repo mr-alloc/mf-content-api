@@ -18,6 +18,6 @@ public class MissionCommentManager {
     }
 
     public List<MissionComment> getComments(Long stateId) {
-        return repository.findAllByStateId(stateId);
+        return repository.getCommentsByStateId(stateId);
     }
 }

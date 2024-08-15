@@ -17,6 +17,8 @@ public class TemporalUtil {
     public static final Long DAY_IN_SECONDS = 24L * HOUR_IN_SECONDS;
     public static final Long WEEK_IN_SECONDS = 7 * DAY_IN_SECONDS;
 
+    public static final Long DAYS30_IN_SECONDS = 30 * DAY_IN_SECONDS;
+
     public static long toTimeStamp(LocalDateTime dateTime) {
         return dateTime.toEpochSecond(AppContext.APP_ZONE_OFFSET);
     }

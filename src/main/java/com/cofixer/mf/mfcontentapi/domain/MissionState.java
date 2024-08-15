@@ -80,6 +80,9 @@ public class MissionState implements Serializable {
                 ? MissionStatus.ALWAYS.getCode()
                 : MissionStatus.CREATED.getCode();
 
+        missionState.startTime = 0L;
+        missionState.completeTime = 0L;
+
         if (ScheduleMode.REPEAT.equalsValue(schedule.getMode())) {
             missionState.startStamp = timestamp;
             missionState.endStamp = timestamp + (TemporalUtil.DAY_IN_SECONDS - 1);
@@ -88,8 +91,6 @@ public class MissionState implements Serializable {
 
         missionState.startStamp = schedule.getStartAt();
         missionState.endStamp = schedule.getEndAt();
-        missionState.startTime = 0L;
-        missionState.completeTime = 0L;
 
         return missionState;
     }

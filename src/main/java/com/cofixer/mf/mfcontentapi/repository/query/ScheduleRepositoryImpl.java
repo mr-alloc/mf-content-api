@@ -60,7 +60,6 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
         BooleanBuilder condition = new BooleanBuilder();
 
         long now = TemporalUtil.getEpochSecond();
-        log.info("timestamp: {}", now);
         long tenDay = TemporalUtil.DAY_IN_SECONDS * 10;
         condition.and(schedule.startAt.goe(now).and(schedule.startAt.loe(now + tenDay)));
         if (authorizedMember.forFamilyMember()) {
@@ -83,5 +82,19 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
                 .join(mission).on(mission.scheduleId.eq(schedule.scheduleId))
                 .where(mission.missionId.eq(missionId))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Schedule> getAllSchedules(AuthorizedMember authorizedMember, ScheduleType scheduleType) {
+        BooleanBuilder condition = new BooleanBuilder();
+        if (authorizedMember.forFamilyMember()) {
+            condition.and(schedule.family.eq(authorizedMember.getFamilyId()));
+        } else {
+            condition.and(schedule.reporter.eq(authorizedMember.getMemberId()));
+        }
+        return queryFactory
+                .selectFrom(schedule)
+                .where(condition.and(schedule.type.eq(scheduleType.getValue())))
+                .fetch();
     }
 }

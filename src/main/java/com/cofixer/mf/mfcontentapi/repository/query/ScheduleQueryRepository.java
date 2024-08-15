@@ -13,4 +13,6 @@ public interface ScheduleQueryRepository {
     List<Schedule> getComingSchedules(AuthorizedMember authorizedMember, ScheduleType scheduleType);
 
     Schedule getScheduleByMissionId(Long missionId);
+
+    List<Schedule> getAllSchedules(AuthorizedMember authorizedMember, ScheduleType scheduleType);
 }

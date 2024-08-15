@@ -39,6 +39,6 @@ public class ChangeMissionReq {
     }
 
     public boolean hasNotChanged() {
-        return !needChangeType() && !needChangeTitle() && !needChangeStatus() && !needChangeDeadline();
+        return !needChangeDescription() && !needChangeType() && !needChangeTitle() && !needChangeStatus() && !needChangeDeadline();
     }
 }

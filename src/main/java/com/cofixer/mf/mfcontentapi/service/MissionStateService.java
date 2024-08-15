@@ -2,16 +2,20 @@ package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.constant.DeclaredMissionResult;
 import com.cofixer.mf.mfcontentapi.constant.MissionType;
+import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
 import com.cofixer.mf.mfcontentapi.domain.*;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.MissionCommentValue;
 import com.cofixer.mf.mfcontentapi.dto.MissionStateValue;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateCommentReq;
+import com.cofixer.mf.mfcontentapi.dto.res.DiscussionValue;
 import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.manager.MissionCommentManager;
 import com.cofixer.mf.mfcontentapi.manager.MissionManager;
 import com.cofixer.mf.mfcontentapi.manager.MissionStateManager;
+import com.cofixer.mf.mfcontentapi.manager.ScheduleManager;
 import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
+import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,7 +31,8 @@ public class MissionStateService {
     private final MissionStateManager missionStateManager;
     private final MissionManager missionManager;
     private final MissionCommentManager missionCommentManager;
-    private final ScheduleService scheduleService;
+    private final ScheduleManager scheduleManager;
+    private final DiscussionService discussionService;
 
     public List<MissionStateValue> getStates(Long missionId) {
         return missionStateManager.getStates(missionId).stream()
@@ -75,29 +80,37 @@ public class MissionStateService {
 
     @Transactional
     public MissionCommentValue createComment(AuthorizedMember authorizedMember, Long stateId, CreateCommentReq req) {
-        MissionState missionState = Optional.of(stateId).filter(id -> id > 0)
-                .map(missionStateManager::getStateSafe)
-                .orElseGet(() -> {
-                    MissionDetail missionDetail = missionManager.getMissionDetail(req.missionId());
-                    Mission mission = missionDetail.getMission();
-                    Schedule schedule = mission.getSchedule();
-                    if (schedule.isNotAccessibleFrom(authorizedMember)) {
-                        throw new MissionException(DeclaredMissionResult.NOT_OWN_MISSION);
-                    }
-                    boolean isRange = schedule.getStartAt() <= req.timestamp() && req.timestamp() <= schedule.getEndAt();
+        if (stateId > 0) {
+            MissionState state = missionStateManager.getStateSafe(stateId);
+            Schedule schedule = scheduleManager.getScheduleByMissionId(state.getMissionId());
+            schedule.isNotAccessibleFrom(authorizedMember, () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
+            Discussion discussion = discussionService.getDiscussionOrRetrieve(state);
+            MissionComment saved = missionCommentManager.saveComment(MissionComment.forCreate(discussion, authorizedMember, req.content()));
+            discussion.renewLatest(saved.getContent(), TemporalUtil.getEpochSecond());
+            return MissionCommentValue.of(saved);
+        }
 
-                    return Optional.of(isRange)
-                            .filter(isValidRange -> isValidRange)
-                            .map(isValidRange -> missionStateManager.getState(mission.getMissionId(), req.timestamp()))
-                            .orElseGet(() -> missionStateManager.saveState(MissionState.forLazyCreate(
-                                    req.missionId(),
-                                    MissionType.fromValue(mission.getType()),
-                                    schedule,
-                                    req.timestamp()
-                            )));
-                });
+        Mission mission = missionManager.getMission(req.missionId());
+        Schedule schedule = mission.getSchedule();
+        if (schedule.isNotAccessibleFrom(authorizedMember)) {
+            throw new MissionException(DeclaredMissionResult.NOT_OWN_MISSION);
+        }
 
-        MissionComment saved = missionCommentManager.saveComment(MissionComment.forCreate(missionState, authorizedMember, req.content()));
+        boolean isNotRange = req.timestamp() < schedule.getStartAt() && schedule.getEndAt() < req.timestamp();
+        if (isNotRange) {
+            throw new MissionException(DeclaredMissionResult.NOT_SCHEDULE_RANGE);
+        }
+
+        MissionState missionState = missionStateManager.saveState(MissionState.forLazyCreate(
+                req.missionId(),
+                MissionType.fromValue(mission.getMissionType()),
+                schedule,
+                req.timestamp()
+        ));
+
+        Discussion discussion = discussionService.getDiscussionOrRetrieve(mission, missionState);
+        MissionComment saved = missionCommentManager.saveComment(MissionComment.forCreate(discussion, authorizedMember, req.content()));
+        discussion.renewLatest(saved.getContent(), TemporalUtil.getEpochSecond());
         return MissionCommentValue.of(saved);
     }
 
@@ -125,5 +138,22 @@ public class MissionStateService {
     public MissionState createStateLazy(Mission mission, Long startStamp) {
         MissionState missionState = MissionState.forLazyCreate(mission.getMissionId(), MissionType.MISSION, mission.getSchedule(), startStamp);
         return missionStateManager.saveState(missionState);
+    }
+
+    @Transactional(readOnly = true)
+    public List<DiscussionValue> getJoinedDiscussions(AuthorizedMember authorizedMember) {
+        Set<Long> schedules = CollectionUtil.convertSet(
+                scheduleManager.getAllSchedules(authorizedMember, ScheduleType.MISSION),
+                Schedule::getScheduleId
+        );
+
+        Set<Long> states = CollectionUtil.convertSet(
+                missionStateManager.getStatesByScheduleIds(schedules),
+                MissionState::getId
+        );
+
+        Map<Long, MissionState> stateMap = CollectionUtil.toMap(missionStateManager.getStateAll(states), MissionState::getId);
+
+        return discussionService.getDiscussionValues(states, stateMap);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 
+import static com.cofixer.mf.mfcontentapi.domain.QMission.mission;
 import static com.cofixer.mf.mfcontentapi.domain.QMissionState.missionState;
 
 @RequiredArgsConstructor
@@ -34,6 +35,16 @@ public class MissionStateRepositoryImpl implements MissionStateQueryRepository {
     public List<MissionState> getStateAllByMissionIdList(Collection<Long> missionIdList) {
         return queryFactory.selectFrom(missionState)
                 .where(missionState.missionId.in(missionIdList))
+                .fetch();
+    }
+
+    @Override
+    public List<MissionState> getStateAllByScheduleIds(Collection<Long> scheduleIds) {
+        return queryFactory
+                .select(missionState)
+                .from(mission)
+                .join(missionState).on(mission.missionId.eq(missionState.missionId))
+                .where(mission.scheduleId.in(scheduleIds))
                 .fetch();
     }
 }
