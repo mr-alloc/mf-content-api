@@ -39,6 +39,7 @@ public class DiscussionService {
 
     public List<DiscussionValue> getDiscussionValues(Set<Long> states, Map<Long, MissionState> stateMap) {
         return manager.getDiscussionAll(states).stream()
+                .filter(discussion -> stateMap.containsKey(discussion.getStateId()))
                 .map(discussion -> DiscussionValue.of(discussion, stateMap.get(discussion.getStateId())))
                 .sorted(Comparator.comparing(DiscussionValue::latestUpdateTime, Comparator.reverseOrder()))
                 .toList();
