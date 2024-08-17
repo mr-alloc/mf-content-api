@@ -6,6 +6,7 @@ import com.cofixer.mf.mfcontentapi.domain.MissionState;
 import com.cofixer.mf.mfcontentapi.dto.res.DiscussionValue;
 import com.cofixer.mf.mfcontentapi.manager.DiscussionManager;
 import com.cofixer.mf.mfcontentapi.manager.MissionManager;
+import com.cofixer.mf.mfcontentapi.util.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +38,12 @@ public class DiscussionService {
                 });
     }
 
-    public List<DiscussionValue> getDiscussionValues(Set<Long> states, Map<Long, MissionState> stateMap) {
+    public List<DiscussionValue> getDiscussionValues(Map<Long, MissionState> stateMap) {
+        Set<Long> states = CollectionUtil.convertSet(stateMap.values(), MissionState::getId);
         return manager.getDiscussionAll(states).stream()
+                .sorted(Comparator.comparing(Discussion::getLatestUpdatedAt, Comparator.reverseOrder()))
                 .filter(discussion -> stateMap.containsKey(discussion.getStateId()))
                 .map(discussion -> DiscussionValue.of(discussion, stateMap.get(discussion.getStateId())))
-                .sorted(Comparator.comparing(DiscussionValue::latestUpdateTime, Comparator.reverseOrder()))
                 .toList();
     }
 }

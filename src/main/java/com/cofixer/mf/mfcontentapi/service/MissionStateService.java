@@ -92,9 +92,7 @@ public class MissionStateService {
 
         Mission mission = missionManager.getMission(req.missionId());
         Schedule schedule = mission.getSchedule();
-        if (schedule.isNotAccessibleFrom(authorizedMember)) {
-            throw new MissionException(DeclaredMissionResult.NOT_OWN_MISSION);
-        }
+        schedule.isNotAccessibleFrom(authorizedMember, () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         boolean isNotRange = req.timestamp() < schedule.getStartAt() && schedule.getEndAt() < req.timestamp();
         if (isNotRange) {
@@ -147,13 +145,11 @@ public class MissionStateService {
                 Schedule::getScheduleId
         );
 
-        Set<Long> states = CollectionUtil.convertSet(
+        Map<Long, MissionState> stateMap = CollectionUtil.toMap(
                 missionStateManager.getStatesByScheduleIds(schedules),
                 MissionState::getId
         );
 
-        Map<Long, MissionState> stateMap = CollectionUtil.toMap(missionStateManager.getStateAll(states), MissionState::getId);
-
-        return discussionService.getDiscussionValues(states, stateMap);
+        return discussionService.getDiscussionValues(stateMap);
     }
 }
