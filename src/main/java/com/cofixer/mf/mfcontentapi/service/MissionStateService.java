@@ -67,7 +67,6 @@ public class MissionStateService {
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_STATE));
     }
 
-
     @Transactional(propagation = Propagation.MANDATORY)
     public MissionState createState(Mission mission, Schedule schedule) {
         MissionState toBeSaved = MissionState.forMissionCreate(

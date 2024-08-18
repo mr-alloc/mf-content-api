@@ -34,6 +34,7 @@ public class MissionService {
     private final ScheduleManager scheduleManager;
     private final MissionStateService missionStateService;
     private final ScheduleService scheduleService;
+    private final NotificationService notificationService;
 
     @Transactional
     public List<MissionDetailValue> createMission(CreateMissionReq req, AuthorizedMember authorizedMember) {
@@ -67,6 +68,10 @@ public class MissionService {
         FamilyMember assignee = familyManager.getFamilyMember(
                 FamilyMemberId.of(authorizedMember.getFamilyId(), req.getAssigneeSafe(authorizedMember.getMemberId()))
         );
+
+        if (!Objects.equals(assignee.getMemberId(), authorizedMember.getMemberId())) {
+            notificationService.notify(TargetType.USER, assignee.getMemberId(), ContentType.ASSIGN_FAMILY_MISSION, "");
+        }
 
         return schedules.stream()
                 .map(schedule -> {
@@ -160,7 +165,8 @@ public class MissionService {
         FamilyMissionDetail detail = missionManager.getFamilyMissionDetail(missionId, authorizedMember.getFamilyId());
         Mission mission = detail.getMission();
         //소속 패밀리 미션이 아닌경우
-        ConditionUtil.throwIfTrue(!Objects.equals(mission.getSchedule().getFamily(), authorizedMember.getFamilyId()), () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
+        Schedule schedule = mission.getSchedule();
+        ConditionUtil.throwIfTrue(!Objects.equals(schedule.getFamily(), authorizedMember.getFamilyId()), () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
         // 변경할 내용이 없는 경우
         ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
 
@@ -194,6 +200,21 @@ public class MissionService {
                 throw new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET);
             }
             state.changeStatus(status);
+            boolean notReporter = !schedule.getReporter().equals(authorizedMember.getMemberId());
+            switch (status) {
+                case IN_PROGRESS: {
+                    if (notReporter) {
+                        notificationService.notify(TargetType.USER, schedule.getReporter(), ContentType.START_FAMILY_MISSION, "");
+                    }
+                    break;
+                }
+                case COMPLETED: {
+                    if (notReporter) {
+                        notificationService.notify(TargetType.USER, schedule.getReporter(), ContentType.COMPLETE_FAMILY_MISSION, "");
+                    }
+                    break;
+                }
+            }
         }
 
         if (request.needChangeDeadline()) {
@@ -205,7 +226,6 @@ public class MissionService {
         }
 
         List<MissionStateValue> states = missionStateService.getStates(detail.getMissionId());
-        Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());
         FamilyMissionDetailValue detailValue = FamilyMissionDetailValue.of(detail, states, schedule);
         return ChangeFamilyMissionRes.of(detailValue);
     }
