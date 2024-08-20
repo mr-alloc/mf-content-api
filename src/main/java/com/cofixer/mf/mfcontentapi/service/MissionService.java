@@ -70,7 +70,7 @@ public class MissionService {
         );
 
         if (!Objects.equals(assignee.getMemberId(), authorizedMember.getMemberId())) {
-            notificationService.notify(TargetType.USER, assignee.getMemberId(), ContentType.ASSIGN_FAMILY_MISSION, "");
+            notificationService.notify(TargetType.USER, assignee.getMemberId(), ContentType.ASSIGN_FAMILY_MISSION, req.name());
         }
 
         return schedules.stream()
@@ -204,13 +204,13 @@ public class MissionService {
             switch (status) {
                 case IN_PROGRESS: {
                     if (notReporter) {
-                        notificationService.notify(TargetType.USER, schedule.getReporter(), ContentType.START_FAMILY_MISSION, "");
+                        notificationService.notify(TargetType.USER, schedule.getReporter(), ContentType.START_FAMILY_MISSION, mission.getName());
                     }
                     break;
                 }
                 case COMPLETED: {
                     if (notReporter) {
-                        notificationService.notify(TargetType.USER, schedule.getReporter(), ContentType.COMPLETE_FAMILY_MISSION, "");
+                        notificationService.notify(TargetType.USER, schedule.getReporter(), ContentType.COMPLETE_FAMILY_MISSION, mission.getName());
                     }
                     break;
                 }
@@ -317,7 +317,6 @@ public class MissionService {
         Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getScheduleId);
 
         Map<Long, FamilyMissionDetail> detailsMap = missionManager.getFamilyMissionDetails(scheduleIds).stream()
-                .filter(detail -> detail.isMyMission(authorizedMember))
                 .collect(Collectors.toMap(
                         FamilyMissionDetail::getMissionId,
                         Function.identity()
@@ -357,6 +356,6 @@ public class MissionService {
                 .toList();
 
         return GetComingMissionsRes.of(detailValues);
-
     }
+
 }
