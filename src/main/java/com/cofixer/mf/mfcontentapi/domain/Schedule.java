@@ -42,6 +42,10 @@ public class Schedule implements Serializable {
     @Column(name = "type")
     Integer type;
 
+    @Comment("카테고리 ID")
+    @Column(name = "category_id")
+    Long categoryId;
+
     @Comment("생성멤버")
     @Column(name = "reporter", nullable = false)
     Long reporter;
@@ -74,56 +78,80 @@ public class Schedule implements Serializable {
     @Column(name = "repeat_value", nullable = false)
     Integer repeatValue;
 
-    public static List<Schedule> forCreate(AuthorizedMember authorizedMember, ScheduleInfo scheduleInfo, ScheduleType scheduleType) {
+    public static List<Schedule> forCreate(
+            AuthorizedMember authorizedMember,
+            ScheduleInfo scheduleInfo,
+            ScheduleType scheduleType,
+            Long categoryId
+    ) {
         ScheduleMode scheduleMode = ScheduleMode.fromValue(scheduleInfo.scheduleMode());
 
         return switch (scheduleMode) {
             case PERIOD -> {
                 Schedule schedule = new Schedule();
-                schedule.type = scheduleType.getValue();
-                schedule.reporter = authorizedMember.getMemberId();
-                schedule.family = authorizedMember.getFamilyId();
-                schedule.mode = scheduleMode.getValue();
-                schedule.startAt = scheduleInfo.startAt();
-                schedule.scheduleTime = scheduleInfo.scheduleTime();
-                schedule.endAt = scheduleInfo.endAt();
-                schedule.repeatOption = RepeatOption.NONE.getValue();
-                schedule.repeatValue = 0;
+                schedule.setDefaultValues(
+                        scheduleType.getValue(),
+                        categoryId,
+                        authorizedMember.getMemberId(),
+                        authorizedMember.getFamilyId(),
+                        scheduleMode.getValue(),
+                        scheduleInfo.startAt(),
+                        scheduleInfo.scheduleTime(),
+                        scheduleInfo.endAt(),
+                        RepeatOption.NONE.getValue(),
+                        0
+                );
                 yield List.of(schedule);
             }
             case SINGLE, MULTIPLE -> scheduleInfo.selected().stream().map(timestamp -> {
                 Schedule schedule = new Schedule();
-                schedule.type = scheduleType.getValue();
-                schedule.reporter = authorizedMember.getMemberId();
-                schedule.family = authorizedMember.getFamilyId();
-                schedule.mode = scheduleMode.getValue();
-                schedule.startAt = timestamp;
-                schedule.scheduleTime = scheduleInfo.scheduleTime();
-                schedule.endAt = timestamp + TemporalUtil.DAY_IN_SECONDS - 1;
-                schedule.repeatOption = RepeatOption.NONE.getValue();
-                schedule.repeatValue = 0;
+                schedule.setDefaultValues(
+                        scheduleType.getValue(),
+                        categoryId,
+                        authorizedMember.getMemberId(),
+                        authorizedMember.getFamilyId(),
+                        scheduleMode.getValue(),
+                        timestamp,
+                        scheduleInfo.scheduleTime(),
+                        timestamp + TemporalUtil.DAY_IN_SECONDS - 1,
+                        RepeatOption.NONE.getValue(),
+                        0
+                );
                 return schedule;
             }).toList();
             case REPEAT -> {
                 Schedule schedule = new Schedule();
-                schedule.type = scheduleType.getValue();
-                schedule.reporter = authorizedMember.getMemberId();
-                schedule.family = authorizedMember.getFamilyId();
-                schedule.mode = scheduleMode.getValue();
-                schedule.startAt = scheduleInfo.startAt();
-                schedule.scheduleTime = scheduleInfo.scheduleTime();
-                schedule.endAt = scheduleInfo.endAt();
-                schedule.repeatOption = scheduleInfo.repeatOption();
-                schedule.repeatValue = RepeatOption.fromValue(scheduleInfo.repeatOption()).isWeek()
+                Integer repeatValue = RepeatOption.fromValue(scheduleInfo.repeatOption()).isWeek()
                         ? Weeks.toSelected(scheduleInfo.repeatValues())
                         : scheduleInfo.getFirstRepeatValue();
+                schedule.setDefaultValues(
+                        scheduleType.getValue(),
+                        categoryId,
+                        authorizedMember.getMemberId(),
+                        authorizedMember.getFamilyId(),
+                        scheduleMode.getValue(),
+                        scheduleInfo.startAt(),
+                        scheduleInfo.scheduleTime(),
+                        scheduleInfo.endAt(),
+                        scheduleInfo.repeatOption(),
+                        repeatValue
+                );
                 yield List.of(schedule);
             }
         };
     }
 
-    public void editStartAt(long timestamp) {
-        this.startAt = timestamp;
+    private void setDefaultValues(Integer scheduleType, Long categoryId, Long reporter, Long family, Integer mode, Long startAt, Long scheduleTime, Long endAt, Integer repeatOption, Integer repeatValue) {
+        this.type = scheduleType;
+        this.categoryId = categoryId;
+        this.reporter = reporter;
+        this.family = family;
+        this.mode = mode;
+        this.startAt = startAt;
+        this.scheduleTime = scheduleTime;
+        this.endAt = endAt;
+        this.repeatOption = repeatOption;
+        this.repeatValue = repeatValue;
     }
 
 
