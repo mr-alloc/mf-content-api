@@ -12,6 +12,8 @@ public record CreateMissionReq(
         /* 미션명 */
         String name,
 
+        Long categoryId,
+
         /* 미션 부제 */
         String subName,
 

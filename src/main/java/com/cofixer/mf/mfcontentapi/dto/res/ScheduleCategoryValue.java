@@ -28,7 +28,7 @@ public record ScheduleCategoryValue(
                 category.getName(),
                 category.getColor(),
                 category.getDescription(),
-                category.getOrder()
+                category.getSortOrder()
         );
     }
 }

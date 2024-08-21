@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 import java.io.Serial;
@@ -43,6 +44,7 @@ public class Schedule implements Serializable {
     Integer type;
 
     @Comment("카테고리 ID")
+    @ColumnDefault("0")
     @Column(name = "category_id")
     Long categoryId;
 

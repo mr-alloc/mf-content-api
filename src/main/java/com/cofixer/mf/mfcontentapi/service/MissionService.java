@@ -38,7 +38,7 @@ public class MissionService {
 
     @Transactional
     public List<MissionDetailValue> createMission(CreateMissionReq req, AuthorizedMember authorizedMember) {
-        List<Schedule> schedules = Schedule.forCreate(authorizedMember, req.scheduleInfo(), ScheduleType.MISSION).stream()
+        List<Schedule> schedules = Schedule.forCreate(authorizedMember, req.scheduleInfo(), ScheduleType.MISSION, req.categoryId()).stream()
                 .map(scheduleManager::saveSchedule)
                 .toList();
         long now = TemporalUtil.getEpochSecond();
@@ -61,7 +61,7 @@ public class MissionService {
 
     @Transactional
     public List<FamilyMissionDetailValue> createFamilyMission(CreateFamilyMissionReq req, AuthorizedMember authorizedMember) {
-        List<Schedule> schedules = Schedule.forCreate(authorizedMember, req.scheduleInfo(), ScheduleType.MISSION).stream()
+        List<Schedule> schedules = Schedule.forCreate(authorizedMember, req.scheduleInfo(), ScheduleType.MISSION, req.categoryId()).stream()
                 .map(scheduleManager::saveSchedule)
                 .toList();
         long now = TemporalUtil.getEpochSecond();

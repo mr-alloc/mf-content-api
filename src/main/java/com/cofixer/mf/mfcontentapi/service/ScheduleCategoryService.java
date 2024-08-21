@@ -2,6 +2,7 @@ package com.cofixer.mf.mfcontentapi.service;
 
 import com.cofixer.mf.mfcontentapi.domain.ScheduleCategory;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
+import com.cofixer.mf.mfcontentapi.dto.req.CreateCategoryReq;
 import com.cofixer.mf.mfcontentapi.dto.res.ScheduleCategoryValue;
 import com.cofixer.mf.mfcontentapi.manager.ScheduleCategoryManager;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +31,9 @@ public class ScheduleCategoryService {
     @Transactional
     public ScheduleCategory addCategory(
             AuthorizedMember authorizedMember,
-            String name,
-            String color,
-            String description
+            CreateCategoryReq request
     ) {
-        ScheduleCategory category = ScheduleCategory.of(authorizedMember, name, color, description);
+        ScheduleCategory category = ScheduleCategory.of(authorizedMember, request.name(), request.color(), request.description());
         return manager.addCategory(category);
     }
 }

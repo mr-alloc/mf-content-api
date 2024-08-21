@@ -17,6 +17,8 @@ public record CreateFamilyMissionReq(
         /* 미션 부제 */
         String subName,
 
+        Long categoryId,
+
         Integer type,
 
         /* 기한(초) */

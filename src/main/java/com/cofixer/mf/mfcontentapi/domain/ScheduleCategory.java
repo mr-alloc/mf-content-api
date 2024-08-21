@@ -1,21 +1,12 @@
 package com.cofixer.mf.mfcontentapi.domain;
 
-import com.cofixer.mf.mfcontentapi.constant.DeclaredValidateResult;
 import com.cofixer.mf.mfcontentapi.constant.SelectorType;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
-import com.cofixer.mf.mfcontentapi.exception.ValidateException;
 import com.cofixer.mf.mfcontentapi.util.StringUtil;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Comment;
-import org.springframework.util.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -59,8 +50,8 @@ public class ScheduleCategory implements Serializable {
     String description;
 
     @Comment("순서")
-    @Column(name = "order", nullable = false)
-    Integer order;
+    @Column(name = "sort_order", nullable = false)
+    Integer sortOrder;
 
     public static ScheduleCategory of(AuthorizedMember authorizedMember, String name, String color, String description) {
         validate(name, color);
@@ -78,7 +69,7 @@ public class ScheduleCategory implements Serializable {
         category.name = name;
         category.color = color;
         category.description = description;
-        category.order = 0;
+        category.sortOrder = 0;
 
         return category;
     }

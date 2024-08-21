@@ -45,7 +45,7 @@ public class AnniversaryService {
 
     @Transactional
     public List<AnniversaryValue> createAnniversaries(CreateAnniversaryReq req, AuthorizedMember authorizedMember) {
-        List<Schedule> schedules = Schedule.forCreate(authorizedMember, req.scheduleInfo(), ScheduleType.ANNIVERSARY).stream()
+        List<Schedule> schedules = Schedule.forCreate(authorizedMember, req.scheduleInfo(), ScheduleType.ANNIVERSARY, 0L).stream()
                 .map(scheduleManager::saveSchedule)
                 .toList();
 
