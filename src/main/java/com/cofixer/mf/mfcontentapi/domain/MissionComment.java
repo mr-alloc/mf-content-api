@@ -16,7 +16,7 @@ import java.util.Comparator;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "mf_mission_comment", indexes = {
-        @Index(name = "idx_state_id", columnList = "state_id")
+        @Index(name = "idx_discussion_id", columnList = "discussion_id")
 })
 public class MissionComment implements Serializable {
 
