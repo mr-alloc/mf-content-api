@@ -46,4 +46,8 @@ public class TemporalUtil {
     public static LocalDateTime toLocalDateTime(Long timestamp) {
         return LocalDateTime.ofEpochSecond(timestamp, 0, APP_ZONE_OFFSET_KST);
     }
+
+    public static long plusSecondOfDayMinus1(Long timestamp) {
+        return timestamp + DAY_IN_SECONDS - 1;
+    }
 }

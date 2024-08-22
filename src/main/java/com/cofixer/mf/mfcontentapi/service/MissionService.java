@@ -313,8 +313,8 @@ public class MissionService {
     }
 
     @Transactional(readOnly = true)
-    public GetComingFamilyMissionsRes getComingFamilyMissions(AuthorizedMember authorizedMember) {
-        Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION).stream()
+    public GetTodayFamilyMissionsRes getTodayFamilyMissions(AuthorizedMember authorizedMember, Long timestamp) {
+        Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION, timestamp).stream()
                 .collect(Collectors.toMap(Schedule::getId, Function.identity()));
         Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getId);
 
@@ -336,11 +336,11 @@ public class MissionService {
                 ))
                 .toList();
 
-        return GetComingFamilyMissionsRes.of(detailValues);
+        return GetTodayFamilyMissionsRes.of(detailValues);
     }
 
-    public GetComingMissionsRes getComingMissions(AuthorizedMember authorizedMember) {
-        Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION).stream()
+    public GetTodayMissionsRes getTodayMissions(AuthorizedMember authorizedMember, Long timestamp) {
+        Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION, timestamp).stream()
                 .collect(Collectors.toMap(Schedule::getId, Function.identity()));
         Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getId);
 
@@ -357,7 +357,7 @@ public class MissionService {
                 ))
                 .toList();
 
-        return GetComingMissionsRes.of(detailValues);
+        return GetTodayMissionsRes.of(detailValues);
     }
 
 }

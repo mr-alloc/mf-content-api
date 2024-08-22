@@ -32,9 +32,10 @@ public class ScheduleManager {
 
     public List<Schedule> getComingMissionSchedules(
             AuthorizedMember authorizedMember,
-            ScheduleType scheduleType
+            ScheduleType scheduleType,
+            Long timestamp
     ) {
-        return scheduleRepository.getComingSchedules(authorizedMember, scheduleType);
+        return scheduleRepository.getComingSchedules(authorizedMember, scheduleType, timestamp);
     }
 
     public Schedule getScheduleByMissionId(Long missionId) {

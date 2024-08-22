@@ -7,7 +7,6 @@ import java.util.List;
 @Schema(description = "카테고리 목록 정보")
 public record GetCategoriesRes (
 
-
         @Schema(description = "카테고리 목록")
         List<ScheduleCategoryValue> categories
 ) {

@@ -17,7 +17,6 @@ public class MissionDetailRepositoryImpl implements MissionDetailQueryRepository
 
     private final JPAQueryFactory queryFactory;
 
-
     @Override
     public List<MissionDetail> getMissionsInPeriod(Collection<Long> scheduleIds) {
         return queryFactory.select(missionDetail)

@@ -10,7 +10,7 @@ public interface ScheduleQueryRepository {
 
     List<Schedule> getSchedulesByRange(AuthorizedMember authorizedMember, Long startAt, Long endAt, ScheduleType scheduleType);
 
-    List<Schedule> getComingSchedules(AuthorizedMember authorizedMember, ScheduleType scheduleType);
+    List<Schedule> getComingSchedules(AuthorizedMember authorizedMember, ScheduleType scheduleType, Long timestamp);
 
     Schedule getScheduleByMissionId(Long missionId);
 

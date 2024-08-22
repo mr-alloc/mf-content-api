@@ -9,6 +9,7 @@ import com.cofixer.mf.mfcontentapi.dto.res.*;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
 import com.cofixer.mf.mfcontentapi.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -77,11 +78,14 @@ public class MissionController {
     }
 
 
-    @Operation(summary = "/coming-missions: 다가오는 미션 목록 조회")
-    @GetMapping("/coming-missions")
-    public ResponseEntity<GetComingMissionsRes> getComingMissions() {
+    @Operation(summary = "/daily: 일일 미션 목록 조회")
+    @GetMapping("/daily")
+    public ResponseEntity<GetTodayMissionsRes> getComingMissions(
+            @Schema(description = "시간 기준값")
+            Long timestamp
+    ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        GetComingMissionsRes response = missionService.getComingMissions(authorizedMember);
+        GetTodayMissionsRes response = missionService.getTodayMissions(authorizedMember, timestamp);
         return ResponseEntity.ok(response);
     }
 }
