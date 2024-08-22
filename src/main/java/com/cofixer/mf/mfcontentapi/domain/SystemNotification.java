@@ -5,6 +5,8 @@ import com.cofixer.mf.mfcontentapi.constant.TargetType;
 import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -25,6 +27,7 @@ public class SystemNotification implements Serializable {
     private static final long serialVersionUID = 3724396103300416787L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Comment("알림 타입 0: 유저, 1: 패밀리, 2: 시스템")
