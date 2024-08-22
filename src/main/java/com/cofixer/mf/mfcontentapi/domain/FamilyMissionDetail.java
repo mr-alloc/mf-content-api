@@ -45,7 +45,7 @@ public class FamilyMissionDetail implements Serializable {
             AuthorizedMember authorizedMember
     ) {
         FamilyMissionDetail newer = new FamilyMissionDetail();
-        newer.missionId = mission.getMissionId();
+        newer.missionId = mission.getId();
         newer.assigneeId = assignee.getMemberId();
         newer.lastUpdateMember = authorizedMember.getMemberId();
 

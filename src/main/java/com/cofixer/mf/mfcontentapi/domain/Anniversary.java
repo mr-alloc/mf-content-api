@@ -42,7 +42,7 @@ public class Anniversary implements Serializable {
     public static Anniversary forCreate(CreateAnniversaryReq req, Schedule schedule) {
         Anniversary anniversary = new Anniversary();
         anniversary.name = req.name();
-        anniversary.scheduleId = schedule.getScheduleId();
+        anniversary.scheduleId = schedule.getId();
         anniversary.createdAt = TemporalUtil.getEpochSecond();
         return anniversary;
     }

@@ -43,7 +43,7 @@ public class MissionStateRepositoryImpl implements MissionStateQueryRepository {
         return queryFactory
                 .select(missionState)
                 .from(mission)
-                .join(missionState).on(mission.missionId.eq(missionState.missionId))
+                .join(missionState).on(mission.id.eq(missionState.missionId))
                 .where(mission.scheduleId.in(scheduleIds))
                 .fetch();
     }

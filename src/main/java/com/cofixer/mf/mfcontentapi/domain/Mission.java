@@ -36,7 +36,7 @@ public class Mission implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long missionId;
+    Long id;
 
     @Comment("공개 여부")
     @Column(name = "is_public", nullable = false)
@@ -78,11 +78,6 @@ public class Mission implements Serializable {
     @Column(name = "created_at", nullable = false)
     Long createdAt;
 
-    @Delegate
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "schedule_id", insertable = false, updatable = false)
-    Schedule schedule;
-
     @Transient
     transient List<Long> watcherList = new ArrayList<>();
 
@@ -100,7 +95,7 @@ public class Mission implements Serializable {
         newer.isPublic = true;
         newer.name = req.name();
         newer.description = req.subName();
-        newer.scheduleId = schedule.getScheduleId();
+        newer.scheduleId = schedule.getId();
         newer.placeId = 0L;
         newer.missionType = req.type();
         newer.watchers = String.valueOf(schedule.getReporter());
@@ -118,7 +113,7 @@ public class Mission implements Serializable {
         newer.isPublic = true;
         newer.name = req.name();
         newer.description = req.subName();
-        newer.scheduleId = schedule.getScheduleId();
+        newer.scheduleId = schedule.getId();
         newer.placeId = 0L;
         newer.missionType = req.type();
         newer.watchers = String.valueOf(schedule.getReporter());
@@ -154,10 +149,6 @@ public class Mission implements Serializable {
     public void changeType(MissionType missionType, Long now) {
         this.missionType = missionType.getValue();
         this.renewUpdatedAt(now);
-    }
-
-    public boolean isReportedBy(Long memberId) {
-        return this.getReporter().equals(memberId);
     }
 
     public void changeDescription(String description, long now) {

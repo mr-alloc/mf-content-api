@@ -38,7 +38,7 @@ public class Schedule implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long scheduleId;
+    Long id;
 
     @Comment("스케쥴 타입 1: 기념일, 2: 미션")
     @Column(name = "type")

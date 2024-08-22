@@ -21,7 +21,7 @@ public class ScheduleService {
     public Map<Long, Schedule> getScheduleMap(AuthorizedMember authorizedMember, Long startAt, Long endAt, ScheduleType scheduleType) {
         return scheduleManager.getSchedules(authorizedMember, startAt, endAt, scheduleType).stream()
                 .collect(Collectors.toMap(
-                        Schedule::getScheduleId,
+                        Schedule::getId,
                         Function.identity()
                 ));
     }

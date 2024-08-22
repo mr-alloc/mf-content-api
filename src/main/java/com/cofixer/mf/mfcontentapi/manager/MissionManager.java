@@ -77,7 +77,7 @@ public class MissionManager {
     public Map<Long, Mission> getMissionsMap(Set<Long> missionIds) {
         return missionRepository.findAllById(missionIds).stream()
                 .collect(Collectors.toMap(
-                        Mission::getMissionId,
+                        Mission::getId,
                         Function.identity()
                 ));
     }

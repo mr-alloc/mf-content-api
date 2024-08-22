@@ -22,7 +22,7 @@ public class MissionDetailRepositoryImpl implements MissionDetailQueryRepository
     public List<MissionDetail> getMissionsInPeriod(Collection<Long> scheduleIds) {
         return queryFactory.select(missionDetail)
                 .from(mission)
-                .join(missionDetail).on(mission.missionId.eq(missionDetail.missionId))
+                .join(missionDetail).on(mission.id.eq(missionDetail.missionId))
                 .where(mission.scheduleId.in(scheduleIds))
                 .fetch();
     }

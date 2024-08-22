@@ -22,7 +22,7 @@ public class MissionRepositoryImpl implements MissionQueryRepository {
     @Override
     public List<Mission> getMissionsByIds(Set<Long> missionIds) {
         return queryFactory.selectFrom(mission)
-                .where(mission.missionId.in(missionIds))
+                .where(mission.id.in(missionIds))
                 .fetch();
     }
 }

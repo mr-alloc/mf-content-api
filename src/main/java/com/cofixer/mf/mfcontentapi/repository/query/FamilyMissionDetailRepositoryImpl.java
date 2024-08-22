@@ -22,8 +22,8 @@ public class FamilyMissionDetailRepositoryImpl implements FamilyMissionDetailQue
     @Override
     public FamilyMissionDetail getFamilyMission(Long missionId, Long familyId) {
         return queryFactory.selectFrom(familyMissionDetail)
-                .join(mission).on(familyMissionDetail.missionId.eq(mission.missionId))
-                .join(schedule).on(mission.scheduleId.eq(schedule.scheduleId))
+                .join(mission).on(familyMissionDetail.missionId.eq(mission.id))
+                .join(schedule).on(mission.scheduleId.eq(schedule.id))
                 .where(familyMissionDetail.missionId.eq(missionId)
                         .and(schedule.family.eq(familyId))
                 )
@@ -33,9 +33,9 @@ public class FamilyMissionDetailRepositoryImpl implements FamilyMissionDetailQue
     @Override
     public List<FamilyMissionDetail> getMissionsInPeriod(Collection<Long> scheduleIds) {
         return queryFactory.selectFrom(familyMissionDetail)
-                .join(mission).on(familyMissionDetail.missionId.eq(mission.missionId))
-                .join(schedule).on(mission.scheduleId.eq(schedule.scheduleId))
-                .where(schedule.scheduleId.in(scheduleIds))
+                .join(mission).on(familyMissionDetail.missionId.eq(mission.id))
+                .join(schedule).on(mission.scheduleId.eq(schedule.id))
+                .where(schedule.id.in(scheduleIds))
                 .fetch();
     }
 }

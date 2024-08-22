@@ -34,7 +34,7 @@ public class AnniversaryService {
 
         Map<Long, Schedule> scheduleMap = CollectionUtil.toMap(
                 scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.ANNIVERSARY),
-                Schedule::getScheduleId
+                Schedule::getId
         );
 
         return anniversaryManager.getAnniversaries(scheduleMap.keySet()).stream()
@@ -53,7 +53,7 @@ public class AnniversaryService {
                 .map(schedule -> Anniversary.forCreate(req, schedule))
                 .toList();
 
-        Map<Long, Schedule> scheduleMap = CollectionUtil.toMap(schedules, Schedule::getScheduleId);
+        Map<Long, Schedule> scheduleMap = CollectionUtil.toMap(schedules, Schedule::getId);
         return anniversaryManager.saveAnniversaries(anniversaries).stream()
                 .map(anniversary -> AnniversaryValue.of(anniversary, scheduleMap.get(anniversary.getScheduleId())))
                 .toList();

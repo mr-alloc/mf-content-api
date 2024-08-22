@@ -87,7 +87,7 @@ public class MissionService {
     @Transactional(readOnly = true)
     public GetMemberCalendarRes getMemberCalendar(AuthorizedMember authorizedMember, Long startAt, Long endAt) {
         List<Schedule> schedules = scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.MISSION);
-        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getScheduleId);
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getId);
         List<MissionDetail> details = missionManager.getMissionDetails(scheduleIds);
 
         Set<Long> missionIds = CollectionUtil.convertSet(details, MissionDetail::getMissionId);
@@ -114,7 +114,7 @@ public class MissionService {
     @Transactional(readOnly = true)
     public GetFamilyCalendarRes getFamilyCalendar(AuthorizedMember authorizedMember, Long startAt, Long endAt) {
         List<Schedule> schedules = scheduleManager.getSchedules(authorizedMember, startAt, endAt, ScheduleType.MISSION);
-        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getScheduleId);
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules, Schedule::getId);
 
         List<FamilyMissionDetail> details = missionManager.getFamilyMissionDetails(scheduleIds);
         Set<Long> missionIdList = CollectionUtil.convertSet(details, FamilyMissionDetail::getMissionId);
@@ -165,7 +165,7 @@ public class MissionService {
         FamilyMissionDetail detail = missionManager.getFamilyMissionDetail(missionId, authorizedMember.getFamilyId());
         Mission mission = detail.getMission();
         //소속 패밀리 미션이 아닌경우
-        Schedule schedule = mission.getSchedule();
+        Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());
         ConditionUtil.throwIfTrue(!Objects.equals(schedule.getFamily(), authorizedMember.getFamilyId()), () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
         // 변경할 내용이 없는 경우
         ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
@@ -235,7 +235,8 @@ public class MissionService {
         MissionDetail detail = missionManager.getMissionDetail(missionId);
         Mission mission = detail.getMission();
         //나의 미션이 아닌경우
-        ConditionUtil.throwIfTrue(ObjectUtil.notEquals(mission.getSchedule().getReporter(), authorizedMember.getMemberId()),
+        Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());
+        ConditionUtil.throwIfTrue(ObjectUtil.notEquals(schedule.getReporter(), authorizedMember.getMemberId()),
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
         // 변경할 내용이 없는 경우
         ConditionUtil.throwIfTrue(request.hasNotChanged(), () -> new MissionException(DeclaredMissionResult.NO_CHANGED_TARGET));
@@ -274,7 +275,6 @@ public class MissionService {
         }
 
         List<MissionStateValue> states = missionStateService.getStates(detail.getMissionId());
-        Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());
         MissionDetailValue detailValue = MissionDetailValue.of(detail, states, schedule);
         return ChangeMissionRes.of(detailValue);
     }
@@ -283,12 +283,13 @@ public class MissionService {
     public DeleteFamilyMissionRes deleteFamilyMission(Long missionId, AuthorizedMember authorizedMember) {
         FamilyMissionDetail detail = missionManager.getFamilyMissionDetail(missionId, authorizedMember.getFamilyId());
         Mission mission = detail.getMission();
+        Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());
         //소속 패밀리 미션이 아닌경우
-        ConditionUtil.throwIfTrue(!Objects.equals(mission.getFamily(), authorizedMember.getFamilyId()),
+        ConditionUtil.throwIfTrue(!Objects.equals(schedule.getFamily(), authorizedMember.getFamilyId()),
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         //공개미션이 아니면서 미션 작성자가 아닌경우
-        ConditionUtil.throwIfTrue(!mission.isPublic() && ObjectUtil.notEquals(mission.getReporter(), authorizedMember.getMemberId()),
+        ConditionUtil.throwIfTrue(!mission.isPublic() && ObjectUtil.notEquals(schedule.getReporter(), authorizedMember.getMemberId()),
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         detail.delete(authorizedMember.getMemberId());
@@ -300,9 +301,10 @@ public class MissionService {
     public DeleteMissionRes deleteMission(Long missionId, AuthorizedMember authorizedMember) {
         MissionDetail detail = missionManager.getMissionDetail(missionId);
         Mission mission = detail.getMission();
+        Schedule schedule = scheduleManager.getSchedule(mission.getScheduleId());
 
         //나의 미션이 아닌경우
-        ConditionUtil.throwIfTrue(ObjectUtil.notEquals(mission.getReporter(), authorizedMember.getMemberId()),
+        ConditionUtil.throwIfTrue(ObjectUtil.notEquals(schedule.getReporter(), authorizedMember.getMemberId()),
                 () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         mission.delete();
@@ -313,8 +315,8 @@ public class MissionService {
     @Transactional(readOnly = true)
     public GetComingFamilyMissionsRes getComingFamilyMissions(AuthorizedMember authorizedMember) {
         Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION).stream()
-                .collect(Collectors.toMap(Schedule::getScheduleId, Function.identity()));
-        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getScheduleId);
+                .collect(Collectors.toMap(Schedule::getId, Function.identity()));
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getId);
 
         Map<Long, FamilyMissionDetail> detailsMap = missionManager.getFamilyMissionDetails(scheduleIds).stream()
                 .collect(Collectors.toMap(
@@ -327,9 +329,9 @@ public class MissionService {
         log.info("Searched coming missions: {}", missionIds);
         List<FamilyMissionDetailValue> detailValues = missionManager.getMissions(missionIds).stream()
                 .map(mission -> FamilyMissionDetailValue.of(
-                        detailsMap.get(mission.getMissionId()),
+                        detailsMap.get(mission.getId()),
                         mission,
-                        stateMap.get(mission.getMissionId()),
+                        stateMap.get(mission.getId()),
                         schedules.get(mission.getScheduleId())
                 ))
                 .toList();
@@ -339,8 +341,8 @@ public class MissionService {
 
     public GetComingMissionsRes getComingMissions(AuthorizedMember authorizedMember) {
         Map<Long, Schedule> schedules = scheduleManager.getComingMissionSchedules(authorizedMember, ScheduleType.MISSION).stream()
-                .collect(Collectors.toMap(Schedule::getScheduleId, Function.identity()));
-        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getScheduleId);
+                .collect(Collectors.toMap(Schedule::getId, Function.identity()));
+        Set<Long> scheduleIds = CollectionUtil.convertSet(schedules.values(), Schedule::getId);
 
         Map<Long, MissionDetail> detailsMap = missionManager.getMissionDetailsMap(scheduleIds);
         Set<Long> missionIds = CollectionUtil.convertSet(detailsMap.values(), MissionDetail::getMissionId);
@@ -348,9 +350,9 @@ public class MissionService {
 
         List<MissionDetailValue> detailValues = missionManager.getMissions(missionIds).stream()
                 .map(mission -> MissionDetailValue.of(
-                        detailsMap.get(mission.getMissionId()),
+                        detailsMap.get(mission.getId()),
                         mission,
-                        stateMap.get(mission.getMissionId()),
+                        stateMap.get(mission.getId()),
                         schedules.get(mission.getScheduleId())
                 ))
                 .toList();

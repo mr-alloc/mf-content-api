@@ -70,7 +70,7 @@ public class MissionStateService {
     @Transactional(propagation = Propagation.MANDATORY)
     public MissionState createState(Mission mission, Schedule schedule) {
         MissionState toBeSaved = MissionState.forMissionCreate(
-                mission.getMissionId(),
+                mission.getId(),
                 MissionType.fromValue(mission.getMissionType()),
                 schedule
         );
@@ -90,7 +90,7 @@ public class MissionStateService {
         }
 
         Mission mission = missionManager.getMission(req.missionId());
-        Schedule schedule = mission.getSchedule();
+        Schedule schedule = scheduleManager.getScheduleByMissionId(mission.getId());
         schedule.isNotAccessibleFrom(authorizedMember, () -> new MissionException(DeclaredMissionResult.NOT_OWN_MISSION));
 
         boolean isNotRange = req.timestamp() < schedule.getStartAt() && schedule.getEndAt() < req.timestamp();
@@ -121,7 +121,7 @@ public class MissionStateService {
                 .orElseThrow(() -> new MissionException(DeclaredMissionResult.NOT_FOUND_STATE));
 
         Mission mission = missionManager.getMission(missionState.getMissionId());
-        Schedule schedule = mission.getSchedule();
+        Schedule schedule = scheduleManager.getScheduleByMissionId(mission.getId());
         if (schedule.isNotAccessibleFrom(authorizedMember)) {
             return Collections.emptyList();
         }
@@ -133,7 +133,8 @@ public class MissionStateService {
     }
 
     public MissionState createStateLazy(Mission mission, Long startStamp) {
-        MissionState missionState = MissionState.forLazyCreate(mission.getMissionId(), MissionType.MISSION, mission.getSchedule(), startStamp);
+        Schedule schedule = scheduleManager.getScheduleByMissionId(mission.getId());
+        MissionState missionState = MissionState.forLazyCreate(mission.getId(), MissionType.MISSION, schedule, startStamp);
         return missionStateManager.saveState(missionState);
     }
 
@@ -141,7 +142,7 @@ public class MissionStateService {
     public List<DiscussionValue> getJoinedDiscussions(AuthorizedMember authorizedMember) {
         Set<Long> schedules = CollectionUtil.convertSet(
                 scheduleManager.getAllSchedules(authorizedMember, ScheduleType.MISSION),
-                Schedule::getScheduleId
+                Schedule::getId
         );
 
         Map<Long, MissionState> stateMap = CollectionUtil.toMap(

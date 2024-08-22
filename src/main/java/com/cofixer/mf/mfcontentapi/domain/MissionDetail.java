@@ -31,7 +31,7 @@ public class MissionDetail implements Serializable {
 
     public static MissionDetail forCreate(Mission newMission) {
         MissionDetail newMissionDetail = new MissionDetail();
-        newMissionDetail.missionId = newMission.getMissionId();
+        newMissionDetail.missionId = newMission.getId();
         return newMissionDetail;
     }
 

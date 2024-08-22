@@ -79,8 +79,8 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
     public Schedule getScheduleByMissionId(Long missionId) {
         return queryFactory
                 .selectFrom(schedule)
-                .join(mission).on(mission.scheduleId.eq(schedule.scheduleId))
-                .where(mission.missionId.eq(missionId))
+                .join(mission).on(mission.scheduleId.eq(schedule.id))
+                .where(mission.id.eq(missionId))
                 .fetchOne();
     }
 
