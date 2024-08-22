@@ -18,6 +18,7 @@ import org.hibernate.annotations.Comment;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Getter
@@ -84,9 +85,10 @@ public class Schedule implements Serializable {
             AuthorizedMember authorizedMember,
             ScheduleInfo scheduleInfo,
             ScheduleType scheduleType,
-            Long categoryId
+            Long requestCategoryId
     ) {
         ScheduleMode scheduleMode = ScheduleMode.fromValue(scheduleInfo.scheduleMode());
+        Long categoryId = Optional.ofNullable(requestCategoryId).orElse(0L);
 
         return switch (scheduleMode) {
             case PERIOD -> {
