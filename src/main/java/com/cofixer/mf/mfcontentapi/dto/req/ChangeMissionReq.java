@@ -14,6 +14,7 @@ public class ChangeMissionReq {
     String description;
     Integer status;
     Long deadline;
+    Long categoryId;
 
     Long stateId;
     Long startStamp;
@@ -36,6 +37,10 @@ public class ChangeMissionReq {
 
     public boolean needChangeDeadline() {
         return deadline != null && deadline > 0;
+    }
+
+    public boolean needChangeCategoryId() {
+        return categoryId != null && categoryId > 0;
     }
 
     public boolean hasNotChanged() {

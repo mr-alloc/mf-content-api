@@ -178,4 +178,8 @@ public class Schedule implements Serializable {
             throw exceptionSupplier.get();
         }
     }
+
+    public void changeCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
 }

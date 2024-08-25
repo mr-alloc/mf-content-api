@@ -6,6 +6,7 @@ import java.util.List;
 
 public record ScheduleValue(
         Long id,
+        Long categoryId,
         Integer mode,
         Long startAt,
         Long scheduleTime,
@@ -18,6 +19,7 @@ public record ScheduleValue(
 
         return new ScheduleValue(
                 schedule.getId(),
+                schedule.getCategoryId(),
                 schedule.getMode(),
                 schedule.getStartAt(),
                 schedule.getScheduleTime(),

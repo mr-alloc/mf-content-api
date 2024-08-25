@@ -221,6 +221,10 @@ public class MissionService {
             mission.changeDeadLine(request.getDeadline(), now);
         }
 
+        if (request.needChangeCategoryId()) {
+            schedule.changeCategoryId(request.getCategoryId());
+        }
+
         if (request.needChangeDescription()) {
             mission.changeDescription(request.getDescription(), now);
         }
@@ -267,6 +271,10 @@ public class MissionService {
 
         if (request.needChangeDeadline()) {
             mission.changeDeadLine(request.getDeadline(), now);
+        }
+
+        if (request.needChangeCategoryId()) {
+            schedule.changeCategoryId(request.getCategoryId());
         }
 
 
