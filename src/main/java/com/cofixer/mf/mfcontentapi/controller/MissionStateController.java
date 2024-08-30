@@ -32,8 +32,8 @@ public class MissionStateController {
             @RequestBody CreateCommentReq req
     ) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
-        MissionCommentValue created = missionStateService.createComment(authorizedMember, stateId, req);
-        return ResponseEntity.ok(CreateCommentRes.of(created));
+        CreateCommentRes response = missionStateService.createComment(authorizedMember, stateId, req);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{stateId}/comment")

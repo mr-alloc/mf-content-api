@@ -8,6 +8,7 @@ import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
 import com.cofixer.mf.mfcontentapi.dto.MissionCommentValue;
 import com.cofixer.mf.mfcontentapi.dto.MissionStateValue;
 import com.cofixer.mf.mfcontentapi.dto.req.CreateCommentReq;
+import com.cofixer.mf.mfcontentapi.dto.res.CreateCommentRes;
 import com.cofixer.mf.mfcontentapi.dto.res.DiscussionValue;
 import com.cofixer.mf.mfcontentapi.exception.MissionException;
 import com.cofixer.mf.mfcontentapi.manager.MissionCommentManager;
@@ -78,7 +79,7 @@ public class MissionStateService {
     }
 
     @Transactional
-    public MissionCommentValue createComment(AuthorizedMember authorizedMember, Long stateId, CreateCommentReq req) {
+    public CreateCommentRes createComment(AuthorizedMember authorizedMember, Long stateId, CreateCommentReq req) {
         if (stateId > 0) {
             MissionState state = missionStateManager.getStateSafe(stateId);
             Schedule schedule = scheduleManager.getScheduleByMissionId(state.getMissionId());
@@ -86,7 +87,7 @@ public class MissionStateService {
             Discussion discussion = discussionService.getDiscussionOrRetrieve(state);
             MissionComment saved = missionCommentManager.saveComment(MissionComment.forCreate(discussion, authorizedMember, req.content()));
             discussion.renewLatest(saved.getContent(), TemporalUtil.getEpochSecond());
-            return MissionCommentValue.of(saved);
+            return CreateCommentRes.of(state.getId(), MissionCommentValue.of(saved));
         }
 
         Mission mission = missionManager.getMission(req.missionId());
@@ -108,7 +109,7 @@ public class MissionStateService {
         Discussion discussion = discussionService.getDiscussionOrRetrieve(mission, missionState);
         MissionComment saved = missionCommentManager.saveComment(MissionComment.forCreate(discussion, authorizedMember, req.content()));
         discussion.renewLatest(saved.getContent(), TemporalUtil.getEpochSecond());
-        return MissionCommentValue.of(saved);
+        return CreateCommentRes.of(stateId, MissionCommentValue.of(saved));
     }
 
     @Transactional(readOnly = true)
