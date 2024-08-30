@@ -50,6 +50,6 @@ public class ChangeFamilyMissionReq {
     }
 
     public boolean hasNotChanged() {
-        return !needChangeType() && !needChangeAssignee() && !needChangeTitle() && !needChangeStatus();
+        return !needChangeType() && !needChangeAssignee() && !needChangeTitle() && !needChangeStatus() && !needChangeCategoryId() && !needChangeDeadline() && !needChangeDescription();
     }
 }
