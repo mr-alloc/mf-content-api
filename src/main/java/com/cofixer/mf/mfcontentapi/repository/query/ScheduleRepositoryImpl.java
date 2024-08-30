@@ -59,7 +59,7 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
     ) {
         BooleanBuilder condition = new BooleanBuilder();
         condition.and(schedule.startAt.loe(timestamp)
-                .and(schedule.startAt.goe(timestamp)));
+                .and(schedule.endAt.goe(timestamp)));
         if (authorizedMember.forFamilyMember()) {
             condition.and(schedule.family.eq(authorizedMember.getFamilyId()));
         } else {
