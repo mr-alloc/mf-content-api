@@ -4,7 +4,6 @@ import com.cofixer.mf.mfcontentapi.constant.ScheduleMode;
 import com.cofixer.mf.mfcontentapi.constant.ScheduleType;
 import com.cofixer.mf.mfcontentapi.domain.Schedule;
 import com.cofixer.mf.mfcontentapi.dto.AuthorizedMember;
-import com.cofixer.mf.mfcontentapi.util.TemporalUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +58,8 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
             Long timestamp
     ) {
         BooleanBuilder condition = new BooleanBuilder();
-        condition.and(schedule.startAt.goe(timestamp).and(schedule.startAt.loe(TemporalUtil.plusSecondOfDayMinus1(timestamp))));
+        condition.and(schedule.startAt.loe(timestamp)
+                .and(schedule.startAt.goe(timestamp)));
         if (authorizedMember.forFamilyMember()) {
             condition.and(schedule.family.eq(authorizedMember.getFamilyId()));
         } else {
@@ -68,7 +68,6 @@ public class ScheduleRepositoryImpl implements ScheduleQueryRepository {
 
         return queryFactory.selectFrom(schedule)
                 .where(condition.and(schedule.type.eq(scheduleType.getValue())))
-                .limit(30)
                 .orderBy(schedule.startAt.desc())
                 .fetch();
     }
