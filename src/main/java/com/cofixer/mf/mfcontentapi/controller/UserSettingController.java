@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @AccountAuth(AccountRoleType.MEMBER)
-@Tag(name = "/v1/user-setting: 유저 설정")
+@Tag(name = "/v1/user-setting", description = "유저 설정")
 @RequestMapping("/v1/user-setting")
 public class UserSettingController {
 
     private final UserSettingService service;
 
-    @Operation(summary = "/: 유저 설정조회")
+    @Operation(summary = "유저 설정조회")
     @GetMapping
     public ResponseEntity<GetUserSettingRes> getUserSetting() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -33,7 +33,7 @@ public class UserSettingController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/main-family: 메인 패밀리 설정")
+    @Operation(summary = "메인 패밀리 설정")
     @PutMapping
     public ResponseEntity<ChangeMainFamilySettingRes> changeMainFamilySetting(
             @RequestBody ChangeMainFamilySettingReq request

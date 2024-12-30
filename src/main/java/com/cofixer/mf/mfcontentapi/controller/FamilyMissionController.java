@@ -31,7 +31,7 @@ public class FamilyMissionController {
 
     private final MissionService missionService;
 
-    @Operation(description = "패밀리 생성")
+    @Operation(summary = "패밀리 생성")
     @PostMapping
     public ResponseEntity<CreateFamilyMissionRes> createFamilyMission(
             @RequestBody CreateFamilyMissionReq request
@@ -44,7 +44,7 @@ public class FamilyMissionController {
     }
 
 
-    @Operation(description = "패밀리 캘린더 조회")
+    @Operation(summary = "패밀리 캘린더 조회")
     @GetMapping("/calendar")
     public ResponseEntity<GetFamilyCalendarRes> getFamilyCalendar(
             @RequestParam("startAt") Long startAt,
@@ -55,7 +55,7 @@ public class FamilyMissionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/{missionId}: 미션조회")
+    @Operation(summary = "미션조회")
     @GetMapping("/{missionId}")
     public ResponseEntity<GetFamilyMissionDetailRes> getFamilyMissionDetail(@PathVariable("missionId") Long missionId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -64,7 +64,7 @@ public class FamilyMissionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/{missionId}: 미션 변경")
+    @Operation(summary = "미션 변경")
     @PutMapping("/{missionId}")
     public ResponseEntity<ChangeFamilyMissionRes> changeFamilyMission(
             @PathVariable("missionId") Long missionId,
@@ -75,7 +75,7 @@ public class FamilyMissionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/{missionId}: 미션 삭제")
+    @Operation(summary = "미션 삭제")
     @DeleteMapping("/{missionId}")
     public ResponseEntity<DeleteFamilyMissionRes> deleteFamilyMission(@PathVariable("missionId") Long missionId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -83,7 +83,7 @@ public class FamilyMissionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/daily: 일일 미션 목록 조회")
+    @Operation(summary = "일일 미션 목록 조회")
     @GetMapping("/daily")
     public ResponseEntity<GetTodayFamilyMissionsRes> getComingMissions(
             @Schema(description = "시작 기준값")

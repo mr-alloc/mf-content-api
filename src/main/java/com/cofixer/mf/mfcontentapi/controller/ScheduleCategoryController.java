@@ -19,7 +19,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@Tag(name = "/v1/sc: 스케줄 카테고리")
+@Tag(name = "/v1/sc", description = "스케줄 카테고리")
 @AccountAuth(AccountRoleType.MEMBER)
 @RequestMapping("/v1/schedule-category")
 public class ScheduleCategoryController {
@@ -27,7 +27,7 @@ public class ScheduleCategoryController {
     private final ScheduleCategoryService service;
 
     @GetMapping
-    @Operation(summary = "/: 카테고리 목록 조회")
+    @Operation(summary = "목록 조회")
     public ResponseEntity<GetCategoriesRes> getCategories() {
         AuthorizedMember member = AuthorizedService.getMember();
         List<ScheduleCategoryValue> categories = service.getCategories(member);
@@ -36,7 +36,7 @@ public class ScheduleCategoryController {
     }
 
     @PostMapping
-    @Operation(summary = "/: 카테고리 추가")
+    @Operation(summary = "추가")
     public ResponseEntity<Void> addCategories(
             @RequestBody
             CreateCategoryReq request

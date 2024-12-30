@@ -7,6 +7,7 @@ import com.cofixer.mf.mfcontentapi.dto.res.AnniversaryValue;
 import com.cofixer.mf.mfcontentapi.dto.res.GetAnniversaryRes;
 import com.cofixer.mf.mfcontentapi.service.AnniversaryService;
 import com.cofixer.mf.mfcontentapi.service.AuthorizedService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class AnniversaryController {
 
     private final AnniversaryService anniversaryService;
 
+    @Operation(summary = "기념일 조회")
     @GetMapping
     public ResponseEntity<GetAnniversaryRes> getAnniversaries(
             @RequestParam("startAt") Long startAt,
@@ -32,6 +34,7 @@ public class AnniversaryController {
         return ResponseEntity.ok(GetAnniversaryRes.of(anniversaries));
     }
 
+    @Operation(summary = "기념일 생성")
     @PostMapping
     public ResponseEntity<CreateAnniversaryRes> createAnniversary(
             @RequestBody CreateAnniversaryReq req

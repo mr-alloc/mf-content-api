@@ -30,14 +30,14 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @Operation(summary = "/confirm: 이메일 확인")
+    @Operation(summary = "이메일 확인")
     @PostMapping("/confirm")
     public ResponseEntity<Void> confirmAccount(@RequestBody ConfirmAccountReq req) {
         accountService.confirmAccount(req);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "/create: 계정 생성")
+    @Operation(summary = "계정 생성")
     @PostMapping("/create")
     public ResponseEntity<Void> createAccount(@RequestBody CreateAccountReq req) {
         accountService.createAccount(req);
@@ -45,7 +45,7 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @Operation(summary = "/verify: 계정 확인")
+    @Operation(summary = "계정 확인")
     @PostMapping("/verify")
     public ResponseEntity<VerifiedAccountRes> verifyAccount(@RequestBody VerifyAccountReq req) {
         VerifiedAccountRes verifiedRes = accountService.verifyAccount(req);
@@ -53,7 +53,7 @@ public class AccountController {
     }
 
     @AccountAuth(AccountRoleType.MEMBER)
-    @Operation(summary = "/info: 계정 정보")
+    @Operation(summary = "계정정보 조회")
     @GetMapping("/info")
     public ResponseEntity<AccountInfoRes> getAccountInfo() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -65,7 +65,7 @@ public class AccountController {
         return ResponseEntity.ok(accountInfoRes);
     }
 
-    @Operation(summary = "/refresh: 토큰 갱신")
+    @Operation(summary = "토큰 갱신")
     @PostMapping("/refresh")
     public ResponseEntity<RefreshTokenRes> refreshToken(
             @RequestBody RefreshTokenReq req

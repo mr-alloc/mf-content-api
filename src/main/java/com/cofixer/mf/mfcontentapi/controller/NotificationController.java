@@ -17,14 +17,14 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "/v1/notification")
+@Tag(name = "/v1/notification", description = "알림")
 @RequestMapping("/v1/notification")
 public class NotificationController {
 
     private final NotificationService service;
 
     @GetMapping
-    @Operation(summary = "/: 일림 조회")
+    @Operation(summary = "조회")
     public ResponseEntity<GetNotificationRes> getNotifications() {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
 

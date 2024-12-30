@@ -21,14 +21,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @AccountAuth(AccountRoleType.MEMBER)
-@Tag(name = "/v1/mission: 미션")
+@Tag(name = "/v1/mission", description = "미션")
 @RequestMapping("/v1/mission")
 public class MissionController {
 
     private final MissionService missionService;
 
 
-    @Operation(summary = "/: 생성")
+    @Operation(summary = "생성")
     @PostMapping
     public ResponseEntity<CreateMissionRes> createMission(@RequestBody CreateMissionReq req) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -38,7 +38,7 @@ public class MissionController {
                 .body(CreateMissionRes.of(missions));
     }
 
-    @Operation(summary = "/calendar: 이번달 스케쥴 조회")
+    @Operation(summary = "이번달 스케쥴 조회")
     @GetMapping("/calendar")
     public ResponseEntity<GetMemberCalendarRes> getMemberCalendar(
             @RequestParam("startAt") Long startAt,
@@ -49,7 +49,7 @@ public class MissionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/{missionId}: 상세 조회")
+    @Operation(summary = "상세 조회")
     @GetMapping("/{missionId}")
     public ResponseEntity<GetMissionDetailRes> getMissionDetail(@PathVariable("missionId") Long missionId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -58,7 +58,7 @@ public class MissionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/{missionId}: 변경")
+    @Operation(summary = "변경")
     @PutMapping("/{missionId}")
     public ResponseEntity<ChangeMissionRes> changeMission(
             @PathVariable("missionId") Long missionId,
@@ -69,7 +69,7 @@ public class MissionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "/{missionId}: 삭제")
+    @Operation(summary = "삭제")
     @DeleteMapping("/{missionId}")
     public ResponseEntity<DeleteMissionRes> deleteMission(@PathVariable("missionId") Long missionId) {
         AuthorizedMember authorizedMember = AuthorizedService.getMember();
@@ -78,7 +78,7 @@ public class MissionController {
     }
 
 
-    @Operation(summary = "/daily: 일일 미션 목록 조회")
+    @Operation(summary = "일일 미션 목록 조회")
     @GetMapping("/daily")
     public ResponseEntity<GetTodayMissionsRes> getComingMissions(
             @Schema(description = "시간 기준값")

@@ -25,7 +25,7 @@ public class OpenApiConfiguration {
                 )
                 .externalDocs(new ExternalDocumentation()
                         .description("GitHub Repository")
-                        .url("https://github.com/devisitem/mf-content-api")
+                        .url("https://github.com/mr-alloc/mf-content-api")
                 );
     }
 

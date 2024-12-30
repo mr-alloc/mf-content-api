@@ -41,20 +41,6 @@ public class MissionStateService {
                 .toList();
     }
 
-    /**
-     * Map<시작시간, MissionState> 가져오기
-     *
-     * @param missionId
-     * @return
-     */
-    public Map<Long, MissionState> getStateMap(Long missionId) {
-        return CollectionUtil.toMap(missionStateManager.getStates(missionId), MissionState::getStartStamp);
-    }
-
-    public MissionState getState(Long missionId, Long startStamp) {
-        return missionStateManager.getState(missionId, startStamp);
-    }
-
     public Map<Long, List<MissionStateValue>> getStateGroupingMap(Set<Long> missionIdList) {
         return missionStateManager.getStateAll(missionIdList).stream()
                 .map(MissionStateValue::of)
